@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>四级速通助手</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>📘 四级速通助手</h1>
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="words">📖 背单词</button>
+      <button class="tab-btn" data-tab="translate">🌐 句子翻译</button>
+      <button class="tab-btn" data-tab="writing">✍️ 作文批改</button>
+      <button class="tab-btn" data-tab="materials">📚 资料库</button>
+      <button class="tab-btn" data-tab="wrongbook">📕 错题本</button>
+      <button class="tab-btn" data-tab="favorites">⭐ 收藏夹</button>
+    </nav>
+
+    <!-- 背单词模块 -->
+    <section id="tab-words" class="tab-content active">
+      <div class="word-card">
+        <div id="studyMode" class="mode-panel">
+          <div class="word-big" id="studyWord">abandon</div>
+          <div class="phonetic-big" id="studyPhonetic">/əˈbændən/</div>
+          <div class="meaning-big" id="studyMeaning" style="display:none;">v. 放弃；抛弃</div>
+          <div class="study-actions">
+            <button id="toggleMeaningBtn" class="btn-secondary">显示释义</button>
+            <button id="nextWordStudyBtn" class="btn-secondary">下一个</button>
+            <button id="switchToDictationBtn" class="btn-primary">切换到默写模式</button>
+            <button id="favoriteBtn" class="btn-star">☆ 收藏</button>
+          </div>
+        </div>
+
+        <div id="dictationMode" class="mode-panel" style="display:none;">
+          <div class="meaning-big dictation-meaning" id="dictationMeaning">v. 放弃；抛弃</div>
+          <div class="dictation-input-row">
+            <input type="text" id="dictationInput" placeholder="请拼写单词" autocomplete="off">
+            <button id="checkSpellBtn" class="btn-primary">检查拼写</button>
+          </div>
+          <div id="spellResult" class="spell-result"></div>
+          <div class="dictation-actions">
+            <button id="nextWordAfterCheckBtn" class="btn-secondary">下一个</button>
+            <button id="switchToStudyBtn" class="btn-outline">返回背诵模式</button>
+          </div>
+        </div>
+
+        <div class="ai-buttons">
+          <button id="aiExplainBtn" class="ai-btn">🤖 AI 深度讲解</button>
+          <button id="aiQuizBtn" class="ai-btn" style="background:#0ea5e9;">📝 AI 出题</button>
+        </div>
+        <div id="wordResult" class="result-box"></div>
+        <div id="quizResult" class="result-box"></div>
+
+        <div style="margin-top:1rem;">
+          <input type="file" id="wordFile" accept=".json">
+          <small>可导入自定义 JSON 词库</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- 句子翻译（新） -->
+    <section id="tab-translate" class="tab-content">
+      <h2>翻译评分</h2>
+      <div class="question-box">
+        <p>📝 请翻译以下句子：</p>
+        <div id="chineseDisplay" class="chinese-sentence">加载中...</div>
+        <button id="refreshSentenceBtn" class="btn-secondary" style="margin-top:0.5rem;">换一题</button>
+      </div>
+      <textarea id="translationInput" rows="3" placeholder="输入你的英文翻译..."></textarea>
+      <button id="evaluateTranslationBtn" class="ai-btn">📊 AI 评分及建议</button>
+      <div id="translateResult" class="result-box"></div>
+    </section>
+
+    <!-- 作文批改 -->
+    <section id="tab-writing" class="tab-content">
+      <input type="text" id="essayTopic" placeholder="作文题目，如：Online Shopping">
+      <textarea id="essayText" rows="8" placeholder="输入你的英文作文..."></textarea>
+      <button id="evaluateBtn" class="ai-btn">📝 批改作文</button>
+      <div id="writingResult" class="result-box"></div>
+    </section>
+
+    <!-- 资料库 -->
+    <section id="tab-materials" class="tab-content">
+      <h2>📚 我的备考资料</h2>
+      <p>点击文件名即可在线查看 PDF</p>
+      <div id="materialsList" class="materials-list">加载中...</div>
+    </section>
+
+    <!-- 错题本 -->
+    <section id="tab-wrongbook" class="tab-content">
+      <h2>📕 错题本</h2>
+      <div id="wrongbookContent">
+        <p>暂无错题，去背单词模块做一下 AI 出题吧！</p>
+      </div>
+    </section>
+
+    <!-- 收藏夹 -->
+    <section id="tab-favorites" class="tab-content">
+      <h2>⭐ 我的收藏</h2>
+      <div id="favoritesContent">
+        <p>还没有收藏的单词，点击背单词页面的 ☆ 收藏按钮添加。</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/words.js"></script>
+  <script src="js/translate.js"></script>
+  <script src="js/writing.js"></script>
+  <script src="js/materials.js"></script>
+  <script src="js/wrongbook.js"></script>
+  <script src="js/favorites.js"></script>
+  <script>
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        const tabId = 'tab-' + b.dataset.tab;
+        document.getElementById(tabId).classList.add('active');
+        if (b.dataset.tab === 'wrongbook') loadWrongBook();
+        if (b.dataset.tab === 'favorites') loadFavorites();
+      });
+    });
+  </script>
+</body>
+</html>

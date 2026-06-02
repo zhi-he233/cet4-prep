@@ -1,0 +1,199 @@
+:root {
+  --primary: #4f46e5;
+  --primary-light: #818cf8;
+  --bg: #f1f5f9;
+  --card: #ffffff;
+  --text: #1e293b;
+  --danger: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  padding: 1.5rem;
+}
+.container { max-width: 800px; margin: 0 auto; }
+h1 { text-align: center; margin-bottom: 1.5rem; font-size: 2rem; }
+
+/* 导航标签 */
+.tabs {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.tab-btn {
+  padding: 0.65rem 1.2rem;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.tab-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: scale(1.05);
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.tab-content.active.card {
+  background: var(--card);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.card { /* 备用于通用卡片 */ }
+
+/* 背单词大卡片 */
+.word-card {
+  background: var(--card);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+.mode-panel { text-align: center; }
+.word-big {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+.phonetic-big {
+  font-size: 1.5rem;
+  color: #64748b;
+  margin-bottom: 1rem;
+}
+.meaning-big {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 1rem 0;
+  padding: 0.8rem;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+.dictation-meaning {
+  font-size: 2.5rem;
+  background: #fef3c7;
+  color: #92400e;
+}
+.dictation-input-row {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+.dictation-input-row input {
+  font-size: 1.8rem;
+  padding: 0.5rem 1rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 12px;
+  width: 60%;
+  text-align: center;
+  outline: none;
+}
+.dictation-input-row input:focus {
+  border-color: var(--primary);
+}
+.spell-result {
+  font-size: 1.4rem;
+  min-height: 2.5rem;
+}
+.btn-primary, .btn-secondary, .btn-outline, .btn-star {
+  padding: 0.75rem 1.8rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  margin: 0.4rem;
+  transition: 0.2s;
+}
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-light); }
+.btn-secondary { background: #e2e8f0; color: var(--text); }
+.btn-secondary:hover { background: #cbd5e1; }
+.btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+.btn-outline:hover { background: var(--primary); color: white; }
+.btn-star { background: #fef9c3; color: #a16207; font-size: 1.2rem; }
+.btn-star.active { background: #fde047; }
+
+.study-actions, .dictation-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1.2rem 0;
+}
+
+.ai-btn {
+  display: block;
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  margin: 0.8rem 0;
+  transition: 0.2s;
+}
+.ai-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+.result-box {
+  background: #f8fafc;
+  padding: 1.2rem;
+  border-radius: 12px;
+  margin-top: 1rem;
+  white-space: pre-wrap;
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+textarea, input[type="text"] {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+.materials-list ul, .wrong-list, .favorites-list {
+  list-style: none;
+  padding: 0;
+}
+.materials-list li, .wrong-item, .favorite-item {
+  padding: 0.7rem 0;
+  border-bottom: 1px solid #eee;
+  font-size: 1.1rem;
+}
+.file-link, .word-link {
+  color: var(--primary);
+  text-decoration: none;
+}
+/* 翻译模块专用 */
+.question-box {
+  background: #f0f9ff;
+  padding: 1.2rem;
+  border-radius: 14px;
+  margin-bottom: 1.2rem;
+  text-align: center;
+  border: 1px solid #bae6fd;
+}
+.chinese-sentence {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0.8rem 0;
+  line-height: 1.5;
+}
+.file-link:hover { text-decoration: underline; }
+.wrong-date { color: #94a3b8; margin-left: 1rem; }
+.favorite-item { display: flex; justify-content: space-between; align-items: center; }
+.remove-fav-btn { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1.2rem; }
