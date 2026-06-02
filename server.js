@@ -18,24 +18,43 @@ app.use(express.static('public'));
 app.use('/materials', express.static(path.join(__dirname, 'materials')));
 
 async function askDeepSeek(systemPrompt, userMessage) {
-  const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: 'deepseek-chat',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userMessage }
-      ],
-      temperature: 0.7,
-      max_tokens: 1500
-    })
-  });
-  const data = await res.json();
-  return data.choices[0].message.content;
+  const apiKey = process.env.DEEPSEEK_API_KEY;
+  if (!apiKey) {
+    const errMsg = '错误：未设置 DEEPSEEK_API_KEY 环境变量';
+    console.error(errMsg);
+    throw new Error(errMsg);
+  }
+  try {
+    console.log('正在调用 DeepSeek API...');
+    const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userMessage }
+        ],
+        temperature: 0.7,
+        max_tokens: 1500
+      })
+    });
+
+    const data = await res.json();
+    console.log('DeepSeek 响应状态码:', res.status);
+    if (!res.ok) {
+      const errMsg = `DeepSeek API 错误 (${res.status}): ${JSON.stringify(data)}`;
+      console.error(errMsg);
+      throw new Error(errMsg);
+    }
+    return data.choices[0].message.content;
+  } catch (e) {
+    console.error('askDeepSeek 异常:', e.message);
+    throw e;
+  }
 }
 
 // 1. 单词详解
