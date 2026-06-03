@@ -46,3 +46,18 @@ evaluateBtn.addEventListener('click', async () => {
   translateResult.textContent = data.evaluation || ('出错：' + (data.error || ''));
   evaluateBtn.disabled = false;
 });
+async function evaluateTranslation() {
+  // ...原有评分逻辑
+  const result = await API.post('/api/translate/evaluate', { sentence: chinese, answer: userInput });
+  const score = result.score; // 假设后端返回 {score, detail}
+  // --- 新增记录 ---
+  const history = getTranslateHistory(getCurrentUserId());
+  history.push({
+    chinese: currentSentence.chinese,
+    english: userInput,
+    score: score,
+    time: new Date().toISOString()
+  });
+  saveTranslateHistory(getCurrentUserId(), history);
+  // ...显示结果
+}
