@@ -16236,7 +16236,14 @@ const WORDS = [
 ];
 
 
-// ========== 以下为最新交互逻辑 ==========
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+// ========== 状态与 DOM ==========
 let currentIndex = 0;
 let mode = 'study';
 let favorites = JSON.parse(localStorage.getItem('cet4_favorites') || '[]');
@@ -16247,6 +16254,7 @@ const studyWordEl = document.getElementById('studyWord');
 const studyPhoneticEl = document.getElementById('studyPhonetic');
 const studyMeaningEl = document.getElementById('studyMeaning');
 const toggleMeaningBtn = document.getElementById('toggleMeaningBtn');
+const nextWordStudyBtn = document.getElementById('nextWordStudyBtn');
 const switchToDictationBtn = document.getElementById('switchToDictationBtn');
 const switchToStudyBtn = document.getElementById('switchToStudyBtn');
 const dictationMeaningEl = document.getElementById('dictationMeaning');
@@ -16260,7 +16268,6 @@ const aiQuizBtn = document.getElementById('aiQuizBtn');
 const wordResult = document.getElementById('wordResult');
 const quizResult = document.getElementById('quizResult');
 const wordFileInput = document.getElementById('wordFile');
-const nextWordStudyBtn = document.getElementById('nextWordStudyBtn');
 
 function getCurrentWord() {
   return WORDS.length > 0 ? WORDS[currentIndex % WORDS.length] : null;
@@ -16345,6 +16352,7 @@ function nextWord() {
   quizResult.textContent = '';
 }
 
+// ========== 事件绑定 ==========
 toggleMeaningBtn.addEventListener('click', () => {
   if (!studyMeaningEl) return;
   if (studyMeaningEl.style.display === 'none') {
@@ -16356,6 +16364,7 @@ toggleMeaningBtn.addEventListener('click', () => {
   }
 });
 
+nextWordStudyBtn.addEventListener('click', nextWord);
 switchToDictationBtn.addEventListener('click', () => switchMode('dictation'));
 switchToStudyBtn.addEventListener('click', () => switchMode('study'));
 
@@ -16368,12 +16377,11 @@ checkSpellBtn.addEventListener('click', () => {
     spellResult.innerHTML = '<span style="color:green; font-weight:bold;">✅ 完全正确！</span>';
     setTimeout(nextWord, 1500);
   } else {
-    spellResult.innerHTML = '<span style="color:red;">❌ 拼写错误，正确答案是：<strong>' + w.word + '</strong></span>';
+    spellResult.innerHTML = `<span style="color:red;">❌ 拼写错误，正确答案是：<strong>${w.word}</strong></span>`;
   }
 });
 
 nextWordAfterCheckBtn.addEventListener('click', nextWord);
-nextWordStudyBtn.addEventListener('click', nextWord);
 
 favoriteBtn.addEventListener('click', () => {
   const w = getCurrentWord();
@@ -16391,20 +16399,71 @@ aiExplainBtn.addEventListener('click', async () => {
   aiExplainBtn.disabled = false;
 });
 
+// ========== AI 出题（按钮答题版本） ==========
 aiQuizBtn.addEventListener('click', async () => {
   const w = getCurrentWord();
   if (!w) return;
   aiQuizBtn.disabled = true;
   quizResult.innerHTML = 'AI 出题中...';
+
   const data = await API.post('/api/word/quiz', { word: w.word, meaning: w.meaning });
-  if (data.quiz) {
-    const quizText = data.quiz;
-    const answerMatch = quizText.match(/答案[：:]\s*([A-D])/i);
-    const correctOption = answerMatch ? answerMatch[1].toUpperCase() : null;
-    quizResult.innerHTML = quizText.replace(/\n/g, '<br>');
-    if (correctOption) {
-      const userAnswer = prompt('请输入你的答案（A/B/C/D）：\n正确答案是 ' + correctOption);
-      if (userAnswer && userAnswer.toUpperCase() !== correctOption) {
+  if (!data.quiz) {
+    quizResult.textContent = '出题失败：' + (data.error || '');
+    aiQuizBtn.disabled = false;
+    return;
+  }
+
+  const quizText = data.quiz;
+  // 解析选项
+  const optionRegex = /([A-D])[.、．]\s*(.+)/g;
+  const options = {};
+  let match;
+  let questionText = quizText;
+  // 提取问题文本（在第一个选项之前的内容）
+  const firstOptionIdx = quizText.search(optionRegex);
+  if (firstOptionIdx !== -1) {
+    questionText = quizText.substring(0, firstOptionIdx).trim();
+  }
+  // 重置正则
+  optionRegex.lastIndex = 0;
+  while ((match = optionRegex.exec(quizText)) !== null) {
+    options[match[1]] = match[2].trim();
+  }
+  // 解析答案
+  const answerMatch = quizText.match(/答案[：:]\s*([A-D])/i);
+  const correctOption = answerMatch ? answerMatch[1].toUpperCase() : null;
+
+  if (Object.keys(options).length === 0 || !correctOption) {
+    // 解析失败，回退显示原始文本
+    quizResult.innerHTML = quizText.replace(/\n/g, '<br>') + '<br><span style="color:gray;">（无法解析选项，请直接查看答案）</span>';
+    aiQuizBtn.disabled = false;
+    return;
+  }
+
+  // 渲染选项按钮
+  let html = `<div class="quiz-question">${questionText.replace(/\n/g, '<br>')}</div>`;
+  html += '<div class="quiz-options">';
+  for (const [letter, text] of Object.entries(options)) {
+    html += `<button class="quiz-option-btn" data-letter="${letter}">${letter}. ${text}</button>`;
+  }
+  html += '</div>';
+  html += '<div id="quizFeedback" class="quiz-feedback"></div>';
+  quizResult.innerHTML = html;
+
+  // 绑定点击
+  const optionBtns = quizResult.querySelectorAll('.quiz-option-btn');
+  optionBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      // 禁止重复点击
+      optionBtns.forEach(b => b.disabled = true);
+      this.classList.add('selected');
+      const userAnswer = this.dataset.letter;
+      const feedback = document.getElementById('quizFeedback');
+
+      if (userAnswer === correctOption) {
+        feedback.innerHTML = '<span style="color:green; font-weight:bold;">✅ 回答正确！</span>';
+      } else {
+        // 记录错题
         const wrongWords = JSON.parse(localStorage.getItem('cet4_wrongbook') || '[]');
         wrongWords.push({
           word: w.word,
@@ -16412,17 +16471,21 @@ aiQuizBtn.addEventListener('click', async () => {
           wrongTime: new Date().toISOString()
         });
         localStorage.setItem('cet4_wrongbook', JSON.stringify(wrongWords));
-        quizResult.innerHTML += '<br><span style="color:red;">❌ 回答错误，已加入错题本。</span>';
-      } else if (userAnswer) {
-        quizResult.innerHTML += '<br><span style="color:green;">✅ 回答正确！</span>';
+        feedback.innerHTML = `<span style="color:red;">❌ 回答错误，正确答案是：<strong>${correctOption}. ${options[correctOption]}</strong>，已加入错题本。</span>`;
       }
-    }
-  } else {
-    quizResult.textContent = '出题失败：' + (data.error || '');
-  }
+      // 高亮正确答案
+      optionBtns.forEach(b => {
+        if (b.dataset.letter === correctOption) {
+          b.classList.add('correct');
+        }
+      });
+    });
+  });
+
   aiQuizBtn.disabled = false;
 });
 
+// 导入词库文件
 wordFileInput.addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (!file) return;
@@ -16433,6 +16496,7 @@ wordFileInput.addEventListener('change', (e) => {
       if (Array.isArray(data) && data.length > 0 && data[0].word) {
         WORDS.length = 0;
         Array.prototype.push.apply(WORDS, data);
+        shuffleArray(WORDS);
         currentIndex = 0;
         switchMode('study');
         alert('成功导入 ' + data.length + ' 个单词！');
@@ -16448,6 +16512,7 @@ wordFileInput.addEventListener('change', (e) => {
 
 // 初始化
 if (WORDS.length > 0) {
+  shuffleArray(WORDS);
   switchMode('study');
 } else {
   studyWordEl.textContent = '暂无单词';
