@@ -16395,95 +16395,12 @@ aiExplainBtn.addEventListener('click', async () => {
   aiExplainBtn.disabled = true;
   wordResult.textContent = 'AI 讲解生成中...';
   const data = await API.post('/api/word/enrich', { word: w.word });
-  wordResult.textContent = data.result || ('出错：' + (data.error || ''));
+  wordResult.innerHTML = data.result ? marked.parse(data.result) : ('出错：' + (data.error || ''));
   aiExplainBtn.disabled = false;
 });
 
 // ========== AI 出题（按钮答题版本） ==========
-aiQuizBtn.addEventListener('click', async () => {
-  const w = getCurrentWord();
-  if (!w) return;
-  aiQuizBtn.disabled = true;
-  quizResult.innerHTML = 'AI 出题中...';
-
-  const data = await API.post('/api/word/quiz', { word: w.word, meaning: w.meaning });
-  if (!data.quiz) {
-    quizResult.textContent = '出题失败：' + (data.error || '');
-    aiQuizBtn.disabled = false;
-    return;
-  }
-
-  const quizText = data.quiz;
-  // 解析选项
-  const optionRegex = /([A-D])[.、．]\s*(.+)/g;
-  const options = {};
-  let match;
-  let questionText = quizText;
-  // 提取问题文本（在第一个选项之前的内容）
-  const firstOptionIdx = quizText.search(optionRegex);
-  if (firstOptionIdx !== -1) {
-    questionText = quizText.substring(0, firstOptionIdx).trim();
-  }
-  // 重置正则
-  optionRegex.lastIndex = 0;
-  while ((match = optionRegex.exec(quizText)) !== null) {
-    options[match[1]] = match[2].trim();
-  }
-  // 解析答案
-  const answerMatch = quizText.match(/答案[：:]\s*([A-D])/i);
-  const correctOption = answerMatch ? answerMatch[1].toUpperCase() : null;
-
-  if (Object.keys(options).length === 0 || !correctOption) {
-    // 解析失败，回退显示原始文本
-    quizResult.innerHTML = quizText.replace(/\n/g, '<br>') + '<br><span style="color:gray;">（无法解析选项，请直接查看答案）</span>';
-    aiQuizBtn.disabled = false;
-    return;
-  }
-
-  // 渲染选项按钮
-  let html = `<div class="quiz-question">${questionText.replace(/\n/g, '<br>')}</div>`;
-  html += '<div class="quiz-options">';
-  for (const [letter, text] of Object.entries(options)) {
-    html += `<button class="quiz-option-btn" data-letter="${letter}">${letter}. ${text}</button>`;
-  }
-  html += '</div>';
-  html += '<div id="quizFeedback" class="quiz-feedback"></div>';
-  quizResult.innerHTML = html;
-
-  // 绑定点击
-  const optionBtns = quizResult.querySelectorAll('.quiz-option-btn');
-  optionBtns.forEach(btn => {
-    btn.addEventListener('click', function() {
-      // 禁止重复点击
-      optionBtns.forEach(b => b.disabled = true);
-      this.classList.add('selected');
-      const userAnswer = this.dataset.letter;
-      const feedback = document.getElementById('quizFeedback');
-
-      if (userAnswer === correctOption) {
-        feedback.innerHTML = '<span style="color:green; font-weight:bold;">✅ 回答正确！</span>';
-      } else {
-        // 记录错题
-        const wrongWords = JSON.parse(localStorage.getItem('cet4_wrongbook') || '[]');
-        wrongWords.push({
-          word: w.word,
-          meaning: w.meaning,
-          wrongTime: new Date().toISOString()
-        });
-        localStorage.setItem('cet4_wrongbook', JSON.stringify(wrongWords));
-        feedback.innerHTML = `<span style="color:red;">❌ 回答错误，正确答案是：<strong>${correctOption}. ${options[correctOption]}</strong>，已加入错题本。</span>`;
-      }
-      // 高亮正确答案
-      optionBtns.forEach(b => {
-        if (b.dataset.letter === correctOption) {
-          b.classList.add('correct');
-        }
-      });
-    });
-  });
-
-  aiQuizBtn.disabled = false;
-});
+// AI 出题已移至 exam.js，由弹窗选择题型后调用对应函数
 
 // 导入词库文件
 wordFileInput.addEventListener('change', (e) => {

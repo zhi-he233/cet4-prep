@@ -109,7 +109,7 @@ app.post('/api/writing/evaluate', async (req, res) => {
   }
 });
 
-// AI 出题
+// AI 出题（选择题）
 app.post('/api/word/quiz', async (req, res) => {
   try {
     const { word, meaning } = req.body;
@@ -136,6 +136,171 @@ D. ……
       `单词：${word}，释义：${meaning}`
     );
     res.json({ quiz });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ========== 新增：四级新题型 ==========
+
+// 选词填空（15选10）
+app.post('/api/exam/bankedCloze', async (req, res) => {
+  try {
+    const content = await askDeepSeek(
+      `你是四级英语出题专家。请出一道"选词填空"题（四级阅读15选10）。
+
+要求：
+1. 一篇约120-150词的英文短文，挖掉10个单词，每个空用____加编号①-⑩表示。
+2. 提供15个候选词（A-O），多出5个干扰词。
+3. 短文主题贴近四级常考话题。
+4. 难度适中，符合四级水平。
+
+输出格式（不要额外解释）：
+【短文】
+（带____①、____②等空格的短文全文）
+
+【候选词】
+A. word1  B. word2  C. word3 ... O. word15
+
+【答案】
+①=A  ②=B ... ⑩=J`,
+      '请出一道四级选词填空（15选10）题。'
+    );
+    res.json({ content });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// 信息匹配（词汇用法匹配，4题一组）
+app.post('/api/exam/infoMatch', async (req, res) => {
+  try {
+    const { word } = req.body;
+    const content = await askDeepSeek(
+      `你是四级英语出题专家。请根据所给单词，出4道"词汇用法匹配"选择题。
+
+要求：
+1. 给出4个英文句子，每个句中有一个空缺（用____表示）。
+2. 每句4个选项，考察该单词在不同语境下的用法。
+3. 句子难度为四级水平。
+4. 选项可以是被动语态、搭配、词形变化等不同形式。
+
+输出格式（不要额外解释）：
+1. 句子____剩余部分。
+   A. opt1  B. opt2  C. opt3  D. opt4
+
+2. 句子____剩余部分。
+   A. opt1  B. opt2  C. opt3  D. opt4
+
+3. 句子____剩余部分。
+   A. opt1  B. opt2  C. opt3  D. opt4
+
+4. 句子____剩余部分。
+   A. opt1  B. opt2  C. opt3  D. opt4
+
+【答案】
+1=A  2=B  3=C  4=D`,
+      `单词：${word}`
+    );
+    res.json({ content });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ========== 作文教学模式 ==========
+
+// 获取四级作文标题列表
+app.get('/api/writing/topics', (req, res) => {
+  const topics = [
+    "The Importance of Environmental Protection",
+    "The Impact of the Internet on Education",
+    "Should College Students Take Part-time Jobs?",
+    "The Advantages and Disadvantages of Online Shopping",
+    "How to Keep Healthy in Modern Life",
+    "The Role of Artificial Intelligence in the Future",
+    "My Views on Social Media",
+    "The Importance of Learning a Second Language",
+    "How to Deal with Stress as a College Student",
+    "The Benefits of Volunteering",
+    "Is It Necessary to Study Abroad?",
+    "The Influence of Smartphones on People's Lives",
+    "The Importance of Teamwork",
+    "How to Protect the Environment in Daily Life",
+    "The Value of Reading Books"
+  ];
+  res.json({ topics });
+});
+
+// AI 生成作文大纲
+app.post('/api/writing/outline', async (req, res) => {
+  try {
+    const { topic } = req.body;
+    const content = await askDeepSeek(
+      `你是四级英语写作辅导老师。请根据所给作文题目，生成一个详细的英文写作大纲。
+
+要求：
+1. 用英文输出，给出 introduction、body paragraphs、conclusion 的结构。
+2. 每个部分给出 2-3 个要点提示（bullet points）。
+3. 在 body 部分建议可以使用的论证方法（举例、对比、因果等）。
+4. 语言简洁实用，适合四级水平。
+
+输出格式：
+Introduction:
+- 要点1
+- 要点2
+...
+
+Body Paragraph 1:
+- 要点1
+- 要点2
+...
+
+Body Paragraph 2:
+- 要点1
+- 要点2
+...
+
+Conclusion:
+- 要点1
+- 要点2
+...`,
+      `题目：${topic}`
+    );
+    res.json({ outline: content });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// AI 提供关键词汇和短语
+app.post('/api/writing/vocabulary', async (req, res) => {
+  try {
+    const { topic } = req.body;
+    const content = await askDeepSeek(
+      `你是四级英语写作辅导老师。请根据所给作文题目，提供 15-20 个实用的英语词汇和短语。
+
+要求：
+1. 分为三类：开头引入短语、中间论证词汇/短语、结尾总结短语
+2. 每个短语附中文翻译
+3. 选择四级考试常用、能提分的表达
+4. 避免太简单的词汇
+
+输出格式：
+【开头引入】
+- phrase1（中文翻译）
+- phrase2（中文翻译）
+
+【中间论证】
+- phrase3（中文翻译）
+- phrase4（中文翻译）
+
+【结尾总结】
+- phrase5（中文翻译）
+- phrase6（中文翻译）`,
+      `题目：${topic}`
+    );
+    res.json({ vocabulary: content });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }

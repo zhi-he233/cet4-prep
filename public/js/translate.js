@@ -22,42 +22,39 @@ async function loadRandomSentence() {
   }
 }
 
-// 进入页面自动获取
 loadRandomSentence();
 
-// 换一题
 refreshSentenceBtn.addEventListener('click', () => {
   translationInput.value = '';
   translateResult.textContent = '';
   loadRandomSentence();
 });
 
-// 评分
 evaluateBtn.addEventListener('click', async () => {
   const translation = translationInput.value.trim();
   if (!currentChinese) return alert('等待句子加载');
-  if (!translation) return alert('请输入你的英文翻译');
+    if (!translation) return alert('请输入你的英文翻译');
   evaluateBtn.disabled = true;
   translateResult.textContent = 'AI 评分中...';
   const data = await API.post('/api/translate/evaluate', {
     chinese: currentChinese,
     translation: translation
   });
-  translateResult.textContent = data.evaluation || ('出错：' + (data.error || ''));
+  translateResult.innerHTML = data.evaluation ? marked.parse(data.evaluation) : ('出错：' + (data.error || ''));
   evaluateBtn.disabled = false;
+
+  // 保存完整记录（含 evaluation 详情）
+  if (data.evaluation) {
+    const uid = getCurrentUserId();
+    const history = JSON.parse(localStorage.getItem(`${uid}_translateHistory`) || '[]');
+    history.push({
+      chinese: currentChinese,
+      english: translation,
+      evaluation: data.evaluation,
+      time: new Date().toISOString()
+    });
+    localStorage.setItem(`${uid}_translateHistory`, JSON.stringify(history));
+  }
 });
-async function evaluateTranslation() {
-  // ...原有评分逻辑
-  const result = await API.post('/api/translate/evaluate', { sentence: chinese, answer: userInput });
-  const score = result.score; // 假设后端返回 {score, detail}
-  // --- 新增记录 ---
-  const history = getTranslateHistory(getCurrentUserId());
-  history.push({
-    chinese: currentSentence.chinese,
-    english: userInput,
-    score: score,
-    time: new Date().toISOString()
-  });
-  saveTranslateHistory(getCurrentUserId(), history);
-  // ...显示结果
-}
+
+// getCurrentUserId 已在 api.js 中定义

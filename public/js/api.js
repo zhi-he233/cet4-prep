@@ -38,11 +38,33 @@ function saveUsers(users) {
   localStorage.setItem('cet4_users', JSON.stringify(users));
 }
 function getCurrentUserId() {
+  const select = document.getElementById('userSelect');
+  if (select && select.value) return select.value;
   return localStorage.getItem('cet4_currentUser') || '默认用户';
 }
 function switchUser(userId) {
   localStorage.setItem('cet4_currentUser', userId);
-  location.reload(); // 简单重载刷新所有记录
+  // 更新下拉框
+  const select = document.getElementById('userSelect');
+  if (select) select.value = userId;
+  // 刷新各模块数据，无需重载页面
+  // 刷新各模块显示
+  const activeTab = document.querySelector('.tab-btn.active');
+  if (activeTab) {
+    const tab = activeTab.dataset.tab;
+    if (tab === 'words') showStudyHistory();
+    else if (tab === 'translate') showTranslateHistory();
+    else if (tab === 'wrongbook') loadWrongBook('wrong-words');
+    else if (tab === 'favorites') loadFavorites();
+    else if (tab === 'writing') {
+      // 不刷新，因为内容是独立的
+    }
+  }
+  // 清空各结果区域
+  document.getElementById('wordResult') && (document.getElementById('wordResult').innerHTML = '');
+  document.getElementById('quizResult') && (document.getElementById('quizResult').innerHTML = '');
+  document.getElementById('translateResult') && (document.getElementById('translateResult').innerHTML = '');
+  document.getElementById('writingResult') && (document.getElementById('writingResult').innerHTML = '');
 }
 // 初始化下拉框
 function initUserSelect() {
@@ -50,7 +72,10 @@ function initUserSelect() {
   const users = getUsers();
   select.innerHTML = users.map(u => `<option value="${u}">${u}</option>`).join('');
   select.value = getCurrentUserId();
-  select.addEventListener('change', () => switchUser(select.value));
+  // 用 setTimeout 避免初始化时触发 change
+  setTimeout(() => {
+    select.addEventListener('change', () => switchUser(select.value));
+  }, 100);
 }
 // 新建用户
 document.getElementById('newUserBtn').addEventListener('click', () => {
@@ -64,5 +89,10 @@ document.getElementById('confirmNewUser').addEventListener('click', () => {
   if (users.includes(name)) { alert('用户已存在'); return; }
   users.push(name);
   saveUsers(users);
+  // 重新初始化下拉框并切换到新用户
+  initUserSelect();
   switchUser(name);
+  document.getElementById('newUserName').value = '';
+  document.getElementById('newUserName').style.display = 'none';
+  document.getElementById('confirmNewUser').style.display = 'none';
 });

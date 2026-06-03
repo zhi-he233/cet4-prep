@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>四级速通助手</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
   <div class="container">
@@ -23,7 +24,6 @@
       <button class="tab-btn active" data-tab="words">📖 背单词</button>
       <button class="tab-btn" data-tab="translate">🌐 句子翻译</button>
       <button class="tab-btn" data-tab="writing">✍️ 作文批改</button>
-      <button class="tab-btn" data-tab="materials">📚 资料库</button>
       <button class="tab-btn" data-tab="wrongbook">📕 错题本</button>
       <button class="tab-btn" data-tab="favorites">⭐ 收藏夹</button>
     </nav>
@@ -56,10 +56,22 @@
           </div>
         </div>
 
-        <div class="ai-buttons">
+                <div class="ai-buttons">
           <button id="aiExplainBtn" class="ai-btn">🤖 AI 深度讲解</button>
           <button id="aiQuizBtn" class="ai-btn" style="background:#0ea5e9;">📝 AI 出题</button>
         </div>
+
+        <!-- 题型选择弹窗 -->
+        <div id="quizTypeModal" class="modal-overlay" style="display:none;">
+          <div class="modal-content">
+            <h3>选择题目类型</h3>
+            <button class="quiz-type-btn" data-type="choice">📝 单选题（拼写/用法）</button>
+            <button class="quiz-type-btn" data-type="cloze">📄 选词填空（15选10）</button>
+            <button class="quiz-type-btn" data-type="match">🔗 信息匹配（用法辨析）</button>
+            <button class="quiz-type-btn cancel-btn" id="closeQuizModal">取消</button>
+          </div>
+        </div>
+
         <div id="wordResult" class="result-box"></div>
         <div id="quizResult" class="result-box"></div>
 
@@ -97,26 +109,80 @@
       </div>
     </section>
 
-    <!-- 作文批改 -->
+        <!-- 作文批改（含教学模式） -->
     <section id="tab-writing" class="tab-content">
-      <input type="text" id="essayTopic" placeholder="作文题目，如：Online Shopping">
-      <textarea id="essayText" rows="8" placeholder="输入你的英文作文..."></textarea>
-      <button id="evaluateBtn" class="ai-btn">📝 批改作文</button>
-      <div id="writingResult" class="result-box"></div>
+      <h2>✍️ 作文批改</h2>
+
+      <!-- 教学模式切换 -->
+      <div class="writing-mode-switch">
+        <button id="directEvalMode" class="btn-outline active">直接批改</button>
+        <button id="teachMode" class="btn-outline">🎓 教学模式</button>
+      </div>
+
+      <!-- ===== 直接批改模式 ===== -->
+      <div id="directModeContent">
+        <input type="text" id="essayTopic" placeholder="作文题目，如：Online Shopping">
+        <textarea id="essayText" rows="8" placeholder="输入你的英文作文..."></textarea>
+        <button id="evaluateBtn" class="ai-btn">📝 批改作文</button>
+        <div id="writingResult" class="result-box"></div>
+      </div>
+
+      <!-- ===== 教学模式 ===== -->
+      <div id="teachModeContent" style="display:none;">
+        <!-- 步骤1：选题目 -->
+        <div class="teach-step" id="step1">
+          <h3>📌 第一步：选择或输入作文题目</h3>
+          <div id="topicListContainer">
+            <p class="teach-hint">加载四级常考题目中...</p>
+          </div>
+          <div class="teach-custom-topic">
+            <input type="text" id="customTopicInput" placeholder="或手动输入自定义题目">
+            <button id="useCustomTopicBtn" class="btn-secondary">使用</button>
+          </div>
+        </div>
+
+        <!-- 步骤2：生成大纲 -->
+        <div class="teach-step" id="step2" style="display:none;">
+          <h3>📋 第二步：查看写作大纲 <span id="selectedTopicDisplay"></span></h3>
+          <button id="generateOutlineBtn" class="ai-btn" style="background:#8b5cf6;">🤖 AI 生成大纲</button>
+          <div id="outlineResult" class="result-box"></div>
+        </div>
+
+        <!-- 步骤3：关键词汇 -->
+        <div class="teach-step" id="step3" style="display:none;">
+          <h3>🔤 第三步：学习关键词汇</h3>
+          <button id="generateVocabBtn" class="ai-btn" style="background:#06b6d4;">🔤 AI 推荐词汇</button>
+          <div id="vocabResult" class="result-box"></div>
+        </div>
+
+        <!-- 步骤4：开始写作 -->
+        <div class="teach-step" id="step4" style="display:none;">
+          <h3>✍️ 第四步：开始写作</h3>
+          <p class="teach-hint">参考大纲和词汇，在下面写下你的作文</p>
+          <textarea id="teachEssayText" rows="8" placeholder="参考上面的提纲和词汇，开始写作文..."></textarea>
+          <button id="evaluateTeachBtn" class="ai-btn">📝 提交批改</button>
+          <div id="teachResult" class="result-box"></div>
+        </div>
+      </div>
     </section>
 
-    <!-- 资料库 -->
-    <section id="tab-materials" class="tab-content">
-      <h2>📚 我的备考资料</h2>
-      <p>点击文件名即可在线查看 PDF</p>
-      <div id="materialsList" class="materials-list">加载中...</div>
-    </section>
-
-    <!-- 错题本 -->
+        <!-- 错题本 / 学习档案 -->
     <section id="tab-wrongbook" class="tab-content">
-      <h2>📕 错题本</h2>
+      <h2>📕 学习档案</h2>
+      <div class="sub-tabs">
+        <button class="sub-tab-btn active" data-subtab="wrong-words">📖 错词本</button>
+        <button class="sub-tab-btn" data-subtab="wrong-translate">🌐 翻译记录</button>
+        <button class="sub-tab-btn" data-subtab="wrong-writing">✍️ 作文记录</button>
+      </div>
       <div id="wrongbookContent">
         <p>暂无错题，去背单词模块做一下 AI 出题吧！</p>
+      </div>
+      <!-- 详情弹窗 -->
+      <div id="detailModal" class="modal-overlay" style="display:none;">
+        <div class="modal-content modal-detail">
+          <div id="detailContent"></div>
+          <button id="closeDetailBtn" class="btn-secondary" style="margin-top:1rem;">关闭</button>
+        </div>
       </div>
     </section>
 
@@ -129,17 +195,54 @@
     </section>
   </div>
 
-  <script src="js/api.js"></script>
+        <script src="js/api.js"></script>
   <script src="js/words.js"></script>
   <script src="js/translate.js"></script>
   <script src="js/writing.js"></script>
-  <script src="js/materials.js"></script>
+  <script src="js/exam.js"></script>
   <script src="js/wrongbook.js"></script>
   <script src="js/favorites.js"></script>
   <script src="js/history.js"></script>
   <script>
     // 初始化用户下拉框
     initUserSelect();
+
+    // 题型选择弹窗控制
+    const quizModal = document.getElementById('quizTypeModal');
+    document.getElementById('aiQuizBtn').addEventListener('click', () => {
+      quizModal.style.display = 'flex';
+    });
+    document.getElementById('closeQuizModal').addEventListener('click', () => {
+      quizModal.style.display = 'none';
+    });
+    quizModal.addEventListener('click', (e) => {
+      if (e.target === quizModal) quizModal.style.display = 'none';
+    });
+    // 题型按钮
+    document.querySelectorAll('.quiz-type-btn:not(.cancel-btn)').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const type = btn.dataset.type;
+        quizModal.style.display = 'none';
+        if (type === 'choice') startChoiceQuiz();
+        else if (type === 'cloze') startClozeQuiz();
+        else if (type === 'match') startInfoMatchQuiz();
+      });
+    });
+
+    // 子标签切换
+    document.querySelectorAll('.sub-tab-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.sub-tab-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        loadWrongBook(b.dataset.subtab);
+      });
+    });
+
+    // 关闭详情弹窗
+    document.getElementById('closeDetailBtn').addEventListener('click', () => {
+      document.getElementById('detailModal').style.display = 'none';
+    });
+
     document.querySelectorAll('.tab-btn').forEach(b => {
       b.addEventListener('click', () => {
         document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
@@ -147,13 +250,12 @@
         b.classList.add('active');
         const tabId = 'tab-' + b.dataset.tab;
         document.getElementById(tabId).classList.add('active');
-        if (b.dataset.tab === 'wrongbook') loadWrongBook();
+        if (b.dataset.tab === 'wrongbook') loadWrongBook('wrong-words');
         if (b.dataset.tab === 'favorites') loadFavorites();
-        if (b.dataset.tab === 'translate') showTranslateHistory(); // 切换到翻译时显示记录
-        if (b.dataset.tab === 'words') showStudyHistory();        // 切换到背单词时显示记录
+        if (b.dataset.tab === 'translate') showTranslateHistory();
+        if (b.dataset.tab === 'words') showStudyHistory();
       });
     });
-    // 页面加载完先显示当前用户的历史记录
     showStudyHistory();
   </script>
 </body>

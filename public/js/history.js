@@ -1,10 +1,3 @@
-const TRANSLATE_HISTORY_KEY = (uid) => `${uid}_translateHistory`;
-function getTranslateHistory(uid) {
-  return JSON.parse(localStorage.getItem(TRANSLATE_HISTORY_KEY(uid)) || '[]');
-}
-function saveTranslateHistory(uid, data) {
-  localStorage.setItem(TRANSLATE_HISTORY_KEY(uid), JSON.stringify(data));
-}
 // ========== 翻译历史 ==========
 function getTranslateHistory(uid) {
   return JSON.parse(localStorage.getItem(`${uid}_translateHistory`) || '[]');
@@ -14,22 +7,28 @@ function saveTranslateHistory(uid, data) {
 }
 
 function showTranslateHistory() {
-  const uid = getCurrentUserId();  // 这个函数在 user.js/api.js 中定义
+  const uid = getCurrentUserId();
   const records = getTranslateHistory(uid);
   const searchTerm = document.getElementById('historySearch')?.value.toLowerCase() || '';
   const filtered = records.filter(r =>
-    r.chinese.includes(searchTerm) || r.english.toLowerCase().includes(searchTerm)
+    r.chinese.includes(searchTerm) || (r.english && r.english.toLowerCase().includes(searchTerm))
   );
   const list = document.getElementById('historyList');
   if (!list) return;
-  // 保留原始索引，方便删除
   list.innerHTML = filtered.map((r) => {
-    const originalIndex = records.indexOf(r);  // 获取在原始数组中的位置
+    const originalIndex = records.indexOf(r);
+    let scoreText = '';
+    if (r.evaluation) {
+      const scoreMatch = r.evaluation.match(/(\d+)\s*分/);
+      if (scoreMatch) scoreText = scoreMatch[1] + '分';
+    } else if (r.score) {
+      scoreText = r.score + '分';
+    }
     return `
       <li>
         <strong>中文：</strong>${r.chinese}<br>
         <strong>你的翻译：</strong>${r.english}<br>
-        <strong>评分：</strong>${r.score} <small>${new Date(r.time).toLocaleString()}</small>
+        <strong>评分：</strong>${scoreText || 'N/A'} <small>${new Date(r.time).toLocaleString()}</small>
         <button onclick="deleteTranslateItem(${originalIndex})">删除</button>
       </li>
     `;
@@ -42,6 +41,14 @@ function deleteTranslateItem(index) {
   records.splice(index, 1);
   saveTranslateHistory(uid, records);
   showTranslateHistory();
+}
+
+// ========== 作文历史 ==========
+function getWritingHistory(uid) {
+  return JSON.parse(localStorage.getItem(`${uid}_writingHistory`) || '[]');
+}
+function saveWritingHistory(uid, data) {
+  localStorage.setItem(`${uid}_writingHistory`, JSON.stringify(data));
 }
 
 // ========== 背诵历史 ==========
@@ -87,3 +94,5 @@ function clearStudyHistory() {
   localStorage.removeItem(`${uid}_studyHistory`);
   showStudyHistory();
 }
+
+// getCurrentUserId 已在 api.js 中定义
