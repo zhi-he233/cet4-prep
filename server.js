@@ -76,23 +76,17 @@ app.post('/api/translate/evaluate', async (req, res) => {
   }
 });
 
-// 随机翻译句子（静态题库，稳定免费）
-const staticQuestions = [
-  "环境保护是每个人的责任。",
-  "随着互联网的普及，网络购物变得越来越流行。",
-  "中国有着悠久的历史和丰富的文化遗产。",
-  "近年来，越来越多的人开始学习外语。",
-  "大学生应该多参加社会实践活动。",
-  "共享单车为人们的出行提供了便利。",
-  "移动支付已经改变了我们的生活方式。",
-  "健康饮食对每个人都很重要。",
-  "春节是中国最重要的传统节日。",
-  "人工智能将在未来发挥更大的作用。"
-];
-
-app.get('/api/translate/random', (req, res) => {
-  const index = Math.floor(Math.random() * staticQuestions.length);
-  res.json({ sentence: staticQuestions[index] });
+// AI 随机生成翻译句子
+app.get('/api/translate/random', async (req, res) => {
+  try {
+    const sentence = await askDeepSeek(
+      '你是四级翻译出题老师。请随机生成一个50字以内的中文句子，适合四级学生翻译成英文。句子要贴近中国文化、社会生活或校园日常。只输出句子本身，不要任何解释、不要编号、不要引号。',
+      '请出一个四级翻译练习题的中文句子。'
+    );
+    res.json({ sentence });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // 作文批改
