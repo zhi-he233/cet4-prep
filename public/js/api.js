@@ -47,7 +47,6 @@ function switchUser(userId) {
   // 更新下拉框
   const select = document.getElementById('userSelect');
   if (select) select.value = userId;
-  // 刷新各模块数据，无需重载页面
   // 刷新各模块显示
   const activeTab = document.querySelector('.tab-btn.active');
   if (activeTab) {
@@ -56,9 +55,7 @@ function switchUser(userId) {
     else if (tab === 'translate') showTranslateHistory();
     else if (tab === 'wrongbook') loadWrongBook('wrong-words');
     else if (tab === 'favorites') loadFavorites();
-    else if (tab === 'writing') {
-      // 不刷新，因为内容是独立的
-    }
+    else if (tab === 'chat') { stopPolling(); loadChat(); }
   }
   // 清空各结果区域
   document.getElementById('wordResult') && (document.getElementById('wordResult').innerHTML = '');

@@ -26,6 +26,7 @@
       <button class="tab-btn" data-tab="writing">✍️ 作文批改</button>
       <button class="tab-btn" data-tab="wrongbook">📕 错题本</button>
       <button class="tab-btn" data-tab="favorites">⭐ 收藏夹</button>
+      <button class="tab-btn" data-tab="chat">💬 交流角</button>
     </nav>
 
     <!-- 背单词模块 -->
@@ -186,12 +187,17 @@
       </div>
     </section>
 
-    <!-- 收藏夹 -->
+        <!-- 收藏夹 -->
     <section id="tab-favorites" class="tab-content">
       <h2>⭐ 我的收藏</h2>
       <div id="favoritesContent">
         <p>还没有收藏的单词，点击背单词页面的 ☆ 收藏按钮添加。</p>
       </div>
+    </section>
+
+    <!-- 交流角 -->
+    <section id="tab-chat" class="tab-content">
+      <div id="chatContent"></div>
     </section>
   </div>
 
@@ -203,6 +209,7 @@
   <script src="js/wrongbook.js"></script>
   <script src="js/favorites.js"></script>
   <script src="js/history.js"></script>
+  <script src="js/chat.js"></script>
   <script>
     // 初始化用户下拉框
     initUserSelect();
@@ -250,10 +257,11 @@
         b.classList.add('active');
         const tabId = 'tab-' + b.dataset.tab;
         document.getElementById(tabId).classList.add('active');
-        if (b.dataset.tab === 'wrongbook') loadWrongBook('wrong-words');
+                if (b.dataset.tab === 'wrongbook') loadWrongBook('wrong-words');
         if (b.dataset.tab === 'favorites') loadFavorites();
         if (b.dataset.tab === 'translate') showTranslateHistory();
         if (b.dataset.tab === 'words') showStudyHistory();
+        if (b.dataset.tab === 'chat') loadChat();
       });
     });
     showStudyHistory();

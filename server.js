@@ -300,6 +300,38 @@ app.post('/api/writing/vocabulary', async (req, res) => {
   }
 });
 
+// ========== 交流角（消息系统） ==========
+
+// 消息存储（内存，重启会丢失。可以改用文件持久化）
+let chatMessages = [];
+
+// 获取所有消息
+app.get('/api/chat/messages', (req, res) => {
+  // 只返回最近 200 条
+  const recent = chatMessages.slice(-200);
+  res.json({ messages: recent });
+});
+
+// 发送消息
+app.post('/api/chat/send', (req, res) => {
+  const { user, text } = req.body;
+  if (!user || !text) return res.status(400).json({ error: '缺少用户或消息内容' });
+  const msg = {
+    id: Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+    user: user.trim(),
+    text: text.trim().substring(0, 500),
+    time: new Date().toISOString()
+  };
+  chatMessages.push(msg);
+  res.json({ success: true, message: msg });
+});
+
+// 清空消息（调试用）
+app.post('/api/chat/clear', (req, res) => {
+  chatMessages = [];
+  res.json({ success: true });
+});
+
 // 资料库列表
 app.get('/api/materials/list', (req, res) => {
   const dir = path.join(__dirname, 'materials');
