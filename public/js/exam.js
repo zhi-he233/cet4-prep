@@ -67,13 +67,13 @@ function renderChoiceQuiz(quizText, w) {
       if (this.dataset.letter === correctOption) {
         feedback.innerHTML = '<span style="color:green; font-weight:bold;">✅ 回答正确！</span>';
       } else {
-        const wrongWords = JSON.parse(localStorage.getItem('cet4_wrongbook') || '[]');
+        const wrongWords = getUserJson('wrongbook', [], 'cet4_wrongbook');
         wrongWords.push({
           word: w.word,
           meaning: w.meaning,
           wrongTime: new Date().toISOString()
         });
-        localStorage.setItem('cet4_wrongbook', JSON.stringify(wrongWords));
+        setUserJson('wrongbook', wrongWords);
         feedback.innerHTML = `<span style="color:red;">❌ 回答错误，正确答案是：<strong>${correctOption}. ${options[correctOption]}</strong>，已加入错题本。</span>`;
       }
       optionBtns.forEach(b => {
@@ -297,13 +297,13 @@ function renderInfoMatchQuiz(content, w) {
         } else {
           fb.innerHTML = `<span style="color:red;">❌ 错误，正确答案是 ${answers[qNum]}</span>`;
           // 记录错题
-          const wrongWords = JSON.parse(localStorage.getItem('cet4_wrongbook') || '[]');
+          const wrongWords = getUserJson('wrongbook', [], 'cet4_wrongbook');
           wrongWords.push({
             word: w.word,
             meaning: w.meaning,
             wrongTime: new Date().toISOString()
           });
-          localStorage.setItem('cet4_wrongbook', JSON.stringify(wrongWords));
+          setUserJson('wrongbook', wrongWords);
         }
       } else {
         fb.innerHTML = `<span style="color:red;">⚠️ 未作答，正确答案是 ${answers[qNum]}</span>`;

@@ -15,7 +15,7 @@ function loadWrongBook(subTab) {
 
 // --- 错词本 ---
 function loadWrongWords(container) {
-  const wrongWords = JSON.parse(localStorage.getItem('cet4_wrongbook') || '[]');
+  const wrongWords = getUserJson('wrongbook', [], 'cet4_wrongbook');
   if (wrongWords.length === 0) {
     container.innerHTML = '<p>暂无错题，去背单词模块做一下 AI 出题吧！</p>';
     return;
@@ -48,7 +48,7 @@ function loadWrongWords(container) {
   container.querySelectorAll('.record-card').forEach(card => {
     card.addEventListener('click', () => {
       const idx = parseInt(card.dataset.index);
-      const records = JSON.parse(localStorage.getItem('cet4_wrongbook') || '[]');
+      const records = getUserJson('wrongbook', [], 'cet4_wrongbook');
       const item = records[idx];
       if (item) showWrongWordDetail(item);
     });

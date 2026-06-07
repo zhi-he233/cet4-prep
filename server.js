@@ -1,8 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
-const fs = require('fs');
 
 // 兼容 fetch
 let fetch;
@@ -16,7 +14,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
-app.use('/materials', express.static(path.join(__dirname, 'materials')));
 
 // ---------- DeepSeek 调用 ----------
 async function askDeepSeek(systemPrompt, userMessage) {
@@ -330,18 +327,6 @@ app.post('/api/chat/send', (req, res) => {
 app.post('/api/chat/clear', (req, res) => {
   chatMessages = [];
   res.json({ success: true });
-});
-
-// 资料库列表
-app.get('/api/materials/list', (req, res) => {
-  const dir = path.join(__dirname, 'materials');
-  if (!fs.existsSync(dir)) return res.json({ files: [] });
-  const files = fs.readdirSync(dir).filter(f => f.toLowerCase().endsWith('.pdf'));
-  const fileList = files.map(f => ({
-    name: f.replace(/\.pdf$/i, ''),
-    url: `/materials/${encodeURIComponent(f)}`
-  }));
-  res.json({ files: fileList });
 });
 
 // 启动

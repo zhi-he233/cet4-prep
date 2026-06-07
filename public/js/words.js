@@ -16246,7 +16246,7 @@ function shuffleArray(arr) {
 // ========== 状态与 DOM ==========
 let currentIndex = 0;
 let mode = 'study';
-let favorites = JSON.parse(localStorage.getItem('cet4_favorites') || '[]');
+let favorites = loadFavoriteRecords();
 
 const studyModeEl = document.getElementById('studyMode');
 const dictationModeEl = document.getElementById('dictationMode');
@@ -16274,7 +16274,11 @@ function getCurrentWord() {
 }
 
 function saveFavorites() {
-  localStorage.setItem('cet4_favorites', JSON.stringify(favorites));
+  setUserJson('favorites', favorites);
+}
+
+function loadFavoriteRecords() {
+  return getUserJson('favorites', [], 'cet4_favorites');
 }
 
 function isFavorited(word) {
@@ -16292,6 +16296,11 @@ function toggleFavorite(word, meaning) {
     favoriteBtn.classList.add('active');
   }
   saveFavorites();
+}
+
+function refreshWordUserData() {
+  favorites = loadFavoriteRecords();
+  updateFavoriteBtn();
 }
 
 function updateFavoriteBtn() {

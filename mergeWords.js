@@ -23,7 +23,7 @@ const newLogic = `
 // ========== 以下为最新交互逻辑 ==========
 let currentIndex = 0;
 let mode = 'study';
-let favorites = JSON.parse(localStorage.getItem('cet4_favorites') || '[]');
+let favorites = getUserJson('favorites', [], 'cet4_favorites');
 
 const studyModeEl = document.getElementById('studyMode');
 const dictationModeEl = document.getElementById('dictationMode');
@@ -50,7 +50,7 @@ function getCurrentWord() {
 }
 
 function saveFavorites() {
-  localStorage.setItem('cet4_favorites', JSON.stringify(favorites));
+  setUserJson('favorites', favorites);
 }
 
 function isFavorited(word) {
@@ -187,13 +187,13 @@ aiQuizBtn.addEventListener('click', async () => {
     if (correctOption) {
       const userAnswer = prompt('请输入你的答案（A/B/C/D）：\\n正确答案是 ' + correctOption);
       if (userAnswer && userAnswer.toUpperCase() !== correctOption) {
-        const wrongWords = JSON.parse(localStorage.getItem('cet4_wrongbook') || '[]');
+        const wrongWords = getUserJson('wrongbook', [], 'cet4_wrongbook');
         wrongWords.push({
           word: w.word,
           meaning: w.meaning,
           wrongTime: new Date().toISOString()
         });
-        localStorage.setItem('cet4_wrongbook', JSON.stringify(wrongWords));
+        setUserJson('wrongbook', wrongWords);
         quizResult.innerHTML += '<br><span style="color:red;">❌ 回答错误，已加入错题本。</span>';
       } else if (userAnswer) {
         quizResult.innerHTML += '<br><span style="color:green;">✅ 回答正确！</span>';

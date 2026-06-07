@@ -42,11 +42,47 @@ function getCurrentUserId() {
   if (select && select.value) return select.value;
   return localStorage.getItem('cet4_currentUser') || '默认用户';
 }
+
+function parseJson(value, fallback) {
+  try {
+    return value ? JSON.parse(value) : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
+function getUserStorageKey(name, userId = getCurrentUserId()) {
+  return `${userId}_${name}`;
+}
+
+function getUserJson(name, fallback, legacyKey) {
+  const key = getUserStorageKey(name);
+  const stored = localStorage.getItem(key);
+  if (stored) return parseJson(stored, fallback);
+
+  if (legacyKey) {
+    const legacyValue = localStorage.getItem(legacyKey);
+    const migrationFlag = `${legacyKey}_migrated`;
+    if (legacyValue && !localStorage.getItem(migrationFlag)) {
+      localStorage.setItem(key, legacyValue);
+      localStorage.setItem(migrationFlag, '1');
+      return parseJson(legacyValue, fallback);
+    }
+  }
+
+  return fallback;
+}
+
+function setUserJson(name, data) {
+  localStorage.setItem(getUserStorageKey(name), JSON.stringify(data));
+}
+
 function switchUser(userId) {
   localStorage.setItem('cet4_currentUser', userId);
   // 更新下拉框
   const select = document.getElementById('userSelect');
   if (select) select.value = userId;
+  if (typeof refreshWordUserData === 'function') refreshWordUserData();
   // 刷新各模块显示
   const activeTab = document.querySelector('.tab-btn.active');
   if (activeTab) {
@@ -67,12 +103,15 @@ function switchUser(userId) {
 function initUserSelect() {
   const select = document.getElementById('userSelect');
   const users = getUsers();
-  select.innerHTML = users.map(u => `<option value="${u}">${u}</option>`).join('');
+  select.innerHTML = '';
+  users.forEach(u => {
+    const option = document.createElement('option');
+    option.value = u;
+    option.textContent = u;
+    select.appendChild(option);
+  });
   select.value = getCurrentUserId();
-  // 用 setTimeout 避免初始化时触发 change
-  setTimeout(() => {
-    select.addEventListener('change', () => switchUser(select.value));
-  }, 100);
+  select.onchange = () => switchUser(select.value);
 }
 // 新建用户
 document.getElementById('newUserBtn').addEventListener('click', () => {
