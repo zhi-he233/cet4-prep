@@ -476,6 +476,14 @@ app.post('/api/reading/explain', async (req, res) => {
 
 // ========== Listening ==========
 
+
+// Seed-based listening list (works without filesystem access)
+let listeningSeedData = null;
+try {
+  const sp = require('path').join(__dirname, 'listening_seed.json');
+  if (require('fs').existsSync(sp)) listeningSeedData = JSON.parse(require('fs').readFileSync(sp, 'utf8'));
+} catch(e) {}
+
 const EXAM_BASE = (() => { const p = process.env.EXAM_DATA_PATH; if (p) return p; try { return require('path').join(process.env.USERPROFILE || process.env.HOME || __dirname, 'exam_data'); } catch(e) { return require('path').join(__dirname, 'exam_data'); } })();
 
 // Serve MP3 audio files
@@ -500,7 +508,9 @@ app.get('/api/listening', async (req, res) => {
     const dir = path.join(EXAM_BASE, '大学生英语' + label + '历年真题（已更新至2025年12月）', '【2013年-2025年12月】历年' + label + '真题+答案解析+听力音频');
     if (!require('fs').existsSync(dir)) return res.json({ exercises: [] });
     const periods = require('fs').readdirSync(dir).filter(d => d.match(/【\d{4}年\d{2}月】/));
-    const exercises = [];
+    let exercises = listeningSeedData || [];
+    if (exercises.length > 0) return res.json({ exercises: exercises.filter(e => e.level === level) });
+    exercises = [];
     for (const p of periods) {
       const ym = p.match(/(\d{4})年(\d{2})月/); if (!ym) continue;
       const y = parseInt(ym[1]), m = parseInt(ym[2]);
@@ -682,6 +692,7 @@ const PORT = process.env.PORT || 8080;
 try { require('fs').mkdirSync(require('path').join(__dirname, 'data'), { recursive: true }); } catch(e) {}
 
 app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
+
 
 
 
