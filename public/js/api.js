@@ -156,9 +156,7 @@ function setUserJson(name, data) {
 function switchUser(userId) {
   localStorage.setItem('cet4_currentUser', userId);
   // 更新下拉框
-  const select = document.getElementById('userSelect');
-  if (select) select.value = userId;
-  if (typeof refreshWordUserData === 'function') refreshWordUserData();
+    if (typeof refreshWordUserData === 'function') refreshWordUserData();
   // 刷新各模块显示
   const activeTab = document.querySelector('.tab-btn.active');
   if (activeTab) {
@@ -178,18 +176,6 @@ function switchUser(userId) {
 }
 // 初始化下拉框
 function initUserSelect() {
-  const select = document.getElementById('userSelect');
-  const users = getUsers();
-  select.innerHTML = '';
-  users.forEach(u => {
-    const option = document.createElement('option');
-    option.value = u;
-    option.textContent = u;
-    select.appendChild(option);
-  });
-  select.value = getCurrentUserId();
-  select.onchange = () => switchUser(select.value);
-
   const examSelect = document.getElementById('examLevelSelect');
   if (examSelect) {
     examSelect.value = getExamLevel();
@@ -214,4 +200,7 @@ document.getElementById('confirmNewUser').addEventListener('click', () => {
   document.getElementById('newUserName').style.display = 'none';
   document.getElementById('confirmNewUser').style.display = 'none';
 });
+
+
+
 
