@@ -18,12 +18,17 @@ const JWT_EXPIRES = '7d';
 
 const app = express();
 app.use(cors());
+app.use((req, res, next) => {
+  const ct = res.getHeader('Content-Type');
+  if (ct && !ct.includes('charset')) res.setHeader('Content-Type', ct + '; charset=utf-8');
+  next();
+});
 app.use(express.json());
 app.use(express.static('public'));
 
 const EXAM_CONFIG = {
   cet4: {
-    label: 'ËÄ¼¶',
+    label: 'ï¿½Ä¼ï¿½',
     translateMaxChars: 50,
     clozeWords: '120-150',
     writingTopics: [
@@ -45,7 +50,7 @@ const EXAM_CONFIG = {
     ]
   },
   cet6: {
-    label: 'Áù¼¶',
+    label: 'ï¿½ï¿½ï¿½ï¿½',
     translateMaxChars: 70,
     clozeWords: '150-180',
     writingTopics: [
@@ -79,7 +84,7 @@ function getRequestExam(req) {
 // ---------- DeepSeek ----------
 async function askDeepSeek(systemPrompt, userMessage) {
   const apiKey = process.env.DEEPSEEK_API_KEY;
-  if (!apiKey) throw new Error('Î´ÉèÖÃ DEEPSEEK_API_KEY »·¾³±äÁ¿');
+  if (!apiKey) throw new Error('Î´ï¿½ï¿½ï¿½ï¿½ DEEPSEEK_API_KEY ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½');
   const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -108,7 +113,7 @@ async function askDeepSeek(systemPrompt, userMessage) {
 function authMiddleware(req, res, next) {
   const header = req.headers.authorization;
   if (!header || !header.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Î´µÇÂ¼' });
+    return res.status(401).json({ error: 'Î´ï¿½ï¿½Â¼' });
   }
   try {
     const token = header.split(' ')[1];
@@ -117,7 +122,7 @@ function authMiddleware(req, res, next) {
     req.username = decoded.username;
     next();
   } catch (e) {
-    return res.status(401).json({ error: 'µÇÂ¼ÒÑ¹ıÆÚ£¬ÇëÖØĞÂµÇÂ¼' });
+    return res.status(401).json({ error: 'ï¿½ï¿½Â¼ï¿½Ñ¹ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½Â¼' });
   }
 }
 
@@ -126,12 +131,12 @@ function authMiddleware(req, res, next) {
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { username, password } = req.body;
-    if (!username || !password) return res.status(400).json({ error: 'ÓÃ»§ÃûºÍÃÜÂë²»ÄÜÎª¿Õ' });
-    if (username.trim().length < 2 || username.trim().length > 20) return res.status(400).json({ error: 'ÓÃ»§Ãû2-20¸ö×Ö·û' });
-    if (password.length < 3 || password.length > 50) return res.status(400).json({ error: 'ÃÜÂë3-50¸ö×Ö·û' });
+    if (!username || !password) return res.status(400).json({ error: 'ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë²»ï¿½ï¿½Îªï¿½ï¿½' });
+    if (username.trim().length < 2 || username.trim().length > 20) return res.status(400).json({ error: 'ï¿½Ã»ï¿½ï¿½ï¿½2-20ï¿½ï¿½ï¿½Ö·ï¿½' });
+    if (password.length < 3 || password.length > 50) return res.status(400).json({ error: 'ï¿½ï¿½ï¿½ï¿½3-50ï¿½ï¿½ï¿½Ö·ï¿½' });
 
     const exists = await db.users.findOne({ username: username.trim() });
-    if (exists) return res.status(400).json({ error: 'ÓÃ»§ÃûÒÑ´æÔÚ' });
+    if (exists) return res.status(400).json({ error: 'ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½ï¿½' });
 
     const hashed = await bcrypt.hash(password, 10);
     const user = await db.users.insert({ username: username.trim(), password: hashed, createdAt: new Date() });
@@ -146,13 +151,13 @@ app.post('/api/auth/register', async (req, res) => {
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { username, password } = req.body;
-    if (!username || !password) return res.status(400).json({ error: 'ÓÃ»§ÃûºÍÃÜÂë²»ÄÜÎª¿Õ' });
+    if (!username || !password) return res.status(400).json({ error: 'ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë²»ï¿½ï¿½Îªï¿½ï¿½' });
 
     const user = await db.users.findOne({ username: username.trim() });
-    if (!user) return res.status(400).json({ error: 'ÓÃ»§Ãû»òÃÜÂë´íÎó' });
+    if (!user) return res.status(400).json({ error: 'ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½' });
 
     const valid = await bcrypt.compare(password, user.password);
-    if (!valid) return res.status(400).json({ error: 'ÓÃ»§Ãû»òÃÜÂë´íÎó' });
+    if (!valid) return res.status(400).json({ error: 'ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½' });
 
     const token = jwt.sign({ userId: user._id, username: user.username }, JWT_SECRET, { expiresIn: JWT_EXPIRES });
     res.json({ token, user: { id: user._id, username: user.username } });
@@ -164,7 +169,7 @@ app.post('/api/auth/login', async (req, res) => {
 app.get('/api/auth/me', authMiddleware, async (req, res) => {
   try {
     const user = await db.users.findOne({ _id: req.userId });
-    if (!user) return res.status(404).json({ error: 'ÓÃ»§²»´æÔÚ' });
+    if (!user) return res.status(404).json({ error: 'ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½' });
     res.json({ user: { id: user._id, username: user.username, createdAt: user.createdAt } });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -210,8 +215,8 @@ app.post('/api/reading/translate', async (req, res) => {
 
     const content = await askDeepSeek(
       type === 'word'
-        ? 'ÄãÊÇÓ¢ÓïÖú½Ì¡£Çë·­ÒëÕâ¸öµ¥´Ê£¬¸ñÊ½£ºÖĞÎÄÊÍÒå£¨´ÊĞÔ£©¡£ÀıÈç£ºabandon - v. ·ÅÆú£¬Å×Æú¡£Ö»Êä³ö·­Òë½á¹û£¬²»Òª¶îÍâ½âÊÍ¡£'
-        : 'ÄãÊÇÓ¢ÓïÖú½Ì¡£Çë½«Õâ¾ä»°·­Òë³ÉÍ¨Ë³µÄÖĞÎÄ¡£Ö»Êä³öÖĞÎÄ·­Òë£¬²»Òª¶îÍâ½âÊÍ¡£',
+        ? 'ï¿½ï¿½ï¿½ï¿½Ó¢ï¿½ï¿½ï¿½ï¿½ï¿½Ì¡ï¿½ï¿½ë·­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê£ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å£¨ï¿½ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ç£ºabandon - v. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¡ï¿½'
+        : 'ï¿½ï¿½ï¿½ï¿½Ó¢ï¿½ï¿½ï¿½ï¿½ï¿½Ì¡ï¿½ï¿½ë½«ï¿½ï¿½ä»°ï¿½ï¿½ï¿½ï¿½ï¿½Í¨Ë³ï¿½ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ë£¬ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¡ï¿½',
       text
     );
     res.json({ translation: content.trim() });
@@ -227,8 +232,8 @@ app.post('/api/word/enrich', async (req, res) => {
     const { word } = req.body;
     const exam = getRequestExam(req);
     const content = await askDeepSeek(
-      `ÄãÊÇ${exam.label}Ó¢ÓïÖú½Ì¡£ÇëÓÃÖĞÎÄÏêÏ¸½²½âµ¥´Ê£¬°üÀ¨£ºÒô±ê¡¢ÖĞÎÄÊÍÒå¡¢´Ê¸ù´Ê×º¡¢Ò»¸öĞÎÏó¼ÇÒä¹ÊÊÂ¡¢Á½¸ö´øÖĞÎÄ·­ÒëµÄÀı¾ä¡¢³£¼û´îÅä¡£ÄÚÈİÄÑ¶ÈÒªÌùºÏ${exam.label}¿¼ÊÔ¡£`,
-      `µ¥´Ê£º${word}`
+      `ï¿½ï¿½ï¿½ï¿½${exam.label}Ó¢ï¿½ï¿½ï¿½ï¿½ï¿½Ì¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½ï¿½âµ¥ï¿½Ê£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê¡¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å¡¢ï¿½Ê¸ï¿½ï¿½ï¿½×ºï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ä¡¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ä¡£ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¶ï¿½Òªï¿½ï¿½ï¿½ï¿½${exam.label}ï¿½ï¿½ï¿½Ô¡ï¿½`,
+      `ï¿½ï¿½ï¿½Ê£ï¿½${word}`
     );
     res.json({ result: content });
   } catch (e) {
@@ -240,8 +245,8 @@ app.post('/api/translate/evaluate', async (req, res) => {
   try {
     const { chinese, translation } = req.body;
     const exam = getRequestExam(req);
-    const prompt = `ÄãÊÇ${exam.label}·­ÒëÔÄ¾íÀÏÊ¦¡£Çë¸ù¾İËù¸øÖĞÎÄ¾ä×Ó£¬ÆÀ¼ÛÑ§ÉúµÄÓ¢ÎÄ·­Òë¡£Ö¸³ö´Ê»ã¡¢Óï·¨¡¢¾äÊ½·½ÃæµÄÎÊÌâ£¬²¢¸ø³öĞŞ¸Ä½¨ÒéºÍ±ê×¼·­Òë£¨Âú·Ö15·Ö£¬Çë´ò·Ö£©¡£ÇëÑÏ¸ñ°üº¬ÒÔÏÂĞ¡±êÌâ£ºµÃ·Ö¡¢Ö÷ÒªÎÊÌâ¡¢ĞŞ¸Ä½¨Òé¡¢±ê×¼·­Òë¡£ÆäÖĞ"±ê×¼·­Òë£º"ºóÃæµ¥¶À¸ø³öÒ»°æÍêÕûÓ¢ÎÄÒëÎÄ£¬·½±ãÑ§Éú¶Ô±È¸´Ï°¡£ÓÃÖĞÎÄ·Öµã»Ø¸´¡£`;
-    const content = await askDeepSeek(prompt, `ÖĞÎÄ¾ä×Ó£º${chinese}\nÑ§Éú·­Òë£º${translation}`);
+    const prompt = `ï¿½ï¿½ï¿½ï¿½${exam.label}ï¿½ï¿½ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½Ê¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½Ñ§ï¿½ï¿½ï¿½ï¿½Ó¢ï¿½Ä·ï¿½ï¿½ë¡£Ö¸ï¿½ï¿½ï¿½Ê»ã¡¢ï¿½ï·¨ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ş¸Ä½ï¿½ï¿½ï¿½Í±ï¿½×¼ï¿½ï¿½ï¿½ë£¨ï¿½ï¿½ï¿½ï¿½15ï¿½Ö£ï¿½ï¿½ï¿½ï¿½Ö£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½â£ºï¿½Ã·Ö¡ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½â¡¢ï¿½Ş¸Ä½ï¿½ï¿½é¡¢ï¿½ï¿½×¼ï¿½ï¿½ï¿½ë¡£ï¿½ï¿½ï¿½ï¿½"ï¿½ï¿½×¼ï¿½ï¿½ï¿½ë£º"ï¿½ï¿½ï¿½æµ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¢ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½Ñ§ï¿½ï¿½ï¿½Ô±È¸ï¿½Ï°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä·Öµï¿½Ø¸ï¿½ï¿½ï¿½`;
+    const content = await askDeepSeek(prompt, `ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½Ó£ï¿½${chinese}\nÑ§ï¿½ï¿½ï¿½ï¿½ï¿½ë£º${translation}`);
     res.json({ evaluation: content });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -254,8 +259,8 @@ app.get('/api/translate/random', async (req, res) => {
     const exam = getRequestExam(req);
     const seed = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     const sentence = await askDeepSeek(
-      `ÄãÊÇ${exam.label}·­Òë³öÌâÀÏÊ¦¡£ÇëÏÖ³¡Ô­´´Éú³ÉÒ»¸ö${exam.translateMaxChars}×ÖÒÔÄÚµÄÖĞÎÄ¾ä×Ó£¬ÊÊºÏ${exam.label}Ñ§Éú·­Òë³ÉÓ¢ÎÄ¡£¾ä×ÓÒªÌù½üÖĞ¹úÎÄ»¯¡¢Éç»áÉú»î¡¢¿Æ¼¼·¢Õ¹¡¢Ğ£Ô°ÈÕ³£»òÉç»áÈÈµã¡£²»ÒªÊ¹ÓÃ¹Ì¶¨Ìâ¿â£¬²»Òª¸´ÊöÊ¾Àı¡£Ö»Êä³ö¾ä×Ó±¾Éí£¬²»ÒªÈÎºÎ½âÊÍ¡¢±àºÅ¡¢ÒıºÅ¡£`,
-      `Çë¸ù¾İÕâ¸öËæ»úÖÖ×ÓÔ­´´Éú³ÉÒ»µÀĞÂµÄ${exam.label}·­ÒëÁ·Ï°ÖĞÎÄ¾ä×Ó£º${seed}`
+      `ï¿½ï¿½ï¿½ï¿½${exam.label}ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¦ï¿½ï¿½ï¿½ï¿½ï¿½Ö³ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½${exam.translateMaxChars}ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½Ó£ï¿½ï¿½Êºï¿½${exam.label}Ñ§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¢ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ğ¹ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î¡¢ï¿½Æ¼ï¿½ï¿½ï¿½Õ¹ï¿½ï¿½Ğ£Ô°ï¿½Õ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Èµã¡£ï¿½ï¿½ÒªÊ¹ï¿½Ã¹Ì¶ï¿½ï¿½ï¿½â£¬ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ÎºÎ½ï¿½ï¿½Í¡ï¿½ï¿½ï¿½Å¡ï¿½ï¿½ï¿½ï¿½Å¡ï¿½`,
+      `ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Âµï¿½${exam.label}ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½Ó£ï¿½${seed}`
     );
     res.json({ sentence: sentence.trim().replace(/^[\u201c\u2018"]|[\u201d\u2019"]$/g, '') });
   } catch (e) {
@@ -268,8 +273,8 @@ app.post('/api/writing/evaluate', async (req, res) => {
     const { topic, essay } = req.body;
     const exam = getRequestExam(req);
     const content = await askDeepSeek(
-      `ÄãÊÇ${exam.label}Ğ´×÷ÔÄ¾íÀÏÊ¦¡£Çë¶Ô×÷ÎÄÆÀ·Ö£¨Âú·Ö15·Ö£©£¬Ö¸³ö´Ê»ã¡¢Óï·¨¡¢Á¬¹áĞÔÓÅÈ±µã£¬²¢¸ø³öĞŞ¸ÄºóµÄ·¶ÎÄ¡£ÆÀ·Ö±ê×¼ºÍĞŞ¸Ä½¨ÒéÒªÌùºÏ${exam.label}¿¼ÊÔ¡£`,
-      `ÌâÄ¿£º${topic}\nÑ§Éú×÷ÎÄ£º${essay}`
+      `ï¿½ï¿½ï¿½ï¿½${exam.label}Ğ´ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½Ê¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö£ï¿½ï¿½ï¿½ï¿½ï¿½15ï¿½Ö£ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ê»ã¡¢ï¿½ï·¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È±ï¿½ã£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ş¸Äºï¿½Ä·ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½Ö±ï¿½×¼ï¿½ï¿½ï¿½Ş¸Ä½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½${exam.label}ï¿½ï¿½ï¿½Ô¡ï¿½`,
+      `ï¿½ï¿½Ä¿ï¿½ï¿½${topic}\nÑ§ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½${essay}`
     );
     res.json({ evaluation: content });
   } catch (e) {
@@ -282,23 +287,23 @@ app.post('/api/word/quiz', async (req, res) => {
     const { word, meaning } = req.body;
     const exam = getRequestExam(req);
     const quiz = await askDeepSeek(
-      `ÄãÊÇ${exam.label}Ó¢Óï³öÌâ×¨¼Ò¡£Çë¸ù¾İËù¸øµ¥´ÊºÍÖĞÎÄÊÍÒå£¬³öÒ»µÀµ¥Ñ¡Ìâ¡£
-ÒªÇó£º1. Ìâ¸ÉÓÃÖĞÎÄ£¬¿¼²ì¸Ãµ¥´ÊµÄÓ¢ÎÄÆ´Ğ´»òÓÃ·¨¡£2. ËÄ¸öÑ¡Ïî±ØĞë¶¼ÊÇÕæÊµµÄÓ¢ÎÄµ¥´Ê£¬ÆäÖĞÒ»¸öÊÇÕıÈ·´ğ°¸£¬ÁíÍâÈı¸öÊÇ¸ÉÈÅÏî¡£
-3. ¸ÉÈÅÏî±ØĞë¾ß±¸¸ß¶ÈÃÔ»óĞÔ£¬ÓÅÏÈÊ¹ÓÃ£º
-   - ĞÎ½ü´Ê£¨Èç abandon ºÍ abundant£©
-   - ½üÒå´Êµ«ÓÃ·¨²»Í¬£¨Èç refuse / decline / reject£©
-   - Í¬´Ê¸ùÅÉÉú´Ê£¨Èç predict / preview / prepare£©
-   - Í¬Ò»³¡¾°µÄ¹ØÁª´Ê£¨Èç banquet / feast / dinner£©
-4. ÑÏ½û³öÏÖÃ÷ÏÔÎŞ¹ØµÄµ¥´Ê»òÂÒÂë¡£
-5. Êä³ö¸ñÊ½ÑÏ¸ñ°´ÕÕÏÂÃæÄ£°å£¬²»ÒªÌí¼ÓÈÎºÎ¶îÍâ½âÊÍ£º
+      `ï¿½ï¿½ï¿½ï¿½${exam.label}Ó¢ï¿½ï¿½ï¿½ï¿½ï¿½×¨ï¿½Ò¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å£¬ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½â¡£
+Òªï¿½ï¿½1. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½Êµï¿½Ó¢ï¿½ï¿½Æ´Ğ´ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½2. ï¿½Ä¸ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ë¶¼ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½Ó¢ï¿½Äµï¿½ï¿½Ê£ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ğ°¸£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½ï¿½ï¿½ï¿½î¡£
+3. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß±ï¿½ï¿½ß¶ï¿½ï¿½Ô»ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã£ï¿½
+   - ï¿½Î½ï¿½ï¿½Ê£ï¿½ï¿½ï¿½ abandon ï¿½ï¿½ abundantï¿½ï¿½
+   - ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½Ã·ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ refuse / decline / rejectï¿½ï¿½
+   - Í¬ï¿½Ê¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê£ï¿½ï¿½ï¿½ predict / preview / prepareï¿½ï¿½
+   - Í¬Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½Ê£ï¿½ï¿½ï¿½ banquet / feast / dinnerï¿½ï¿½
+4. ï¿½Ï½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ş¹ØµÄµï¿½ï¿½Ê»ï¿½ï¿½ï¿½ï¿½ë¡£
+5. ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½å£¬ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ÎºÎ¶ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½
 
-ÌâÄ¿£º...
+ï¿½ï¿½Ä¿ï¿½ï¿½...
 A. ...
 B. ...
 C. ...
 D. ...
-´ğ°¸£ºA£¨»òB/C/D£©`,
-      `µ¥´Ê£º${word}£¬ÊÍÒå£º${meaning}`
+ï¿½ğ°¸£ï¿½Aï¿½ï¿½ï¿½ï¿½B/C/Dï¿½ï¿½`,
+      `ï¿½ï¿½ï¿½Ê£ï¿½${word}ï¿½ï¿½ï¿½ï¿½ï¿½å£º${meaning}`
     );
     res.json({ quiz });
   } catch (e) {
@@ -312,18 +317,18 @@ app.post('/api/exam/bankedCloze', async (req, res) => {
   try {
     const exam = getRequestExam(req);
     const content = await askDeepSeek(
-      `ÄãÊÇ${exam.label}Ó¢Óï³öÌâ×¨¼Ò¡£Çë³öÒ»µÀ"Ñ¡´ÊÌî¿Õ"Ìâ£¨${exam.label}ÔÄ¶Á15Ñ¡10£©¡£
-ÒªÇó£º1. Ò»ÆªÔ¼${exam.clozeWords}´ÊµÄÓ¢ÎÄ¶ÌÎÄ£¬ÍÚµô10¸öµ¥´Ê£¬Ã¿¸ö¿ÕÓÃ____¼Ó±àºÅ¢Ù-¢â±íÊ¾¡£2. Ìá¹©15¸öºòÑ¡´Ê£¨A-O£©£¬¶à³ö5¸ö¸ÉÈÅ´Ê¡£3. ¶ÌÎÄÖ÷ÌâÌù½ü${exam.label}³£¿¼»°Ìâ¡£4. ÄÑ¶ÈÊÊÖĞ£¬·ûºÏ${exam.label}Ë®Æ½¡£
-Êä³ö¸ñÊ½£¨²»Òª¶îÍâ½âÊÍ£©£º
-¡¾¶ÌÎÄ¡¿
-£¨´ø____¢Ù¡¢____¢ÚµÈ¿Õ¸ñµÄ¶ÌÎÄÈ«ÎÄ£©
+      `ï¿½ï¿½ï¿½ï¿½${exam.label}Ó¢ï¿½ï¿½ï¿½ï¿½ï¿½×¨ï¿½Ò¡ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½"Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½"ï¿½â£¨${exam.label}ï¿½Ä¶ï¿½15Ñ¡10ï¿½ï¿½ï¿½ï¿½
+Òªï¿½ï¿½1. Ò»ÆªÔ¼${exam.clozeWords}ï¿½Êµï¿½Ó¢ï¿½Ä¶ï¿½ï¿½Ä£ï¿½ï¿½Úµï¿½10ï¿½ï¿½ï¿½ï¿½ï¿½Ê£ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½____ï¿½Ó±ï¿½Å¢ï¿½-ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½2. ï¿½á¹©15ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½Ê£ï¿½A-Oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½5ï¿½ï¿½ï¿½ï¿½ï¿½Å´Ê¡ï¿½3. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½${exam.label}ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â¡£4. ï¿½Ñ¶ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½ï¿½ï¿½ï¿½ï¿½${exam.label}Ë®Æ½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½
+ï¿½ï¿½ï¿½ï¿½____ï¿½Ù¡ï¿½____ï¿½ÚµÈ¿Õ¸ï¿½Ä¶ï¿½ï¿½ï¿½È«ï¿½Ä£ï¿½
 
-¡¾ºòÑ¡´Ê¡¿
+ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½Ê¡ï¿½
 A. word1  B. word2  C. word3 ... O. word15
 
-¡¾´ğ°¸¡¿
-¢Ù=A  ¢Ú=B ... ¢â=J`,
-      `Çë³öÒ»µÀ${exam.label}Ñ¡´ÊÌî¿Õ£¨15Ñ¡10£©Ìâ¡£`
+ï¿½ï¿½ï¿½ğ°¸¡ï¿½
+ï¿½ï¿½=A  ï¿½ï¿½=B ... ï¿½ï¿½=J`,
+      `ï¿½ï¿½ï¿½Ò»ï¿½ï¿½${exam.label}Ñ¡ï¿½ï¿½ï¿½ï¿½Õ£ï¿½15Ñ¡10ï¿½ï¿½ï¿½â¡£`
     );
     res.json({ content });
   } catch (e) {
@@ -336,25 +341,25 @@ app.post('/api/exam/infoMatch', async (req, res) => {
     const { word } = req.body;
     const exam = getRequestExam(req);
     const content = await askDeepSeek(
-      `ÄãÊÇ${exam.label}Ó¢Óï³öÌâ×¨¼Ò¡£Çë¸ù¾İËù¸øµ¥´Ê£¬³ö4µÀ"´Ê»ãÓÃ·¨Æ¥Åä"Ñ¡ÔñÌâ¡£
-ÒªÇó£º1. ¸ø³ö4¸öÓ¢ÎÄ¾ä×Ó£¬Ã¿¸ö¾äÖĞÓĞÒ»¸ö¿ÕÈ±£¨ÓÃ___±íÊ¾£©¡£2. Ã¿Ìâ4¸öÑ¡Ïî£¬¿¼²ì¸Ãµ¥´ÊÔÚ²»Í¬Óï¾³ÏÂµÄÓÃ·¨¡£3. ¾ä×ÓÄÑ¶ÈÎª${exam.label}Ë®Æ½¡£4. Ñ¡Ïî¿ÉÒÔÊÇ±»¶¯ÓïÌ¬¡¢´îÅä¡¢´ÊĞÎ±ä»¯µÈ²»Í¬ĞÎÊ½¡£
+      `ï¿½ï¿½ï¿½ï¿½${exam.label}Ó¢ï¿½ï¿½ï¿½ï¿½ï¿½×¨ï¿½Ò¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê£ï¿½ï¿½ï¿½4ï¿½ï¿½"ï¿½Ê»ï¿½ï¿½Ã·ï¿½Æ¥ï¿½ï¿½"Ñ¡ï¿½ï¿½ï¿½â¡£
+Òªï¿½ï¿½1. ï¿½ï¿½ï¿½ï¿½4ï¿½ï¿½Ó¢ï¿½Ä¾ï¿½ï¿½Ó£ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½È±ï¿½ï¿½ï¿½ï¿½___ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½2. Ã¿ï¿½ï¿½4ï¿½ï¿½Ñ¡ï¿½î£¬ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½Ú²ï¿½Í¬ï¿½ï¾³ï¿½Âµï¿½ï¿½Ã·ï¿½ï¿½ï¿½3. ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¶ï¿½Îª${exam.label}Ë®Æ½ï¿½ï¿½4. Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç±ï¿½ï¿½ï¿½ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ä¡¢ï¿½ï¿½ï¿½Î±ä»¯ï¿½È²ï¿½Í¬ï¿½ï¿½Ê½ï¿½ï¿½
 
-Êä³ö¸ñÊ½£¨²»Òª¶îÍâ½âÊÍ£©£º
-1. ¾ä×Ó___Ê£Óà²¿·Ö¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½
+1. ï¿½ï¿½ï¿½ï¿½___Ê£ï¿½à²¿ï¿½Ö¡ï¿½
    A. opt1  B. opt2  C. opt3  D. opt4
 
-2. ¾ä×Ó___Ê£Óà²¿·Ö¡£
+2. ï¿½ï¿½ï¿½ï¿½___Ê£ï¿½à²¿ï¿½Ö¡ï¿½
    A. opt1  B. opt2  C. opt3  D. opt4
 
-3. ¾ä×Ó___Ê£Óà²¿·Ö¡£
+3. ï¿½ï¿½ï¿½ï¿½___Ê£ï¿½à²¿ï¿½Ö¡ï¿½
    A. opt1  B. opt2  C. opt3  D. opt4
 
-4. ¾ä×Ó___Ê£Óà²¿·Ö¡£
+4. ï¿½ï¿½ï¿½ï¿½___Ê£ï¿½à²¿ï¿½Ö¡ï¿½
    A. opt1  B. opt2  C. opt3  D. opt4
 
-¡¾´ğ°¸¡¿
+ï¿½ï¿½ï¿½ğ°¸¡ï¿½
 1=A  2=B  3=C  4=D`,
-      `µ¥´Ê£º${word}`
+      `ï¿½ï¿½ï¿½Ê£ï¿½${word}`
     );
     res.json({ content });
   } catch (e) {
@@ -374,33 +379,33 @@ app.post('/api/writing/outline', async (req, res) => {
     const { topic } = req.body;
     const exam = getRequestExam(req);
     const content = await askDeepSeek(
-      `ÄãÊÇ${exam.label}Ó¢ÓïĞ´×÷¸¨µ¼ÀÏÊ¦¡£Çë¸ù¾İËù¸ø×÷ÎÄÌâÄ¿£¬Éú³ÉÒ»¸öÏêÏ¸µÄÓ¢ÎÄĞ´×÷´ó¸Ù¡£
-ÒªÇó£º
-1. ÓÃÓ¢ÎÄÊä³ö£¬¸ø³ö introduction¡¢body paragraphs¡¢conclusion µÄ½á¹¹¡£
-2. Ã¿¸ö²¿·Ö¸ø³ö 2-3 ¸öÒªµãÌáÊ¾£¨bullet points£©¡£
-3. ÔÚ body ²¿·Ö½¨Òé¿ÉÒÔÊ¹ÓÃµÄÂÛÖ¤·½·¨£¨¾ÙÀı¡¢¶Ô±È¡¢Òò¹ûµÈ£©¡£
-4. ÓïÑÔ¼ò½àÊµÓÃ£¬ÊÊºÏ${exam.label}Ë®Æ½¡£
-Êä³ö¸ñÊ½£º
+      `ï¿½ï¿½ï¿½ï¿½${exam.label}Ó¢ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½Ó¢ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½Ù¡ï¿½
+Òªï¿½ï¿½
+1. ï¿½ï¿½Ó¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ introductionï¿½ï¿½body paragraphsï¿½ï¿½conclusion ï¿½Ä½á¹¹ï¿½ï¿½
+2. Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ 2-3 ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½bullet pointsï¿½ï¿½ï¿½ï¿½
+3. ï¿½ï¿½ body ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ãµï¿½ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô±È¡ï¿½ï¿½ï¿½ï¿½ï¿½È£ï¿½ï¿½ï¿½
+4. ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½Êµï¿½Ã£ï¿½ï¿½Êºï¿½${exam.label}Ë®Æ½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½
 Introduction:
-- Òªµã1
-- Òªµã2
+- Òªï¿½ï¿½1
+- Òªï¿½ï¿½2
 ...
 
 Body Paragraph 1:
-- Òªµã1
-- Òªµã2
+- Òªï¿½ï¿½1
+- Òªï¿½ï¿½2
 ...
 
 Body Paragraph 2:
-- Òªµã1
-- Òªµã2
+- Òªï¿½ï¿½1
+- Òªï¿½ï¿½2
 ...
 
 Conclusion:
-- Òªµã1
-- Òªµã2
+- Òªï¿½ï¿½1
+- Òªï¿½ï¿½2
 ...`,
-      `ÌâÄ¿£º${topic}`
+      `ï¿½ï¿½Ä¿ï¿½ï¿½${topic}`
     );
     res.json({ outline: content });
   } catch (e) {
@@ -413,26 +418,26 @@ app.post('/api/writing/vocabulary', async (req, res) => {
     const { topic } = req.body;
     const exam = getRequestExam(req);
     const content = await askDeepSeek(
-      `ÄãÊÇ${exam.label}Ó¢ÓïĞ´×÷¸¨µ¼ÀÏÊ¦¡£Çë¸ù¾İËù¸ø×÷ÎÄÌâÄ¿£¬Ìá¹© 15-20 ¸öÊµÓÃµÄÓ¢Óï´Ê»ãºÍ¶ÌÓï¡£
-ÒªÇó£º
-1. ·ÖÎªÈıÀà£º¿ªÍ·ÒıÈë¶ÌÓï¡¢ÖĞ¼äÂÛÖ¤´Ê»ã/¶ÌÓï¡¢½áÎ²×Ü½á¶ÌÓï
-2. Ã¿¸ö¶ÌÓï¸½ÖĞÎÄ·­Òë
-3. Ñ¡Ôñ${exam.label}¿¼ÊÔ³£ÓÃ¡¢ÄÜÌá·ÖµÄ±í´ï
-4. ±ÜÃâÌ«¼òµ¥µÄ´Ê»ã
+      `ï¿½ï¿½ï¿½ï¿½${exam.label}Ó¢ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½á¹© 15-20 ï¿½ï¿½Êµï¿½Ãµï¿½Ó¢ï¿½ï¿½Ê»ï¿½Í¶ï¿½ï¿½ï¡£
+Òªï¿½ï¿½
+1. ï¿½ï¿½Îªï¿½ï¿½ï¿½à£ºï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¡¢ï¿½Ğ¼ï¿½ï¿½ï¿½Ö¤ï¿½Ê»ï¿½/ï¿½ï¿½ï¿½ï¡¢ï¿½ï¿½Î²ï¿½Ü½ï¿½ï¿½ï¿½ï¿½
+2. Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¸½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½
+3. Ñ¡ï¿½ï¿½${exam.label}ï¿½ï¿½ï¿½Ô³ï¿½ï¿½Ã¡ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÄ±ï¿½ï¿½ï¿½
+4. ï¿½ï¿½ï¿½ï¿½Ì«ï¿½òµ¥µÄ´Ê»ï¿½
 
-Êä³ö¸ñÊ½£º
-¡¾¿ªÍ·ÒıÈë¡¿
-- phrase1£¨ÖĞÎÄ·­Òë£©
-- phrase2£¨ÖĞÎÄ·­Òë£©
+ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½ë¡¿
+- phrase1ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ë£©
+- phrase2ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ë£©
 
-¡¾ÖĞ¼äÂÛÖ¤¡¿
-- phrase3£¨ÖĞÎÄ·­Òë£©
-- phrase4£¨ÖĞÎÄ·­Òë£©
+ï¿½ï¿½ï¿½Ğ¼ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½
+- phrase3ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ë£©
+- phrase4ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ë£©
 
-¡¾½áÎ²×Ü½á¡¿
-- phrase5£¨ÖĞÎÄ·­Òë£©
-- phrase6£¨ÖĞÎÄ·­Òë£©`,
-      `ÌâÄ¿£º${topic}`
+ï¿½ï¿½ï¿½ï¿½Î²ï¿½Ü½á¡¿
+- phrase5ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ë£©
+- phrase6ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ë£©`,
+      `ï¿½ï¿½Ä¿ï¿½ï¿½${topic}`
     );
     res.json({ vocabulary: content });
   } catch (e) {
@@ -449,8 +454,8 @@ app.get('/api/reading/daily', async (req, res) => {
     const exam = getExamConfig(level);
     const seed = Date.now().toString(36);
     const content = await askDeepSeek(
-      `ÄãÊÇ${exam.label}Ó¢ÓïÔÄ¶ÁÀÏÊ¦¡£ÇëÔ­´´Ò»ÆªÊÊºÏ${exam.label}Ë®Æ½µÄÓ¢ÎÄ¶ÌÎÄ£¨300-400´Ê£©£¬Ö÷Ìâ²»ÏŞ£¨¿Æ¼¼¡¢ÎÄ»¯¡¢Éç»á¡¢»·¾³¡¢½ÌÓıµÈ£©¡£ÒªÇó£ºÓïÑÔµØµÀ£¬ÄÑ¶ÈÊÊÖĞ£¬ÓĞ3-4¸ö×ÔÈ»¶ÎÂä¡£Ö»Êä³ö´¿ÎÄ±¾¶ÌÎÄ£¬²»Òª±êÌâ£¬²»ÒªÈÎºÎ½âÊÍ¡£`,
-      `ÇëÉú³ÉÒ»ÆªĞÂµÄ${exam.label}ÔÄ¶Á¶ÌÎÄ£¬Ëæ»úÖÖ×Ó£º${seed}`
+      `ï¿½ï¿½ï¿½ï¿½${exam.label}Ó¢ï¿½ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½Ê¦ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½Ò»Æªï¿½Êºï¿½${exam.label}Ë®Æ½ï¿½ï¿½Ó¢ï¿½Ä¶ï¿½ï¿½Ä£ï¿½300-400ï¿½Ê£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â²»ï¿½Ş£ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½á¡¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ÔµØµï¿½ï¿½ï¿½ï¿½Ñ¶ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½ï¿½ï¿½3-4ï¿½ï¿½ï¿½ï¿½È»ï¿½ï¿½ï¿½ä¡£Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½â£¬ï¿½ï¿½Òªï¿½ÎºÎ½ï¿½ï¿½Í¡ï¿½`,
+      `ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Æªï¿½Âµï¿½${exam.label}ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½${seed}`
     );
     res.json({ article: content.trim(), level });
   } catch (e) {
@@ -465,8 +470,8 @@ app.post('/api/reading/explain', async (req, res) => {
     const { passage, question, options, answer } = req.body;
     if (!question) return res.status(400).json({ error: 'missing question' });
     const content = await askDeepSeek(
-      'ÄãÊÇÓ¢ÓïÔÄ¶ÁÀÏÊ¦¡£ÇëÓÃÖĞÎÄ¼òÒª½âÎöÕâµÀÔÄ¶ÁÌâ£ºËµÃ÷ÕıÈ·´ğ°¸ÎªÊ²Ã´¶Ô£¬Ã¿¸ö´íÎóÑ¡ÏîÎªÊ²Ã´´í£¨1-2¾ä»°¼´¿É£©¡£¸ñÊ½£ºÏÈ¸ø´ğ°¸£¬ÔÙÖğÏî½âÎö¡£',
-      `ÎÄÕÂÆ¬¶Î£º${passage ? passage.substring(0, 500) : 'ÎŞ'}\nÌâÄ¿£º${question}\nÑ¡Ïî£º${(options||[]).join(' / ')}\nÕıÈ·´ğ°¸£º${answer}`
+      'ï¿½ï¿½ï¿½ï¿½Ó¢ï¿½ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½Ê¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½ï¿½â£ºËµï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ÎªÊ²Ã´ï¿½Ô£ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ÎªÊ²Ã´ï¿½ï¿½ï¿½ï¿½1-2ï¿½ä»°ï¿½ï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½È¸ï¿½ï¿½ğ°¸£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½',
+      `ï¿½ï¿½ï¿½ï¿½Æ¬ï¿½Î£ï¿½${passage ? passage.substring(0, 500) : 'ï¿½ï¿½'}\nï¿½ï¿½Ä¿ï¿½ï¿½${question}\nÑ¡ï¿½î£º${(options||[]).join(' / ')}\nï¿½ï¿½È·ï¿½ğ°¸£ï¿½${answer}`
     );
     res.json({ explanation: content });
   } catch (e) {
@@ -504,23 +509,23 @@ app.get('/api/listening/audio/:file', (req, res) => {
 app.get('/api/listening', async (req, res) => {
   try {
     const level = req.query.level || 'cet4';
-    const label = level === 'cet6' ? 'Áù¼¶' : 'ËÄ¼¶';
-    const dir = path.join(EXAM_BASE, '´óÑ§ÉúÓ¢Óï' + label + 'ÀúÄêÕæÌâ£¨ÒÑ¸üĞÂÖÁ2025Äê12ÔÂ£©', '¡¾2013Äê-2025Äê12ÔÂ¡¿ÀúÄê' + label + 'ÕæÌâ+´ğ°¸½âÎö+ÌıÁ¦ÒôÆµ');
+    const label = level === 'cet6' ? 'ï¿½ï¿½ï¿½ï¿½' : 'ï¿½Ä¼ï¿½';
+    const dir = path.join(EXAM_BASE, 'ï¿½ï¿½Ñ§ï¿½ï¿½Ó¢ï¿½ï¿½' + label + 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â£¨ï¿½Ñ¸ï¿½ï¿½ï¿½ï¿½ï¿½2025ï¿½ï¿½12ï¿½Â£ï¿½', 'ï¿½ï¿½2013ï¿½ï¿½-2025ï¿½ï¿½12ï¿½Â¡ï¿½ï¿½ï¿½ï¿½ï¿½' + label + 'ï¿½ï¿½ï¿½ï¿½+ï¿½ğ°¸½ï¿½ï¿½ï¿½+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµ');
     if (!require('fs').existsSync(dir)) return res.json({ exercises: [] });
-    const periods = require('fs').readdirSync(dir).filter(d => d.match(/¡¾\d{4}Äê\d{2}ÔÂ¡¿/));
+    const periods = require('fs').readdirSync(dir).filter(d => d.match(/ï¿½ï¿½\d{4}ï¿½ï¿½\d{2}ï¿½Â¡ï¿½/));
     let exercises = listeningSeedData || [];
     if (exercises.length > 0) return res.json({ exercises: exercises.filter(e => e.level === level) });
     exercises = [];
     for (const p of periods) {
-      const ym = p.match(/(\d{4})Äê(\d{2})ÔÂ/); if (!ym) continue;
+      const ym = p.match(/(\d{4})ï¿½ï¿½(\d{2})ï¿½ï¿½/); if (!ym) continue;
       const y = parseInt(ym[1]), m = parseInt(ym[2]);
       const dp = path.join(dir, p);
       const files = require('fs').readdirSync(dp);
-      const af = files.filter(f => f.match(/\.mp3$/i) && f.includes('µÚ1Ì×'));
-      const pf = files.filter(f => f.includes('ÕæÌâµÚ1Ì×') && f.endsWith('.pdf') && !f.includes('½âÎö'));
+      const af = files.filter(f => f.match(/\.mp3$/i) && f.includes('ï¿½ï¿½1ï¿½ï¿½'));
+      const pf = files.filter(f => f.includes('ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½') && f.endsWith('.pdf') && !f.includes('ï¿½ï¿½ï¿½ï¿½'));
       if (af.length > 0) {
-        const audioRel = '´óÑ§ÉúÓ¢Óï' + label + 'ÀúÄêÕæÌâ£¨ÒÑ¸üĞÂÖÁ2025Äê12ÔÂ£©/¡¾2013Äê-2025Äê12ÔÂ¡¿ÀúÄê' + label + 'ÕæÌâ+´ğ°¸½âÎö+ÌıÁ¦ÒôÆµ/' + encodeURIComponent(p) + '/' + af[0];
-        exercises.push({ id: level + '_' + y + '_' + m + '_1', title: y + 'Äê' + m + 'ÔÂ' + label + 'ÌıÁ¦', level, year: y, month: m, audioUrl: '/api/listening/audio/' + audioRel.split('/').pop(), pdfPath: pf.length > 0 ? path.join(dp, pf[0]) : null });
+        const audioRel = 'ï¿½ï¿½Ñ§ï¿½ï¿½Ó¢ï¿½ï¿½' + label + 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â£¨ï¿½Ñ¸ï¿½ï¿½ï¿½ï¿½ï¿½2025ï¿½ï¿½12ï¿½Â£ï¿½/ï¿½ï¿½2013ï¿½ï¿½-2025ï¿½ï¿½12ï¿½Â¡ï¿½ï¿½ï¿½ï¿½ï¿½' + label + 'ï¿½ï¿½ï¿½ï¿½+ï¿½ğ°¸½ï¿½ï¿½ï¿½+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµ/' + encodeURIComponent(p) + '/' + af[0];
+        exercises.push({ id: level + '_' + y + '_' + m + '_1', title: y + 'ï¿½ï¿½' + m + 'ï¿½ï¿½' + label + 'ï¿½ï¿½ï¿½ï¿½', level, year: y, month: m, audioUrl: '/api/listening/audio/' + audioRel.split('/').pop(), pdfPath: pf.length > 0 ? path.join(dp, pf[0]) : null });
       }
     }
     exercises.sort((a,b) => b.year - a.year || b.month - a.month);
@@ -541,8 +546,8 @@ app.post('/api/listening/questions', async (req, res) => {
     const end = text.indexOf('Part III');
     const snippet = (start >= 0 ? text.substring(start, end > start ? end : undefined) : text).substring(0, 6000);
     const content = await askDeepSeek(
-      'ÄãÊÇÓ¢ÓïÌıÁ¦³öÌâ×¨¼Ò¡£ÇëÌáÈ¡ÌıÁ¦Ñ¡ÔñÌâ£ºSection AĞÂÎÅ, Section B³¤¶Ô»°, Section C¶ÌÎÄ¡£Êä³öJSON:{"questions":[{"section":"Section A","number":1,"question":"...","options":["A) ...","B) ...","C) ...","D) ..."],"answer":"A"}]}',
-      'ÎÄ±¾£º\n' + snippet
+      'ï¿½ï¿½ï¿½ï¿½Ó¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¨ï¿½Ò¡ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½â£ºSection Aï¿½ï¿½ï¿½ï¿½, Section Bï¿½ï¿½ï¿½Ô»ï¿½, Section Cï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½JSON:{"questions":[{"section":"Section A","number":1,"question":"...","options":["A) ...","B) ...","C) ...","D) ..."],"answer":"A"}]}',
+      'ï¿½Ä±ï¿½ï¿½ï¿½\n' + snippet
     );
     const match = content.match(/\{[\s\S]*\}/);
     if (match) {
@@ -571,7 +576,7 @@ app.get('/api/papers', async (req, res) => {
 app.get('/api/papers/:id', async (req, res) => {
   try {
     const paper = await db.papers.findOne({ _id: req.params.id });
-    if (!paper) return res.status(404).json({ error: 'ÊÔ¾í²»´æÔÚ' });
+    if (!paper) return res.status(404).json({ error: 'ï¿½Ô¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½' });
     res.json({ paper });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -582,7 +587,7 @@ app.get('/api/papers/:id', async (req, res) => {
 app.post('/api/papers/import', authMiddleware, async (req, res) => {
   try {
     const { title, level, year, month, set, sections } = req.body;
-    if (!title || !level || !sections) return res.status(400).json({ error: 'È±ÉÙ±ØÌî×Ö¶Î' });
+    if (!title || !level || !sections) return res.status(400).json({ error: 'È±ï¿½Ù±ï¿½ï¿½ï¿½ï¿½Ö¶ï¿½' });
     const paper = await db.papers.insert({
       title, level, year: year || 0, month: month || 0, set: set || 1,
       sections,
@@ -598,7 +603,7 @@ app.post('/api/papers/import', authMiddleware, async (req, res) => {
 app.post('/api/papers/parse', async (req, res) => {
   try {
     const { text, level, title } = req.body;
-    if (!text) return res.status(400).json({ error: 'È±ÉÙÎÄ±¾' });
+    if (!text) return res.status(400).json({ error: 'È±ï¿½ï¿½ï¿½Ä±ï¿½' });
     const exam = getExamConfig(level || 'cet4');
 
     // Clean PDF extraction spacing
@@ -608,14 +613,14 @@ app.post('/api/papers/parse', async (req, res) => {
 
     const snippet = cleaned.substring(0, 8000);
     const content = await askDeepSeek(
-      `ÄãÊÇ${exam.label}ÕæÌâ½âÎö×¨¼Ò¡£Çë½«ÒÔÏÂÕæÌâÎÄ±¾½âÎöÎª½á¹¹»¯JSON¡£
-ÒªÇó£º
-1. Ê¶±ğ "Part I Writing", "Part II", "Part III Reading Comprehension", "Part IV Translation" µÈ²¿·Ö
-2. ¶ÔÓÚ Reading Comprehension ²¿·Ö£¬ÌáÈ¡Ã¿ÆªÔÄ¶ÁÀí½âµÄ passage£¨ÎÄÕÂÈ«ÎÄ£©ºÍ questions£¨ÌâÄ¿ÁĞ±í£¬Ã¿Ìâº¬ question¡¢options Êı×é¡¢answer£©
-3. ¶ÔÓÚ Writing ²¿·Ö£¬ÌáÈ¡ Directions ×÷Îª passage
-4. ¶ÔÓÚ Translation ²¿·Ö£¬ÌáÈ¡ÖĞÎÄÔ­ÎÄ×÷Îª passage
-5. Listening ²¿·ÖÌø¹ı
-6. Êä³öÑÏ¸ñ JSON ¸ñÊ½£º
+      `ï¿½ï¿½ï¿½ï¿½${exam.label}ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¨ï¿½Ò¡ï¿½ï¿½ë½«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½á¹¹ï¿½ï¿½JSONï¿½ï¿½
+Òªï¿½ï¿½
+1. Ê¶ï¿½ï¿½ "Part I Writing", "Part II", "Part III Reading Comprehension", "Part IV Translation" ï¿½È²ï¿½ï¿½ï¿½
+2. ï¿½ï¿½ï¿½ï¿½ Reading Comprehension ï¿½ï¿½ï¿½Ö£ï¿½ï¿½ï¿½È¡Ã¿Æªï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ passageï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½Ä£ï¿½ï¿½ï¿½ questionsï¿½ï¿½ï¿½ï¿½Ä¿ï¿½Ğ±ï¿½ï¿½ï¿½Ã¿ï¿½âº¬ questionï¿½ï¿½options ï¿½ï¿½ï¿½é¡¢answerï¿½ï¿½
+3. ï¿½ï¿½ï¿½ï¿½ Writing ï¿½ï¿½ï¿½Ö£ï¿½ï¿½ï¿½È¡ Directions ï¿½ï¿½Îª passage
+4. ï¿½ï¿½ï¿½ï¿½ Translation ï¿½ï¿½ï¿½Ö£ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½Îª passage
+5. Listening ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+6. ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ JSON ï¿½ï¿½Ê½ï¿½ï¿½
 {
   "sections": [
     { "type": "writing", "title": "Part I Writing", "passage": "...", "questions": [] },
@@ -623,7 +628,7 @@ app.post('/api/papers/parse', async (req, res) => {
     { "type": "translation", "title": "Part IV Translation", "passage": "...", "questions": [] }
   ]
 }`,
-      `ÊÔ¾í±êÌâ£º${title || ''}\n¼¶±ğ£º${exam.label}\nÎÄ±¾ÄÚÈİ£º\n${snippet}`
+      `ï¿½Ô¾ï¿½ï¿½ï¿½ï¿½â£º${title || ''}\nï¿½ï¿½ï¿½ï¿½${exam.label}\nï¿½Ä±ï¿½ï¿½ï¿½ï¿½İ£ï¿½\n${snippet}`
     );
 
     const jsonMatch = content.match(/\{[\s\S]*\}/);
@@ -631,7 +636,7 @@ app.post('/api/papers/parse', async (req, res) => {
       const parsed = JSON.parse(jsonMatch[0]);
       res.json({ parsed, raw: content });
     } else {
-      res.json({ raw: content, error: 'Î´ÄÜÌáÈ¡µ½ÓĞĞ§µÄ JSON' });
+      res.json({ raw: content, error: 'Î´ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ğ§ï¿½ï¿½ JSON' });
     }
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -649,7 +654,7 @@ app.get('/api/chat/messages', (req, res) => {
 
 app.post('/api/chat/send', (req, res) => {
   const { user, text } = req.body;
-  if (!user || !text) return res.status(400).json({ error: 'È±ÉÙÓÃ»§»òÏûÏ¢ÄÚÈİ' });
+  if (!user || !text) return res.status(400).json({ error: 'È±ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½' });
   const msg = {
     id: Date.now() + '_' + Math.random().toString(36).substr(2, 6),
     user: user.trim(),
