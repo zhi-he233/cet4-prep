@@ -100,7 +100,7 @@ function stopTimer() {
 function renderExamNav() {
   const nav = document.getElementById('examNav');
   if (!examPaper.sections || !nav) return;
-  nav.innerHTML = examPaper.sections.filter(s => s.type !== 'listening').map((s, i) =>
+  nav.innerHTML = examPaper.sections.map((s, i) =>
     '<button class="exam-nav-btn" data-sec="' + i + '">' + (s.title || ('Part ' + (i+1))) + '</button>'
   ).join('');
   nav.querySelectorAll('.exam-nav-btn').forEach((btn, i) => {
@@ -109,7 +109,7 @@ function renderExamNav() {
 }
 
 function switchSection(idx) {
-  const sections = examPaper.sections.filter(s => s.type !== 'listening');
+  const sections = examPaper.sections;
   if (idx < 0 || idx >= sections.length) return;
   const sec = sections[idx];
   const body = document.getElementById('examBody');
@@ -272,3 +272,86 @@ async function evaluateExamTranslation() {
 window.loadExamSelector = loadExamSelector;
 window.evaluateExamEssay = evaluateExamEssay;
 window.evaluateExamTranslation = evaluateExamTranslation;
+
+async function loadExamListeningQuestions(secIdx) {
+  const btn = document.getElementById('loadExamListeningBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'AI 生成题目中...'; }
+  const container = document.getElementById('examListeningQuestions');
+  if (container) container.innerHTML = '<p style="padding:1rem;">🤖 AI 正在生成听力题目...</p>';
+  const data = await API.post('/api/listening/questions', {
+    level: examPaper.level || 'cet4',
+    year: examPaper.year,
+    month: examPaper.month
+  });
+  if (data.questions && data.questions.length > 0) {
+    renderExamListeningQuestions(data.questions);
+  } else {
+    if (container) container.innerHTML = '<p style="color:red;">题目生成失败: ' + (data.error || '') + '</p>';
+  }
+  if (btn) btn.style.display = 'none';
+}
+
+function renderExamListeningQuestions(questions) {
+  const container = document.getElementById('examListeningQuestions');
+  if (!container) return;
+  let html = '<div class="paper-questions"><h3>📋 听力题目</h3>';
+  let currentSection = '';
+  questions.forEach((q, idx) => {
+    if (q.section && q.section !== currentSection) {
+      currentSection = q.section;
+      html += '<h4 class="listening-section-heading">' + currentSection + '</h4>';
+    }
+    html += '<div class="quiz-question-item" data-lq="' + idx + '">';
+    html += '<div class="q-text">' + (q.number || idx + 1) + '. ' + (q.question || '') + '</div>';
+    if (q.options && q.options.length > 0) {
+      html += '<div class="q-options">';
+      q.options.forEach(opt => {
+        const letter = (opt || '').substring(0, (opt || '').indexOf(')') > -1 ? (opt || '').indexOf(')') : 2);
+        html += '<button class="q-opt-btn" data-answer="' + letter.trim() + '">' + opt + '</button>';
+      });
+      html += '</div>';
+    }
+    html += '<div class="q-feedback" id="lq-fb-' + idx + '" style="display:none;"></div>';
+    html += '</div>';
+  });
+  html += '<button class="btn-primary" id="submitExamListeningBtn" style="margin-top:1rem;">提交答案</button>';
+  html += '<div id="examListeningScore" class="quiz-feedback" style="margin-top:0.5rem;"></div>';
+  html += '</div>';
+  container.innerHTML = html;
+
+  // Bind option selection
+  container.querySelectorAll('.q-opt-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const parent = this.parentElement;
+      parent.querySelectorAll('.q-opt-btn').forEach(b => b.classList.remove('selected'));
+      this.classList.add('selected');
+    });
+  });
+
+  // Bind submit
+  document.getElementById('submitExamListeningBtn').addEventListener('click', () => {
+    let correct = 0, total = 0;
+    questions.forEach((q, idx) => {
+      if (!q.answer) return;
+      total++;
+      const selected = container.querySelector('.quiz-question-item[data-lq="' + idx + '"] .q-opt-btn.selected');
+      const fb = document.getElementById('lq-fb-' + idx);
+      fb.style.display = 'block';
+      const qDiv = container.querySelector('.quiz-question-item[data-lq="' + idx + '"]');
+      qDiv.querySelectorAll('.q-opt-btn').forEach(b => b.disabled = true);
+      const correctLetter = q.answer.trim()[0].toUpperCase();
+      qDiv.querySelectorAll('.q-opt-btn').forEach(b => {
+        if (b.dataset.answer.toUpperCase() === correctLetter) b.classList.add('correct');
+      });
+      if (selected && selected.dataset.answer.toUpperCase() === correctLetter) {
+        correct++;
+        fb.innerHTML = '<span style="color:green;">✓ 正确</span>';
+      } else {
+        if (selected) selected.classList.add('wrong');
+        fb.innerHTML = '<span style="color:red;">✗ 正确答案: ' + q.answer + '</span>';
+      }
+    });
+    document.getElementById('examListeningScore').innerHTML = '得分: <strong>' + correct + '</strong> / ' + total + ' (' + (total > 0 ? Math.round(correct / total * 100) : 0) + '%)';
+    document.getElementById('submitExamListeningBtn').style.display = 'none';
+  });
+}

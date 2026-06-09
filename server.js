@@ -536,28 +536,42 @@ app.get('/api/listening', async (req, res) => {
 // Parse listening questions from PDF
 app.post('/api/listening/questions', async (req, res) => {
   try {
-    const { pdfPath } = req.body;
-    if (!pdfPath || !require('fs').existsSync(pdfPath)) return res.status(400).json({ error: 'Invalid pdfPath' });
-    const pdfParse = require('pdf-parse');
-    const buf = require('fs').readFileSync(pdfPath);
-    const data = await pdfParse(buf);
-    const text = data.text.replace(/([a-zA-Z]) ([a-zA-Z])/g, '$1$2').replace(/\n{2,}/g, '\n\n');
-    const start = text.indexOf('Part II');
-    const end = text.indexOf('Part III');
-    const snippet = (start >= 0 ? text.substring(start, end > start ? end : undefined) : text).substring(0, 6000);
+    const { pdfPath, level, year, month } = req.body;
+    // Try PDF first if available
+    if (pdfPath && require('fs').existsSync(pdfPath)) {
+      const pdfParse = require('pdf-parse');
+      const buf = require('fs').readFileSync(pdfPath);
+      const data = await pdfParse(buf);
+      const text = data.text.replace(/([a-zA-Z]) ([a-zA-Z])/g, '$1$2').replace(/\n{2,}/g, '\n\n');
+      const start = text.indexOf('Part II');
+      const end = text.indexOf('Part III');
+      const snippet = (start >= 0 ? text.substring(start, end > start ? end : undefined) : text).substring(0, 6000);
+      const content = await askDeepSeek(
+        '你是英语听力出题专家。请提取听力选择题：Section A新闻, Section B长对话, Section C短文。输出JSON:{"questions":[{"section":"Section A","number":1,"question":"...","options":["A) ...","B) ...","C) ...","D) ..."],"answer":"A"}]}',
+        '文本：\n' + snippet
+      );
+      const match = content.match(/\{[\s\S]*\}/);
+      if (match) {
+        try { return res.json({ questions: JSON.parse(match[0]).questions || [], raw: content }); }
+        catch(e) { return res.json({ questions: [], raw: content, error: e.message }); }
+      }
+      return res.json({ questions: [], raw: content });
+    }
+    // AI fallback: generate questions from scratch
+    const exam = getExamConfig(level || 'cet4');
+    const seed = Date.now().toString(36);
     const content = await askDeepSeek(
-      '你是英语听力出题专家。请提取听力选择题：Section A新闻, Section B长对话, Section C短文。输出JSON:{"questions":[{"section":"Section A","number":1,"question":"...","options":["A) ...","B) ...","C) ...","D) ..."],"answer":"A"}]}',
-      '文本：\n' + snippet
+      '你是' + exam.label + '英语听力出题专家。请原创生成一套听力选择题，共15题：Section A 新闻听力 5题, Section B 长对话 5题, Section C 短文理解 5题。题目难度贴合' + exam.label + '考试。每题4个选项，标注正确答案。严格输出JSON格式，不要额外解释。',
+      '请为' + (year||'') + '年' + (month||'') + '月' + exam.label + '听力考试原创生成题目，随机种子：' + seed
     );
     const match = content.match(/\{[\s\S]*\}/);
     if (match) {
-      try { res.json({ questions: JSON.parse(match[0]).questions || [], raw: content }); }
-      catch(e) { res.json({ questions: [], raw: content, error: e.message }); }
-    } else {
-      res.json({ questions: [], raw: content });
+      try { return res.json({ questions: JSON.parse(match[0]).questions || [], raw: content, aiGenerated: true }); }
+      catch(e) { return res.json({ questions: [], raw: content, error: e.message }); }
     }
+    res.json({ questions: [], raw: content, aiGenerated: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
-});
+}));
 
 // ========== Paper Management ==========
 
