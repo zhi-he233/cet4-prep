@@ -658,10 +658,31 @@ app.post('/api/chat/clear', (req, res) => {
 // ========== Start ==========
 
 const PORT = process.env.PORT || 8080;
+
+// Auto-seed papers on first run
+(async () => {
+  try {
+    const count = await db.papers.count({});
+    if (count === 0) {
+      const fs = require('fs');
+      const path = require('path');
+      const seedPath = path.join(__dirname, 'papers_seed.json');
+      if (fs.existsSync(seedPath)) {
+        const papers = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
+        for (const p of papers) {
+          await db.papers.insert({ ...p, createdAt: new Date() });
+        }
+        console.log('Seeded ' + papers.length + ' papers from papers_seed.json');
+      }
+    }
+  } catch(e) { console.log('Seed skipped:', e.message); }
+})();
+
 // Ensure data dir exists
 try { require('fs').mkdirSync(require('path').join(__dirname, 'data'), { recursive: true }); } catch(e) {}
 
 app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
+
 
 
 
