@@ -443,7 +443,7 @@ app.post('/api/writing/vocabulary', async (req, res) => {
 
 // ========== Listening ==========
 
-const EXAM_BASE = process.env.EXAM_DATA_PATH || path.join(process.env.USERPROFILE, 'Desktop', '【2026备考】英语四六级历年真题 + 四六级核心高频词汇表');
+const EXAM_BASE = (() => { const p = process.env.EXAM_DATA_PATH; if (p) return p; try { return require('path').join(process.env.USERPROFILE || process.env.HOME || __dirname, 'exam_data'); } catch(e) { return require('path').join(__dirname, 'exam_data'); } })();
 
 // Serve MP3 audio files
 app.get('/api/listening/audio/:file', (req, res) => {
@@ -625,6 +625,11 @@ app.post('/api/chat/clear', (req, res) => {
 // ========== Start ==========
 
 const PORT = process.env.PORT || 8080;
+// Ensure data dir exists
+try { require('fs').mkdirSync(require('path').join(__dirname, 'data'), { recursive: true }); } catch(e) {}
+
 app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
+
+
 
 
