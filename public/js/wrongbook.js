@@ -43,7 +43,9 @@ function loadWrongWords(container) {
   });
   html += '</div>';
 
-  container.innerHTML = html; if (records.length > 0) { document.getElementById("wrongbookContent").innerHTML += "<button class=\\\""btn-secondary btn-sm\\\"" style=\\\""margin-top:0.5rem;\\\"" onclick=\\\""clearTranslateHistory()\\\"">🗑 清空全部翻译记录</button>"; }
+  if (records.length > 0) { const clr = document.createElement("button"); clr.className = "btn-secondary btn-sm"; clr.style.marginTop = "0.5rem"; clr.textContent = "🗑 清空全部"; clr.onclick = clearTranslateHistory; container.appendChild(clr); }
+
+container.innerHTML = html; 
 
   container.querySelectorAll('.record-card').forEach(card => {
     card.addEventListener('click', () => {
@@ -119,7 +121,9 @@ function loadTranslateRecords(container) {
     </div>`;
   });
   html += '</div>';
-  container.innerHTML = html; if (records.length > 0) { document.getElementById("wrongbookContent").innerHTML += "<button class=\\\""btn-secondary btn-sm\\\"" style=\\\""margin-top:0.5rem;\\\"" onclick=\\\""clearTranslateHistory()\\\"">🗑 清空全部翻译记录</button>"; }
+  if (records.length > 0) { const clr = document.createElement("button"); clr.className = "btn-secondary btn-sm"; clr.style.marginTop = "0.5rem"; clr.textContent = "🗑 清空全部"; clr.onclick = clearTranslateHistory; container.appendChild(clr); }
+
+container.innerHTML = html; 
 
   container.querySelectorAll('.record-card').forEach(card => {
     card.addEventListener('click', () => {
@@ -203,7 +207,9 @@ function loadWritingRecords(container) {
     </div>`;
   });
   html += '</div>';
-  container.innerHTML = html; if (records.length > 0) { document.getElementById("wrongbookContent").innerHTML += "<button class=\\\""btn-secondary btn-sm\\\"" style=\\\""margin-top:0.5rem;\\\"" onclick=\\\""clearTranslateHistory()\\\"">🗑 清空全部翻译记录</button>"; }
+  if (records.length > 0) { const clr = document.createElement("button"); clr.className = "btn-secondary btn-sm"; clr.style.marginTop = "0.5rem"; clr.textContent = "🗑 清空全部"; clr.onclick = clearTranslateHistory; container.appendChild(clr); }
+
+container.innerHTML = html; 
 
   container.querySelectorAll('.record-card').forEach(card => {
     card.addEventListener('click', () => {
@@ -261,4 +267,6 @@ function getWritingHistory(uid) {
 }
 
 // getCurrentUserId 已在 api.js 中定义
+
+
 
