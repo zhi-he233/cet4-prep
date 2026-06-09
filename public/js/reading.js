@@ -137,7 +137,11 @@ function renderPaper(container) {
           html += '</div></div>';
         }
         html += '</div>';
-      } else {
+          html += '<div class="section-controls" style="margin-top:0.8rem;text-align:right;">';
+          html += '<span class="section-score-label" id="section-score-'+idx+'" style="margin-right:0.8rem;font-weight:bold;display:none;"></span>';
+          html += '<button class="btn-primary submit-section-btn" data-sec="'+idx+'">提交本节答案</button>';
+          html += '</div>';
+        } else {
         if (sec.passage) html += '<div class="exam-passage">'+unescapeText(sec.passage)+'</div>';
         if (sec.questions && sec.questions.length > 0) {
           html += '<div class="paper-questions">';
@@ -153,33 +157,58 @@ function renderPaper(container) {
   html += '<div id="readingTranslateBox" class="reading-translate-box" style="display:none;"></div>';
   container.innerHTML = html;
   document.getElementById('backToReadingList').addEventListener('click', loadPaperList);
-  bindWordClicks(); bindSentenceSelection(); bindQuizOptions();
+  bindWordClicks(); bindSentenceSelection(); bindQuizOptions(); bindSubmitButtons();
 }
 
 function bindQuizOptions() {
+  // Selection only - no immediate judging. Submit button handles scoring.
   document.querySelectorAll('.q-opt-btn').forEach(btn => {
     btn.addEventListener('click', function() {
       const parent = this.parentElement;
-      parent.querySelectorAll('.q-opt-btn').forEach(b => { b.disabled = true; b.classList.remove('selected','correct','wrong'); });
+      parent.querySelectorAll('.q-opt-btn').forEach(b => b.classList.remove('selected'));
       this.classList.add('selected');
-      const chosenAnswer = this.dataset.answer;
-      const qDiv = this.closest('.quiz-question-item');
-      const secIdx = parseInt(qDiv.dataset.sec);
-      const qIdx = parseInt(qDiv.dataset.q);
-      const section = currentPaper.sections[secIdx];
-      let correctAnswer = null;
-      if (section && section.questions && section.questions[qIdx]) correctAnswer = section.questions[qIdx].answer ? section.questions[qIdx].answer.trim()[0] : null;
-      const fb = document.getElementById('q-fb-'+secIdx+'-'+qIdx);
-      if (!fb) return;
-      fb.style.display = 'block';
-      if (correctAnswer && chosenAnswer.toUpperCase() === correctAnswer.toUpperCase()) {
-        this.classList.add('correct');
-        fb.innerHTML = '<span style="color:green;">✓ 正确！</span> <button class="btn-sm" style="margin-left:0.5rem;font-size:0.75rem;padding:0.2rem 0.5rem;" onclick="explainQuestion('+secIdx+','+qIdx+')">💡 解析</button>';
-      } else {
-        this.classList.add('wrong');
-        parent.querySelectorAll('.q-opt-btn').forEach(b => { if (b.dataset.answer.toUpperCase() === (correctAnswer||'').toUpperCase()) b.classList.add('correct'); });
-        fb.innerHTML = '<span style="color:red;">✗ 错误，正确答案是 '+correctAnswer+'</span> <button class="btn-sm" style="margin-left:0.5rem;font-size:0.75rem;padding:0.2rem 0.5rem;" onclick="explainQuestion('+secIdx+','+qIdx+')">💡 解析</button>';
-      }
+    });
+  });
+}
+
+function submitSection(secIdx) {
+  const section = currentPaper.sections[secIdx];
+  if (!section || !section.questions) return;
+  let correct = 0, total = 0;
+  section.questions.forEach((q, qi) => {
+    if (!q.answer) return;
+    total++;
+    const qDiv = document.querySelector('.quiz-question-item[data-sec="'+secIdx+'"][data-q="'+qi+'"]');
+    if (!qDiv) return;
+    const selected = qDiv.querySelector('.q-opt-btn.selected');
+    const correctAnswer = q.answer.trim()[0].toUpperCase();
+    const fb = document.getElementById('q-fb-'+secIdx+'-'+qi);
+    qDiv.querySelectorAll('.q-opt-btn').forEach(b => { b.disabled = true; });
+    qDiv.querySelectorAll('.q-opt-btn').forEach(b => {
+      if (b.dataset.answer.toUpperCase() === correctAnswer) b.classList.add('correct');
+    });
+    if (selected && selected.dataset.answer.toUpperCase() === correctAnswer) {
+      correct++;
+      if (fb) { fb.style.display = 'block'; fb.innerHTML = '<span style="color:green;">✓ 正确！</span> <button class="btn-sm" style="margin-left:0.5rem;font-size:0.75rem;padding:0.2rem 0.5rem;" onclick="explainQuestion('+secIdx+','+qi+')">💡 解析</button>'; }
+    } else {
+      if (selected) selected.classList.add('wrong');
+      if (fb) { fb.style.display = 'block'; fb.innerHTML = '<span style="color:red;">✗ 错误，正确答案是 '+correctAnswer+'</span> <button class="btn-sm" style="margin-left:0.5rem;font-size:0.75rem;padding:0.2rem 0.5rem;" onclick="explainQuestion('+secIdx+','+qi+')">💡 解析</button>'; }
+    }
+  });
+  const scoreEl = document.getElementById('section-score-'+secIdx);
+  if (scoreEl && total > 0) {
+    scoreEl.style.display = 'inline';
+    scoreEl.textContent = '得分: '+correct+' / '+total + ' (' + Math.round(correct/total*100) + '%)';
+  }
+  const submitBtns = document.querySelectorAll('.submit-section-btn[data-sec="'+secIdx+'"]');
+  submitBtns.forEach(b => b.disabled = true);
+}
+
+function bindSubmitButtons() {
+  document.querySelectorAll('.submit-section-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const secIdx = parseInt(this.dataset.sec);
+      submitSection(secIdx);
     });
   });
 }
