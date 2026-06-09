@@ -51,14 +51,14 @@ if (evaluateBtn) {
 
     if (data.evaluation) {
       const uid = getCurrentUserId();
-      const history = JSON.parse(localStorage.getItem(`${uid}_writingHistory`) || '[]');
+      const history = getWritingHistory(uid);
       history.push({
         topic: topic,
         essay: essay,
         evaluation: data.evaluation,
         time: new Date().toISOString()
       });
-      localStorage.setItem(`${uid}_writingHistory`, JSON.stringify(history));
+      saveWritingHistory(uid, history);
     }
   });
 }
@@ -69,8 +69,7 @@ async function loadTopicList() {
   const container = document.getElementById('topicListContainer');
   if (!container) return;
   try {
-    const res = await fetch('/api/writing/topics');
-    const data = await res.json();
+    const data = await API.get('/api/writing/topics');
     if (!data.topics) {
       container.innerHTML = '<p class="teach-hint">加载失败，请重试</p>';
       return;
@@ -194,19 +193,38 @@ if (evalTeachBtn) {
     if (data.evaluation) {
       result.innerHTML = marked.parse(data.evaluation);
       const uid = getCurrentUserId();
-      const history = JSON.parse(localStorage.getItem(`${uid}_writingHistory`) || '[]');
+      const history = getWritingHistory(uid);
       history.push({
         topic: currentTeachTopic,
         essay: essay,
         evaluation: data.evaluation,
         time: new Date().toISOString()
       });
-      localStorage.setItem(`${uid}_writingHistory`, JSON.stringify(history));
+      saveWritingHistory(uid, history);
     } else {
       result.textContent = '批改失败：' + (data.error || '');
     }
     btn.disabled = false;
   });
 }
+
+window.refreshWritingForExamLevel = function() {
+  currentTeachTopic = '';
+  currentTeachOutline = '';
+  currentTeachVocab = '';
+  document.getElementById('selectedTopicDisplay') && (document.getElementById('selectedTopicDisplay').textContent = '');
+  document.getElementById('outlineResult') && (document.getElementById('outlineResult').innerHTML = '');
+  document.getElementById('vocabResult') && (document.getElementById('vocabResult').innerHTML = '');
+  document.getElementById('teachResult') && (document.getElementById('teachResult').innerHTML = '');
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+  const step3 = document.getElementById('step3');
+  const step4 = document.getElementById('step4');
+  if (step1) step1.style.display = 'block';
+  if (step2) step2.style.display = 'none';
+  if (step3) step3.style.display = 'none';
+  if (step4) step4.style.display = 'none';
+  if (teachContent && teachContent.style.display !== 'none') loadTopicList();
+};
 
 }); // end DOMContentLoaded

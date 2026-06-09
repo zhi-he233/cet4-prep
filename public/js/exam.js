@@ -1,4 +1,4 @@
-// ========== 四级新题型 ==========
+// ========== 四六级题型 ==========
 
 // 当前题型数据
 let currentQuizType = null; // 'choice' | 'cloze' | 'match'
@@ -65,8 +65,12 @@ function renderChoiceQuiz(quizText, w) {
       this.classList.add('selected');
       const feedback = document.getElementById('quizFeedback');
       if (this.dataset.letter === correctOption) {
+        if (typeof updateWordReview === 'function') updateWordReview(w, 'correct');
+        if (typeof recordStudy === 'function') recordStudy('choice', w.word, w.meaning, true);
         feedback.innerHTML = '<span style="color:green; font-weight:bold;">✅ 回答正确！</span>';
       } else {
+        if (typeof updateWordReview === 'function') updateWordReview(w, 'wrong');
+        if (typeof recordStudy === 'function') recordStudy('choice', w.word, w.meaning, false);
         const wrongWords = getUserJson('wrongbook', [], 'cet4_wrongbook');
         wrongWords.push({
           word: w.word,
@@ -296,6 +300,7 @@ function renderInfoMatchQuiz(content, w) {
           fb.innerHTML = '<span style="color:green;">✅ 正确</span>';
         } else {
           fb.innerHTML = `<span style="color:red;">❌ 错误，正确答案是 ${answers[qNum]}</span>`;
+          if (typeof updateWordReview === 'function') updateWordReview(w, 'wrong');
           // 记录错题
           const wrongWords = getUserJson('wrongbook', [], 'cet4_wrongbook');
           wrongWords.push({

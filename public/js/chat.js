@@ -9,7 +9,7 @@ function loadChat() {
     <div class="chat-container">
       <div class="chat-header">
         <span>💬 交流角</span>
-        <span class="chat-subtitle">正在以 <strong>${getCurrentUserId()}</strong> 身份聊天</span>
+        <span class="chat-subtitle">正在以 <strong>${getCurrentUserId()}</strong> 身份进行${getExamLabel()}备考交流</span>
       </div>
       <div class="chat-messages" id="chatMessagesBox"></div>
       <div class="chat-input-row">

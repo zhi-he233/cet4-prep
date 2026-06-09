@@ -81,6 +81,10 @@ function showWrongWordDetail(item) {
       <span class="label">⏰ 出错时间</span>
       <div class="content">${item.wrongTime ? new Date(item.wrongTime).toLocaleString() : '未知'}</div>
     </div>
+    <div class="detail-actions">
+      <button onclick='focusWord(${JSON.stringify(item.word)})'>去复习这个词</button>
+      <button onclick="document.getElementById('detailModal').style.display='none'">关闭</button>
+    </div>
   `;
   modal.style.display = 'flex';
 }
@@ -122,12 +126,12 @@ function loadTranslateRecords(container) {
       const idx = parseInt(card.dataset.index);
       const records = getTranslateHistory(getCurrentUserId());
       const item = records[idx];
-      if (item) showTranslateDetail(item);
+      if (item) showTranslateDetail(item, idx);
     });
   });
 }
 
-function showTranslateDetail(item) {
+function showTranslateDetail(item, index) {
   const modal = document.getElementById('detailModal');
   const content = document.getElementById('detailContent');
 
@@ -152,12 +156,20 @@ function showTranslateDetail(item) {
       <div class="content">${item.english || '暂无'}</div>
     </div>
     <div class="detail-section">
+      <span class="label">✅ 参考翻译</span>
+      <div class="content">${item.standard || (typeof extractStandardTranslation === 'function' ? extractStandardTranslation(item.evaluation || '') : '') || 'AI 评价中未识别到标准译文'}</div>
+    </div>
+    <div class="detail-section">
       <span class="label">📊 AI 评分</span>
       <div class="content ${scoreClass}">${item.evaluation ? marked.parse(item.evaluation) : (item.score ? '评分：' + item.score + '分' : '暂无评分')}</div>
     </div>
     <div class="detail-section">
       <span class="label">⏰ 时间</span>
       <div class="content">${item.time ? new Date(item.time).toLocaleString() : '未知'}</div>
+    </div>
+    <div class="detail-actions">
+      <button onclick="reviewTranslateRecord(${index}); document.getElementById('detailModal').style.display='none'">重新翻译这句</button>
+      <button onclick="showTranslateComparison(${index}); document.getElementById('detailModal').style.display='none'">查看对比</button>
     </div>
   `;
   modal.style.display = 'flex';
@@ -241,11 +253,11 @@ function showWritingDetail(item) {
 
 // ========== 辅助函数 ==========
 function getTranslateHistory(uid) {
-  return JSON.parse(localStorage.getItem(`${uid}_translateHistory`) || '[]');
+  return getUserJson('translateHistory', [], `${uid}_translateHistory`);
 }
 
 function getWritingHistory(uid) {
-  return JSON.parse(localStorage.getItem(`${uid}_writingHistory`) || '[]');
+  return getUserJson('writingHistory', [], `${uid}_writingHistory`);
 }
 
 // getCurrentUserId 已在 api.js 中定义

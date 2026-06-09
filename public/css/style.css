@@ -70,6 +70,7 @@ h1 {
   border-radius: var(--radius-sm);
   font-size: 0.9rem;
   background: white;
+  min-width: 120px;
 }
 .user-switch button {
   padding: 0.4rem 0.8rem;
@@ -350,12 +351,43 @@ textarea, input[type="text"], input[type="file"] {
   transition: 0.15s;
   min-height: 42px;
 }
+select {
+  color: var(--text);
+}
 textarea:focus, input[type="text"]:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
 }
 @media (min-width: 768px) {
   textarea, input[type="text"] { padding: 0.8rem; font-size: 1rem; }
+}
+
+/* ========== 词库筛选与复习 ========== */
+.word-toolbar {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem;
+  margin-bottom: 1rem;
+}
+.word-filter-row {
+  display: grid;
+  grid-template-columns: auto minmax(120px, 180px) minmax(0, 1fr);
+  gap: 0.5rem;
+  align-items: center;
+}
+.word-filter-row label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+.word-filter-row select,
+.word-filter-row input {
+  margin: 0;
+}
+.word-stats-line {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-top: 0.45rem;
 }
 
 /* ========== 翻译模块 ========== */
@@ -367,6 +399,52 @@ textarea:focus, input[type="text"]:focus {
   text-align: center;
   border: 1px solid #bae6fd;
 }
+
+.translate-review-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem;
+  margin-top: 0.8rem;
+}
+.translate-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.5rem;
+}
+.translate-actions button,
+.detail-actions button {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+}
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+.compare-box {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem;
+}
+.compare-box h4 {
+  color: var(--primary);
+  margin-bottom: 0.35rem;
+  font-size: 0.92rem;
+}
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.8rem;
+}
+
 .chinese-sentence {
   font-size: 1.3rem;
   font-weight: 600;
@@ -774,6 +852,72 @@ textarea:focus, input[type="text"]:focus {
 .file-link, .word-link { color: var(--primary); text-decoration: none; }
 .file-link:hover { text-decoration: underline; }
 
+/* ========== 深色模式 ========== */
+body.theme-dark {
+  --primary: #8b5cf6;
+  --primary-light: #a78bfa;
+  --primary-bg: #312e81;
+  --bg: #0f172a;
+  --card: #111827;
+  --text: #e5e7eb;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  --shadow-lg: 0 10px 28px rgba(0,0,0,0.38);
+}
+body.theme-dark .user-switch select,
+body.theme-dark .user-switch button,
+body.theme-dark textarea,
+body.theme-dark input[type="text"],
+body.theme-dark input[type="file"],
+body.theme-dark select,
+body.theme-dark .tab-btn,
+body.theme-dark .sub-tab-btn,
+body.theme-dark .quiz-option-btn,
+body.theme-dark .quiz-type-btn,
+body.theme-dark .modal-content,
+body.theme-dark .chat-input-row input {
+  background: #0f172a;
+  color: var(--text);
+  border-color: var(--border);
+}
+body.theme-dark .result-box,
+body.theme-dark .word-toolbar,
+body.theme-dark .compare-box,
+body.theme-dark .detail-section .content,
+body.theme-dark #studyHistoryList li,
+body.theme-dark #historyList li,
+body.theme-dark .cloze-passage,
+body.theme-dark .chat-messages {
+  background: #0b1220;
+}
+body.theme-dark .question-box {
+  background: #082f49;
+  border-color: #075985;
+}
+body.theme-dark .chinese-sentence {
+  color: var(--text);
+}
+body.theme-dark .dictation-meaning {
+  background: #422006;
+  color: #fde68a;
+}
+body.theme-dark .btn-secondary {
+  background: #334155;
+  color: var(--text);
+}
+body.theme-dark .btn-outline {
+  color: #c4b5fd;
+  border-color: #8b5cf6;
+}
+body.theme-dark .chat-msg-other {
+  background: #1f2937;
+}
+body.theme-dark .chat-msg-me {
+  background: #312e81;
+}
+
 @media (max-width: 640px) {
   body {
     padding: 0.5rem;
@@ -808,6 +952,10 @@ textarea:focus, input[type="text"]:focus {
   .user-switch button,
   .user-switch input {
     width: 100%;
+  }
+
+  .user-switch button {
+    grid-column: 1 / -1;
   }
 
   .tabs {
@@ -868,6 +1016,11 @@ textarea:focus, input[type="text"]:focus {
 
   .dictation-input-row {
     flex-direction: column;
+  }
+
+  .word-filter-row,
+  .compare-grid {
+    grid-template-columns: 1fr;
   }
 
   .dictation-input-row input {

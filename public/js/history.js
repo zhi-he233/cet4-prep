@@ -1,9 +1,9 @@
 // ========== 翻译历史 ==========
 function getTranslateHistory(uid) {
-  return JSON.parse(localStorage.getItem(`${uid}_translateHistory`) || '[]');
+  return getUserJson('translateHistory', [], `${uid}_translateHistory`);
 }
 function saveTranslateHistory(uid, data) {
-  localStorage.setItem(`${uid}_translateHistory`, JSON.stringify(data));
+  setUserJson('translateHistory', data);
 }
 
 function showTranslateHistory() {
@@ -28,12 +28,19 @@ function showTranslateHistory() {
       <li>
         <strong>中文：</strong>${r.chinese}<br>
         <strong>你的翻译：</strong>${r.english}<br>
+        ${r.standard ? `<strong>参考：</strong>${r.standard}<br>` : ''}
         <strong>评分：</strong>${scoreText || 'N/A'} <small>${new Date(r.time).toLocaleString()}</small>
-        <button onclick="deleteTranslateItem(${originalIndex})">删除</button>
+        <div class="translate-actions">
+          <button onclick="reviewTranslateRecord(${originalIndex})">复习这句</button>
+          <button onclick="showTranslateComparison(${originalIndex})">查看对比</button>
+          <button onclick="deleteTranslateItem(${originalIndex})">删除</button>
+        </div>
       </li>
     `;
   }).join('');
 }
+
+document.getElementById('historySearch')?.addEventListener('input', showTranslateHistory);
 
 function deleteTranslateItem(index) {
   const uid = getCurrentUserId();
@@ -45,18 +52,18 @@ function deleteTranslateItem(index) {
 
 // ========== 作文历史 ==========
 function getWritingHistory(uid) {
-  return JSON.parse(localStorage.getItem(`${uid}_writingHistory`) || '[]');
+  return getUserJson('writingHistory', [], `${uid}_writingHistory`);
 }
 function saveWritingHistory(uid, data) {
-  localStorage.setItem(`${uid}_writingHistory`, JSON.stringify(data));
+  setUserJson('writingHistory', data);
 }
 
 // ========== 背诵历史 ==========
 function getStudyHistory(uid) {
-  return JSON.parse(localStorage.getItem(`${uid}_studyHistory`) || '[]');
+  return getUserJson('studyHistory', [], `${uid}_studyHistory`);
 }
 function saveStudyHistory(uid, data) {
-  localStorage.setItem(`${uid}_studyHistory`, JSON.stringify(data));
+  setUserJson('studyHistory', data);
 }
 
 function recordStudy(type, word, meaning, correct) {
@@ -90,8 +97,7 @@ function deleteStudyItem(index) {
 }
 
 function clearStudyHistory() {
-  const uid = getCurrentUserId();
-  localStorage.removeItem(`${uid}_studyHistory`);
+  localStorage.removeItem(getUserStorageKey('studyHistory'));
   showStudyHistory();
 }
 

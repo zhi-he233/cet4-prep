@@ -9,12 +9,18 @@
 </head>
 <body>
   <div class="container">
-    <h1>📘 四级速通助手</h1>
+    <h1>📘 <span data-exam-title>四级速通助手</span></h1>
 
-    <!-- 用户切换（放在导航上方，全局可见） -->
+    <!-- 用户和考试模式切换（放在导航上方，全局可见） -->
     <div class="user-switch">
       <label>当前用户：</label>
       <select id="userSelect"></select>
+      <label>备考级别：</label>
+      <select id="examLevelSelect">
+        <option value="cet4">四级 CET-4</option>
+        <option value="cet6">六级 CET-6</option>
+      </select>
+      <button id="themeToggleBtn" type="button">深色模式</button>
       <button id="newUserBtn">新建用户</button>
       <input type="text" id="newUserName" placeholder="输入用户名" style="display:none;" />
       <button id="confirmNewUser" style="display:none;">确认</button>
@@ -32,12 +38,29 @@
     <!-- 背单词模块 -->
     <section id="tab-words" class="tab-content active">
       <div class="word-card">
+        <div class="word-toolbar">
+          <div class="word-filter-row">
+            <label for="wordFilterSelect">词库：</label>
+            <select id="wordFilterSelect">
+              <option value="all">全部词</option>
+              <option value="due">今日复习</option>
+              <option value="wrong">薄弱词</option>
+              <option value="favorites">收藏词</option>
+              <option value="unseen">未学词</option>
+            </select>
+            <input type="text" id="wordSearchInput" placeholder="搜索单词或释义">
+          </div>
+          <div id="wordStatsLine" class="word-stats-line"></div>
+        </div>
+
         <div id="studyMode" class="mode-panel">
           <div class="word-big" id="studyWord">abandon</div>
           <div class="phonetic-big" id="studyPhonetic">/əˈbændən/</div>
           <div class="meaning-big" id="studyMeaning" style="display:none;">v. 放弃；抛弃</div>
           <div class="study-actions">
             <button id="toggleMeaningBtn" class="btn-secondary">显示释义</button>
+            <button id="knowWordBtn" class="btn-secondary">认识</button>
+            <button id="weakWordBtn" class="btn-secondary">不熟</button>
             <button id="nextWordStudyBtn" class="btn-secondary">下一个</button>
             <button id="switchToDictationBtn" class="btn-primary">切换到默写模式</button>
             <button id="favoriteBtn" class="btn-star">☆ 收藏</button>
@@ -85,7 +108,7 @@
 
         <div style="margin-top:1rem;">
           <input type="file" id="wordFile" accept=".json">
-          <small>可导入自定义 JSON 词库</small>
+          <small>可导入当前级别的 JSON 词库</small>
         </div>
       </div>
     </section>
@@ -108,6 +131,7 @@
         <input type="text" id="historySearch" placeholder="搜索中文或英文..." />
         <ul id="historyList"></ul>
       </div>
+      <div id="translateReviewPanel" class="translate-review-panel" style="display:none;"></div>
     </section>
 
         <!-- 作文批改（含教学模式） -->
@@ -134,7 +158,7 @@
         <div class="teach-step" id="step1">
           <h3>📌 第一步：选择或输入作文题目</h3>
           <div id="topicListContainer">
-            <p class="teach-hint">加载四级常考题目中...</p>
+            <p class="teach-hint">加载<span data-exam-label>四级</span>常考题目中...</p>
           </div>
           <div class="teach-custom-topic">
             <input type="text" id="customTopicInput" placeholder="或手动输入自定义题目">
@@ -202,6 +226,7 @@
   </div>
 
         <script src="js/api.js"></script>
+  <script src="js/cet6_words.js"></script>
   <script src="js/words.js"></script>
   <script src="js/translate.js"></script>
   <script src="js/writing.js"></script>

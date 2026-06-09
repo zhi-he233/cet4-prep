@@ -16235,6 +16235,7 @@ const WORDS = [
   }
 ];
 
+const DEFAULT_CET4_WORDS = WORDS.slice();
 
 function shuffleArray(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -16247,6 +16248,9 @@ function shuffleArray(arr) {
 let currentIndex = 0;
 let mode = 'study';
 let favorites = loadFavoriteRecords();
+let allWords = [];
+let wordFilter = localStorage.getItem('cet_wordFilter') || 'all';
+let wordSearch = '';
 
 const studyModeEl = document.getElementById('studyMode');
 const dictationModeEl = document.getElementById('dictationMode');
@@ -16268,9 +16272,123 @@ const aiQuizBtn = document.getElementById('aiQuizBtn');
 const wordResult = document.getElementById('wordResult');
 const quizResult = document.getElementById('quizResult');
 const wordFileInput = document.getElementById('wordFile');
+const wordFilterSelect = document.getElementById('wordFilterSelect');
+const wordSearchInput = document.getElementById('wordSearchInput');
+const wordStatsLine = document.getElementById('wordStatsLine');
+const knowWordBtn = document.getElementById('knowWordBtn');
+const weakWordBtn = document.getElementById('weakWordBtn');
+
+function getWordBankStorageKey() {
+  return `${getExamLevel()}_wordBank`;
+}
+
+function loadWordsForExamLevel() {
+  const saved = parseJson(localStorage.getItem(getWordBankStorageKey()), null);
+  allWords = [];
+  if (Array.isArray(saved) && saved.length > 0 && saved[0].word) {
+    allWords = saved.slice();
+  } else if (getExamLevel() === 'cet4') {
+    allWords = DEFAULT_CET4_WORDS.slice();
+  } else if (getExamLevel() === 'cet6' && typeof DEFAULT_CET6_WORDS !== 'undefined' && Array.isArray(DEFAULT_CET6_WORDS)) {
+    allWords = DEFAULT_CET6_WORDS.slice();
+  }
+  applyWordFilter();
+}
 
 function getCurrentWord() {
   return WORDS.length > 0 ? WORDS[currentIndex % WORDS.length] : null;
+}
+
+function getWordStats() {
+  return getUserJson('wordStats', {}, null);
+}
+
+function saveWordStats(stats) {
+  setUserJson('wordStats', stats);
+}
+
+function getWordStat(word) {
+  return getWordStats()[word] || {};
+}
+
+function isDueWord(word) {
+  const stat = getWordStat(word.word);
+  return !!stat.dueAt && stat.dueAt <= Date.now();
+}
+
+function isWeakWord(word) {
+  const stat = getWordStat(word.word);
+  return (stat.wrong || 0) > (stat.correct || 0);
+}
+
+function isUnseenWord(word) {
+  return !getWordStat(word.word).seen;
+}
+
+function updateWordReview(word, quality) {
+  if (!word) return;
+  const stats = getWordStats();
+  const current = stats[word.word] || { seen: 0, correct: 0, wrong: 0, streak: 0 };
+  current.seen = (current.seen || 0) + 1;
+  current.lastSeen = Date.now();
+
+  if (quality === 'known' || quality === 'correct') {
+    current.correct = (current.correct || 0) + 1;
+    current.streak = (current.streak || 0) + 1;
+  } else {
+    current.wrong = (current.wrong || 0) + 1;
+    current.streak = 0;
+  }
+
+  const intervals = quality === 'weak' || quality === 'wrong'
+    ? [10 * 60 * 1000]
+    : [24 * 60 * 60 * 1000, 3 * 24 * 60 * 60 * 1000, 7 * 24 * 60 * 60 * 1000, 15 * 24 * 60 * 60 * 1000];
+  const idx = Math.max(0, Math.min((current.streak || 1) - 1, intervals.length - 1));
+  current.dueAt = Date.now() + intervals[idx];
+  stats[word.word] = current;
+  saveWordStats(stats);
+}
+
+function addWrongWord(word) {
+  if (!word) return;
+  const wrongWords = getUserJson('wrongbook', [], 'cet4_wrongbook');
+  wrongWords.push({
+    word: word.word,
+    meaning: word.meaning,
+    wrongTime: new Date().toISOString()
+  });
+  setUserJson('wrongbook', wrongWords);
+}
+
+function applyWordFilter() {
+  let list = allWords.slice();
+  const term = wordSearch.trim().toLowerCase();
+  if (wordFilter === 'due') list = list.filter(isDueWord);
+  else if (wordFilter === 'wrong') list = list.filter(isWeakWord);
+  else if (wordFilter === 'favorites') list = list.filter(w => isFavorited(w.word));
+  else if (wordFilter === 'unseen') list = list.filter(isUnseenWord);
+
+  if (term) {
+    list = list.filter(w =>
+      (w.word || '').toLowerCase().includes(term) ||
+      (w.meaning || '').toLowerCase().includes(term)
+    );
+  }
+
+  WORDS.length = 0;
+  Array.prototype.push.apply(WORDS, list);
+  if (WORDS.length > 0) shuffleArray(WORDS);
+  currentIndex = 0;
+  updateWordStatsLine();
+}
+
+function updateWordStatsLine() {
+  if (!wordStatsLine) return;
+  const stats = getWordStats();
+  const learned = allWords.filter(w => stats[w.word]?.seen).length;
+  const due = allWords.filter(isDueWord).length;
+  const weak = allWords.filter(isWeakWord).length;
+  wordStatsLine.textContent = `当前 ${WORDS.length} / 总 ${allWords.length} 词 · 已学 ${learned} · 今日复习 ${due} · 薄弱 ${weak}`;
 }
 
 function saveFavorites() {
@@ -16296,11 +16414,23 @@ function toggleFavorite(word, meaning) {
     favoriteBtn.classList.add('active');
   }
   saveFavorites();
+  if (wordFilter === 'favorites') {
+    applyWordFilter();
+    switchMode(mode);
+  } else {
+    updateWordStatsLine();
+  }
 }
 
 function refreshWordUserData() {
+  loadWordsForExamLevel();
   favorites = loadFavoriteRecords();
-  updateFavoriteBtn();
+  if (wordFilterSelect) wordFilterSelect.value = wordFilter;
+  if (wordSearchInput) wordSearchInput.value = wordSearch;
+  switchMode('study');
+  showStudyHistory();
+  wordResult.textContent = '';
+  quizResult.textContent = '';
 }
 
 function updateFavoriteBtn() {
@@ -16318,10 +16448,13 @@ function updateFavoriteBtn() {
 function showStudyView() {
   const w = getCurrentWord();
   if (!w) {
-    studyWordEl.textContent = '无单词数据';
+    studyWordEl.textContent = allWords.length ? '无筛选结果' : `暂无${getExamLabel()}词库`;
     studyPhoneticEl.textContent = '';
-    studyMeaningEl.textContent = '';
+    studyMeaningEl.textContent = allWords.length ? '换一个筛选条件或清空搜索' : `可以导入${getExamLabel()} JSON 词库`;
+    studyMeaningEl.style.display = 'block';
     toggleMeaningBtn.textContent = '显示释义';
+    favoriteBtn.classList.remove('active');
+    favoriteBtn.textContent = '☆ 收藏';
     return;
   }
   studyWordEl.textContent = w.word || '?';
@@ -16334,7 +16467,12 @@ function showStudyView() {
 
 function showDictationView() {
   const w = getCurrentWord();
-  if (!w) return;
+  if (!w) {
+    dictationMeaningEl.textContent = allWords.length ? '当前筛选没有单词' : `暂无${getExamLabel()}词库，请先导入 JSON 词库`;
+    dictationInput.value = '';
+    spellResult.innerHTML = '';
+    return;
+  }
   dictationMeaningEl.textContent = w.meaning || '';
   dictationInput.value = '';
   spellResult.innerHTML = '';
@@ -16354,11 +16492,42 @@ function switchMode(newMode) {
 }
 
 function nextWord() {
+  if (WORDS.length === 0) return;
   currentIndex = (currentIndex + 1) % WORDS.length;
   if (mode === 'study') showStudyView();
   else showDictationView();
   wordResult.textContent = '';
   quizResult.textContent = '';
+}
+
+function advanceAfterReview() {
+  if (['due', 'wrong', 'unseen'].includes(wordFilter)) {
+    applyWordFilter();
+  } else {
+    nextWord();
+  }
+  if (mode === 'study') showStudyView();
+  else showDictationView();
+}
+
+function focusWord(word) {
+  const target = String(word || '').toLowerCase();
+  if (!target) return;
+  let idx = WORDS.findIndex(w => w.word === target);
+  if (idx === -1) {
+    wordFilter = 'all';
+    if (wordFilterSelect) wordFilterSelect.value = wordFilter;
+    localStorage.setItem('cet_wordFilter', wordFilter);
+    wordSearch = target;
+    if (wordSearchInput) wordSearchInput.value = wordSearch;
+    applyWordFilter();
+    idx = WORDS.findIndex(w => w.word === target);
+  }
+  if (idx >= 0) {
+    currentIndex = idx;
+    document.querySelector('[data-tab="words"]')?.click();
+    switchMode('study');
+  }
 }
 
 // ========== 事件绑定 ==========
@@ -16383,11 +16552,17 @@ checkSpellBtn.addEventListener('click', () => {
   const answer = dictationInput.value.trim().toLowerCase();
   const correct = w.word.toLowerCase();
   if (answer === correct) {
+    updateWordReview(w, 'correct');
+    recordStudy('spell', w.word, w.meaning, true);
     spellResult.innerHTML = '<span style="color:green; font-weight:bold;">✅ 完全正确！</span>';
-    setTimeout(nextWord, 1500);
+    setTimeout(advanceAfterReview, 1500);
   } else {
+    updateWordReview(w, 'wrong');
+    recordStudy('spell', w.word, w.meaning, false);
+    addWrongWord(w);
     spellResult.innerHTML = `<span style="color:red;">❌ 拼写错误，正确答案是：<strong>${w.word}</strong></span>`;
   }
+  updateWordStatsLine();
 });
 
 nextWordAfterCheckBtn.addEventListener('click', nextWord);
@@ -16396,6 +16571,38 @@ favoriteBtn.addEventListener('click', () => {
   const w = getCurrentWord();
   if (!w) return;
   toggleFavorite(w.word, w.meaning);
+});
+
+knowWordBtn.addEventListener('click', () => {
+  const w = getCurrentWord();
+  if (!w) return;
+  updateWordReview(w, 'known');
+  recordStudy('review', w.word, w.meaning, true);
+  updateWordStatsLine();
+  advanceAfterReview();
+});
+
+weakWordBtn.addEventListener('click', () => {
+  const w = getCurrentWord();
+  if (!w) return;
+  updateWordReview(w, 'weak');
+  recordStudy('review', w.word, w.meaning, false);
+  addWrongWord(w);
+  updateWordStatsLine();
+  advanceAfterReview();
+});
+
+wordFilterSelect.addEventListener('change', () => {
+  wordFilter = wordFilterSelect.value;
+  localStorage.setItem('cet_wordFilter', wordFilter);
+  applyWordFilter();
+  switchMode(mode);
+});
+
+wordSearchInput.addEventListener('input', () => {
+  wordSearch = wordSearchInput.value;
+  applyWordFilter();
+  switchMode(mode);
 });
 
 aiExplainBtn.addEventListener('click', async () => {
@@ -16420,12 +16627,11 @@ wordFileInput.addEventListener('change', (e) => {
     try {
       const data = JSON.parse(ev.target.result);
       if (Array.isArray(data) && data.length > 0 && data[0].word) {
-        WORDS.length = 0;
-        Array.prototype.push.apply(WORDS, data);
-        shuffleArray(WORDS);
-        currentIndex = 0;
+        allWords = data.slice();
+        localStorage.setItem(getWordBankStorageKey(), JSON.stringify(data));
+        applyWordFilter();
         switchMode('study');
-        alert('成功导入 ' + data.length + ' 个单词！');
+        alert(`已导入 ${data.length} 个${getExamLabel()}单词！`);
       } else {
         alert('JSON 格式错误');
       }
@@ -16437,11 +16643,13 @@ wordFileInput.addEventListener('change', (e) => {
 });
 
 // 初始化
+loadWordsForExamLevel();
+if (wordFilterSelect) wordFilterSelect.value = wordFilter;
 if (WORDS.length > 0) {
-  shuffleArray(WORDS);
   switchMode('study');
 } else {
-  studyWordEl.textContent = '暂无单词';
+  studyWordEl.textContent = `暂无${getExamLabel()}词库`;
   studyPhoneticEl.textContent = '';
-  studyMeaningEl.textContent = '请导入词库或运行生成脚本';
+  studyMeaningEl.textContent = `请导入${getExamLabel()} JSON 词库`;
+  studyMeaningEl.style.display = 'block';
 }
