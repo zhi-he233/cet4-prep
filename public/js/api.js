@@ -1,4 +1,4 @@
-const API = {
+﻿const API = {
   async post(url, data) {
     try {
       const headers = { 'Content-Type': 'application/json' };
@@ -112,9 +112,7 @@ function saveUsers(users) {
   localStorage.setItem('cet4_users', JSON.stringify(users));
 }
 function getCurrentUserId() {
-  const select = document.getElementById('userSelect');
-  if (select && select.value) return select.value;
-  return localStorage.getItem('cet4_currentUser') || '默认用户';
+  return (typeof currentUser !== 'undefined' && currentUser && currentUser.username) ? currentUser.username : (localStorage.getItem('cet4_currentUser') || '默认用户');
 }
 
 function parseJson(value, fallback) {
@@ -202,11 +200,6 @@ function initUserSelect() {
   updateExamLevelText();
   applyThemeMode();
 }
-// 新建用户
-document.getElementById('newUserBtn').addEventListener('click', () => {
-  document.getElementById('newUserName').style.display = 'inline';
-  document.getElementById('confirmNewUser').style.display = 'inline';
-});
 document.getElementById('confirmNewUser').addEventListener('click', () => {
   const name = document.getElementById('newUserName').value.trim();
   if (!name) return;
@@ -221,3 +214,4 @@ document.getElementById('confirmNewUser').addEventListener('click', () => {
   document.getElementById('newUserName').style.display = 'none';
   document.getElementById('confirmNewUser').style.display = 'none';
 });
+
