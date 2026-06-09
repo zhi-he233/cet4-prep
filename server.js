@@ -441,6 +441,39 @@ app.post('/api/writing/vocabulary', async (req, res) => {
 });
 
 
+
+// ========== AI Daily Reading ==========
+app.get('/api/reading/daily', async (req, res) => {
+  try {
+    const level = req.query.level || 'cet4';
+    const exam = getExamConfig(level);
+    const seed = Date.now().toString(36);
+    const content = await askDeepSeek(
+      `你是${exam.label}英语阅读老师。请原创一篇适合${exam.label}水平的英文短文（300-400词），主题不限（科技、文化、社会、环境、教育等）。要求：语言地道，难度适中，有3-4个自然段落。只输出纯文本短文，不要标题，不要任何解释。`,
+      `请生成一篇新的${exam.label}阅读短文，随机种子：${seed}`
+    );
+    res.json({ article: content.trim(), level });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+
+// ========== Reading Explain ==========
+app.post('/api/reading/explain', async (req, res) => {
+  try {
+    const { passage, question, options, answer } = req.body;
+    if (!question) return res.status(400).json({ error: 'missing question' });
+    const content = await askDeepSeek(
+      '你是英语阅读老师。请用中文简要解析这道阅读题：说明正确答案为什么对，每个错误选项为什么错（1-2句话即可）。格式：先给答案，再逐项解析。',
+      `文章片段：${passage ? passage.substring(0, 500) : '无'}\n题目：${question}\n选项：${(options||[]).join(' / ')}\n正确答案：${answer}`
+    );
+    res.json({ explanation: content });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // ========== Listening ==========
 
 const EXAM_BASE = (() => { const p = process.env.EXAM_DATA_PATH; if (p) return p; try { return require('path').join(process.env.USERPROFILE || process.env.HOME || __dirname, 'exam_data'); } catch(e) { return require('path').join(__dirname, 'exam_data'); } })();
@@ -629,6 +662,8 @@ const PORT = process.env.PORT || 8080;
 try { require('fs').mkdirSync(require('path').join(__dirname, 'data'), { recursive: true }); } catch(e) {}
 
 app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
+
+
 
 
 

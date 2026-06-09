@@ -1,4 +1,4 @@
-const chineseDisplay = document.getElementById('chineseDisplay');
+﻿const chineseDisplay = document.getElementById('chineseDisplay');
 const translationInput = document.getElementById('translationInput');
 const evaluateBtn = document.getElementById('evaluateTranslationBtn');
 const translateResult = document.getElementById('translateResult');
@@ -62,6 +62,8 @@ evaluateBtn.addEventListener('click', async () => {
   });
   translateResult.innerHTML = data.evaluation ? marked.parse(data.evaluation) : ('出错：' + (data.error || ''));
   evaluateBtn.disabled = false;
+
+  translateResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
   // 保存完整记录（含 evaluation 详情）
   if (data.evaluation) {
@@ -130,3 +132,4 @@ function showTranslateReviewPanel(item, index, compact) {
 }
 
 // getCurrentUserId 已在 api.js 中定义
+

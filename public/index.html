@@ -46,6 +46,7 @@
         <option value="cet6">六级 CET-6</option>
       </select>
       <button id="themeToggleBtn" type="button">深色模式</button>
+      <button id="layoutToggleBtn" type="button">📺 桌面版</button>
     </div>
 
     <nav class="tabs">
@@ -61,7 +62,16 @@
     <section id="tab-reading" class="tab-content">
       <div id="readingContent">
         <p>加载试卷列表中...</p>
-      </div>`n      <div id="listeningSection" style="margin-top:1.5rem;">`n        <div style="text-align:center;padding:1rem 0;">`n          <span style="color:var(--text-muted);font-size:0.85rem;">更多训练：</span>`n          <button class="sub-tab-btn" onclick="loadListeningList()" style="margin-left:0.5rem;">🎧 听力训练</button>`n          <button class="sub-tab-btn" onclick="loadExamSelector()" style="margin-left:0.5rem;">📝 模拟考试</button>`n        </div>`n        <div id="listeningContent" style="margin-top:0.5rem;"></div>`n        <div id="mockExamContent" style="margin-top:0.5rem;"></div>`n      </div>
+      </div>
+      <div id="listeningSection" style="margin-top:1.5rem;">
+        <div style="text-align:center;padding:1rem 0;">
+          <span style="color:var(--text-muted);font-size:0.85rem;">更多训练：</span>
+          <button class="sub-tab-btn" onclick="loadListeningList()" style="margin-left:0.5rem;">🎧 听力训练</button>
+          <button class="sub-tab-btn" onclick="loadExamSelector()" style="margin-left:0.5rem;">📝 模拟考试</button>
+        </div>
+        <div id="listeningContent" style="margin-top:0.5rem;"></div>
+        <div id="mockExamContent" style="margin-top:0.5rem;"></div>
+      </div>
     </section>
 
     <!-- 背单词模块 -->
@@ -233,7 +243,9 @@
   <script src="js/auth.js"></script>
   <script src="js/cet6_words.js"></script>
   <script src="js/words.js"></script>
-  <script src="js/reading.js"></script>`n  <script src="js/listening.js"></script>`n  <script src="js/mockexam.js"></script>
+  <script src="js/reading.js"></script>
+  <script src="js/listening.js"></script>
+  <script src="js/mockexam.js"></script>
   <script src="js/translate.js"></script>
   <script src="js/writing.js"></script>
   <script src="js/exam.js"></script>
@@ -244,6 +256,15 @@
   <script>
     // Initialize user select and auth
     initUserSelect();
+
+    // Auth modal overlay click to close
+    document.getElementById('authModal').addEventListener('click', function(e) {
+      if (e.target === this) hideAuthModal();
+    });
+    // Detail modal overlay click to close
+    document.getElementById('detailModal').addEventListener('click', function(e) {
+      if (e.target === this) this.style.display = 'none';
+    });
 
     // Auth modal tab switching
     document.querySelectorAll('.auth-tab-btn').forEach(btn => {
@@ -298,12 +319,49 @@
         if (b.dataset.tab === 'favorites') loadFavorites();
         if (b.dataset.tab === 'translate') showTranslateHistory();
         if (b.dataset.tab === 'words') showStudyHistory();
+
+    // Layout toggle - desktop/phone
+    (function(){
+      const lb = document.getElementById('layoutToggleBtn');
+      if (!lb) return;
+      lb.onclick = function(){
+        const w = document.body.classList.toggle('layout-desktop');
+        lb.textContent = w ? '📱 手机版' : '📺 桌面版';
+        localStorage.setItem('cet_layout', w?'desktop':'phone');
+      };
+      if ((localStorage.getItem('cet_layout')||'desktop')==='desktop'){
+        document.body.classList.add('layout-desktop');
+        lb.textContent='📱 手机版';
+      }
+    })();
         if (b.dataset.tab === 'chat') loadChat();
       });
     });
     showStudyHistory();
+
+    // Layout toggle - desktop/phone
+    (function(){
+      const lb = document.getElementById('layoutToggleBtn');
+      if (!lb) return;
+      lb.onclick = function(){
+        const w = document.body.classList.toggle('layout-desktop');
+        lb.textContent = w ? '📱 手机版' : '📺 桌面版';
+        localStorage.setItem('cet_layout', w?'desktop':'phone');
+      };
+      if ((localStorage.getItem('cet_layout')||'desktop')==='desktop'){
+        document.body.classList.add('layout-desktop');
+        lb.textContent='📱 手机版';
+      }
+    })();
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
 
 

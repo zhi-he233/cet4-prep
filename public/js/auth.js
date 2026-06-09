@@ -1,4 +1,4 @@
-// ========== Auth Module ==========
+﻿// ========== Auth Module ==========
 let authToken = localStorage.getItem('cet4token');
 let currentUser = null;
 
@@ -150,7 +150,15 @@ function updateAuthUI() {
 }
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  if (isLoggedIn()) {
+    try {
+      const res = await fetch('/api/auth/me', { headers: getAuthHeaders() });
+      const data = await res.json();
+      if (data.user) { currentUser = data.user; localStorage.setItem('cet4_currentUser', data.user.username); }
+    } catch(e) {}
+    syncUserDataFromServer();
+  }
   updateAuthUI();
-  if (isLoggedIn()) syncUserDataFromServer();
 });
+
