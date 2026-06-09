@@ -1,4 +1,4 @@
-// ========== 翻译历史 ==========
+﻿// ========== 翻译历史 ==========
 function getTranslateHistory(uid) {
   return getUserJson('translateHistory', [], `${uid}_translateHistory`);
 }
@@ -42,6 +42,20 @@ function showTranslateHistory() {
 
 document.getElementById('historySearch')?.addEventListener('input', showTranslateHistory);
 
+
+function clearTranslateHistory() {
+  const uid = getCurrentUserId();
+  saveTranslateHistory(uid, []);
+  showTranslateHistory();
+}
+
+function clearWritingHistory() {
+  const uid = getCurrentUserId();
+  saveWritingHistory(uid, []);
+  showTranslateHistory();
+}
+window.clearTranslateHistory = clearTranslateHistory;
+window.clearWritingHistory = clearWritingHistory;
 function deleteTranslateItem(index) {
   const uid = getCurrentUserId();
   const records = getTranslateHistory(uid);
@@ -102,3 +116,4 @@ function clearStudyHistory() {
 }
 
 // getCurrentUserId 已在 api.js 中定义
+
