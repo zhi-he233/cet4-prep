@@ -1214,6 +1214,44 @@ body.theme-dark .audio-player-box { background: #1e293b; }
 .exam-textarea { width: 100%; min-height: 200px; font-size: 0.95rem; line-height: 1.8; }
 .exam-passage { background: #f8fafc; padding: 0.8rem; border-radius: var(--radius-sm); margin-bottom: 0.8rem; line-height: 1.8; }
 .exam-footer { text-align: center; margin-top: 1rem; }
+/* Exam left-right split layout */
+.exam-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 400px;
+}
+.exam-container .exam-nav {
+  flex: none;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0;
+}
+.exam-container .exam-body {
+  flex: 1;
+  min-height: 0;
+}
+body.layout-desktop .exam-container {
+  flex-direction: row;
+  align-items: flex-start;
+}
+body.layout-desktop .exam-container .exam-nav {
+  flex: 0 0 210px;
+  flex-direction: column;
+  position: sticky;
+  top: 0.5rem;
+}
+body.layout-desktop .exam-container .exam-nav-btn {
+  text-align: left;
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  width: 100%;
+}
+body.layout-desktop .exam-container .exam-body {
+  overflow: auto;
+}
 .exam-mark { cursor: pointer; transition: 0.1s; }
 .exam-mark:hover { background-color: rgba(239,68,68,0.3) !important; }
 .q-opt-label { display: block; padding: 0.35rem 0.6rem; border: 1.5px solid var(--border); border-radius: 4px; margin: 0.15rem 0; cursor: pointer; font-size: 0.85rem; transition: 0.1s; }

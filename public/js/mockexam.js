@@ -37,10 +37,14 @@ async function startExam(paperId, title) {
   if (!confirm('开始模拟考试：' + title + '\n\n考试将计时进行，时间到自动提交。确定开始吗？')) return;
 
   const data = await API.get('/api/papers/' + paperId);
-  if (data.error) { alert('加载试卷失败'); return; }
-  examPaper = data.paper;
-  examPaperId = paperId;
-  examAnswers = {};
+ if (data.error) { alert('加载试卷失败'); return; }
+examPaper = data.paper;
+examPaperId = paperId;
+  // Dynamically add listening section
+  const mm = String(examPaper.month).padStart(2, '0');
+  const audioUrl = `/api/listening/audio/${examPaper.level}_${examPaper.year}_${mm}_s1.mp3`;
+  examPaper.sections.splice(1, 0, { type: 'listening', title: '🎧 Part II 听力理解', audioUrl: audioUrl });
+ examAnswers = {};
   examSeconds = EXAM_DURATIONS[examPaper.level] || EXAM_DURATIONS.cet4;
 
   renderExamUI();
@@ -55,9 +59,11 @@ function renderExamUI() {
       <h2>📝 ${examPaper.title}</h2>
       <button class="btn-secondary" id="exitExamBtn">退出考试</button>
     </div>
-    <div class="exam-nav" id="examNav"></div>
-    <div class="exam-body" id="examBody"></div>
-    <div class="exam-footer">
+    <div class="exam-container">
+      <div class="exam-nav" id="examNav"></div>
+      <div class="exam-body" id="examBody"></div>
+    </div>
+   <div class="exam-footer">
       <button class="btn-primary" id="submitExamBtn">📤 提交试卷</button>
     </div>
   `;
@@ -126,14 +132,14 @@ function switchSection(idx) {
   } else if (sec.type === 'reading') {
     // Add passage ID for this section
     const realIdx = examPaper.sections.indexOf(sec);
-    html += '<div class="exam-reading"><div class="reading-passage markable" id="examPassage-' + realIdx + '">';
+    html += '<div class="paper-sbs-layout"><div class="paper-sbs-passage"><div class="reading-passage markable" id="examPassage-' + realIdx + '">';
     const words = (sec.passage || '').split(' ');
     words.forEach(w => {
       html += '<span class="clickable-word">' + w + '</span> ';
     });
-    html += '</div>';
+    html += '</div></div>';
     if (sec.questions && sec.questions.length > 0) {
-      html += '<div class="paper-questions">';
+      html += '<div class="paper-sbs-questions"><div class="paper-questions">';
       sec.questions.forEach((q, qi) => {
         const key = 'q_' + realIdx + '_' + qi;
         html += '<div class="quiz-question-item"><div class="q-text">' + (qi+1) + '. ' + q.question + '</div>';
@@ -148,10 +154,16 @@ function switchSection(idx) {
         }
         html += '</div>';
       });
-      html += '</div>';
+      html += '</div></div>';
     }
+   html += '</div>';
+  } else if (sec.type === 'listening') {
+    html += '<div class="exam-listening">';
+    html += '<div class="audio-player-box"><audio id="examListeningAudio" controls src="' + (sec.audioUrl || '') + '" preload="auto"></audio></div>';
+    html += '<button class="btn-primary" id="loadExamListeningBtn" onclick="loadExamListeningQuestions()">📋 加载听力题目</button>';
+    html += '<div id="examListeningQuestions"></div>';
     html += '</div>';
-  } else if (sec.type === 'translation') {
+ } else if (sec.type === 'translation') {
     html += '<div class="exam-translation"><div class="exam-passage markable" style="font-size:1.2rem;">' + (sec.passage || '无原文') + '</div><textarea class="exam-textarea" id="examTranslation" placeholder="在此输入英文翻译..." rows="6">' + (examAnswers['translation'] || '') + '</textarea></div>';
   }
 
@@ -294,7 +306,7 @@ async function loadExamListeningQuestions(secIdx) {
 function renderExamListeningQuestions(questions) {
   const container = document.getElementById('examListeningQuestions');
   if (!container) return;
-  let html = '<div class="paper-questions"><h3>📋 听力题目</h3>';
+  let html = '<div class="paper-sbs-questions"><div class="paper-questions"><h3>📋 听力题目</h3>';
   let currentSection = '';
   questions.forEach((q, idx) => {
     if (q.section && q.section !== currentSection) {

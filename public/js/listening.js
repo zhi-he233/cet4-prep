@@ -61,7 +61,7 @@ async function loadListeningQuestions() {
   btn.disabled = true;
   btn.textContent = 'AI 解析中...';
 
-  const data = await API.post('/api/listening/questions', { pdfPath: currentExercise.pdfPath, level: currentExercise.level, year: currentExercise.year, month: currentExercise.month });
+  const data = await API.post('/api/listening/questions', { level: currentExercise.level, year: currentExercise.year, month: currentExercise.month });
   
   if (data.questions && data.questions.length > 0) {
     listeningQuestions = data.questions;

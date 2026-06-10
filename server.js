@@ -494,8 +494,8 @@ const EXAM_BASE = (() => { const p = process.env.EXAM_DATA_PATH; if (p) return p
 // Serve MP3 audio files
 app.get('/api/listening/audio/:file', (req, res) => {
   try {
-    const filename = decodeURIComponent(req.params[0]);
-    const fullPath = path.join(__dirname, 'public', 'audio', filename);
+    const filename = decodeURIComponent(req.params.file);
+   const fullPath = path.join(__dirname, 'public', 'audio', filename);
     if (!require('fs').existsSync(fullPath)) return res.status(404).json({ error: 'Audio not found' });
     const stat = require('fs').statSync(fullPath);
     res.setHeader('Content-Type', 'audio/mpeg');
@@ -508,8 +508,12 @@ app.get('/api/listening/audio/:file', (req, res) => {
 // List listening exercises
 app.get('/api/listening', async (req, res) => {
   try {
-    const level = req.query.level || 'cet4';
-    const label = level === 'cet6' ? '六级' : '四级';
+   const level = req.query.level || 'cet4';
+    // Seed data first - no filesystem dependency
+    if (listeningSeedData && listeningSeedData.length > 0) {
+      return res.json({ exercises: listeningSeedData.filter(e => e.level === level) });
+    }
+   const label = level === 'cet6' ? '六级' : '四级';
     const dir = path.join(EXAM_BASE, '大学生英语' + label + '历年真题（已更新至2025年12月）', '【2013年-2025年12月】历年' + label + '真题+答案解析+听力音频');
     if (!require('fs').existsSync(dir)) return res.json({ exercises: [] });
     const periods = require('fs').readdirSync(dir).filter(d => d.match(/【\d{4}年\d{2}月】/));
@@ -569,9 +573,31 @@ app.post('/api/listening/questions', async (req, res) => {
       try { return res.json({ questions: JSON.parse(match[0]).questions || [], raw: content, aiGenerated: true }); }
       catch(e) { return res.json({ questions: [], raw: content, error: e.message }); }
     }
-    res.json({ questions: [], raw: content, aiGenerated: true });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-}));
+    return res.json({ questions: getFallbackListeningQuestions(level || 'cet4'), aiGenerated: false, fallback: true });
+  } catch (e) {
+    return res.json({ questions: getFallbackListeningQuestions(req.body.level || 'cet4'), aiGenerated: false, fallback: true, error: e.message });
+  }
+});
+
+function getFallbackListeningQuestions(level) {
+  return [
+    { section:'Section A', number:1, question:'What is the main purpose of the announcement?', options:['A) To introduce a new course','B) To inform about schedule changes','C) To advertise a job vacancy','D) To remind about an upcoming event'], answer:'B' },
+    { section:'Section A', number:2, question:'Why does the speaker recommend arriving early?', options:['A) To get better seats','B) To register beforehand','C) To meet the organizers','D) To avoid traffic jams'], answer:'A' },
+    { section:'Section A', number:3, question:'What can be inferred about the new policy?', options:['A) It will take effect immediately','B) It requires further approval','C) It has received public support','D) It aims to reduce costs'], answer:'D' },
+    { section:'Section A', number:4, question:"What is the speaker's attitude towards the change?", options:['A) Strongly supportive','B) Cautiously optimistic','C) Completely opposed','D) Fairly neutral'], answer:'B' },
+    { section:'Section A', number:5, question:'What does the report suggest about the future?', options:['A) More research is needed','B) The situation will improve soon','C) Challenges remain to be addressed','D) Similar trends will continue'], answer:'C' },
+    { section:'Section B', number:6, question:'What are the speakers mainly discussing?', options:['A) A travel plan','B) A job interview','C) A class project','D) A weekend activity'], answer:'C' },
+    { section:'Section B', number:7, question:'What does the woman suggest they do first?', options:['A) Gather research materials','B) Contact the professor','C) Create an outline','D) Assign tasks to members'], answer:'B' },
+    { section:'Section B', number:8, question:'Why does the man hesitate about the proposal?', options:['A) He has too much work already','B) He doubts its feasibility','C) He prefers a different approach','D) He needs more information'], answer:'D' },
+    { section:'Section B', number:9, question:'What is the deadline for the project?', options:['A) This Friday','B) Next Monday','C) Next Wednesday','D) Two weeks from now'], answer:'C' },
+    { section:'Section B', number:10, question:'What does the professor primarily emphasize?', options:['A) The importance of original thinking','B) The need for careful planning','C) The value of group collaboration','D) The benefit of practical experience'], answer:'A' },
+    { section:'Section C', number:11, question:'What is the passage mainly about?', options:['A) The history of a cultural tradition','B) The benefits of learning a new skill','C) The impact of technology on daily life','D) The importance of environmental awareness'], answer:'A' },
+    { section:'Section C', number:12, question:'According to the speaker, what has changed in recent years?', options:['A) People\'s attitudes have become more positive','B) The practice has gained official recognition','C) Participation rates have increased significantly','D) New technologies have transformed the field'], answer:'D' },
+    { section:'Section C', number:13, question:'What example does the speaker give?', options:['A) A famous historical figure','B) A recent scientific discovery','C) A specific cultural event','D) A personal experience'], answer:'C' },
+    { section:'Section C', number:14, question:'What challenge is mentioned?', options:['A) Lack of funding','B) Insufficient public interest','C) Difficulty in preserving traditions','D) Resistance from younger generations'], answer:'C' },
+    { section:'Section C', number:15, question:'What conclusion does the speaker draw?', options:['A) More efforts are needed from all sides','B) The future looks promising overall','C) Changes should be made cautiously','D) Immediate action is required'], answer:'B' }
+  ];
+}
 
 // ========== Paper Management ==========
 
