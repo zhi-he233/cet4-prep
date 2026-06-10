@@ -14,188 +14,78 @@
       },
       {
         "type": "listening",
-        "title": "Part II Listening Comprehension",
-        "passage": "",
+        "title": "Part II Listening Comprehension (25 minutes)",
+        "passage": "Section A Directions: In this section, you will hear three news reports. At the end of each news report, you will hear two or three questions. Both the news report and the questions will be spoken only once. After you hear a question, you must choose the best answer from the four choices marked A), B), C) and D). Then mark the corresponding letter on Answer Sheet 1 with a single line through the centre.",
         "questions": [
           {
-            "section": "A",
-            "number": 1,
-            "question": "What is the main topic of the news report?",
+            "question": "Questions 1 and 2 are based on the news report you have just heard. Question 1:",
             "options": [
-              "A new energy policy",
-              "A scientific breakthrough",
-              "A natural disaster",
-              "A political election"
+              "A) She is making a special effort to be recognized.",
+              "B) She has been living in Fayetteville for 25 years.",
+              "C) She has been driving a school bus ever since 2009.",
+              "D) She is the longest-serving bus driver in Fayetteville."
             ],
-            "answer": "C"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 2,
-            "question": "According to the report, how many people were affected by the event?",
+            "question": "Question 2:",
             "options": [
-              "Over 100",
-              "Around 500",
-              "More than 1000",
-              "Exactly 2000"
+              "A) The importance of their service to the city.",
+              "B) The number of riders they serve in the city.",
+              "C) The proclamation issued early this week.",
+              "D) The significance of the event to take place on March 18."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 3,
-            "question": "What measure did the government take in response?",
+            "question": "Questions 3 and 4 are based on the news report you have just heard. Question 3:",
             "options": [
-              "Declared a state of emergency",
-              "Provided financial aid",
-              "Sent rescue teams",
-              "All of the above"
+              "A) Budgeted $56.7 million for the coming school year.",
+              "B) Requested to raise teachers' salaries by 3 percent.",
+              "C) Proposed spending increase of 5.99 percent.",
+              "D) Kept raising the fund for at least 8 budget cycles."
             ],
-            "answer": "D"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 4,
-            "question": "What is the expected duration of the relief effort?",
+            "question": "Question 4:",
             "options": [
-              "Several days",
-              "A few weeks",
-              "At least a month",
-              "Until next year"
+              "A) Decrease in salaries for school administrators.",
+              "B) Reduction in federal and state funding.",
+              "C) Firing of less qualified faculty members.",
+              "D) Closing of some less competitive schools."
             ],
-            "answer": "C"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 5,
-            "question": "What did the local residents complain about?",
+            "question": "Questions 5 to 7 are based on the news report you have just heard. Question 5:",
             "options": [
-              "Slow response",
-              "Lack of food",
-              "Poor communication",
-              "Inadequate shelter"
+              "A) They often take place in the Scottish highlands.",
+              "B) They usually happen in the middle of the night.",
+              "C) Their damage can be as serious as that of bombs.",
+              "D) Their loud claps can be confused with explosions."
             ],
-            "answer": "A"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 6,
-            "question": "What is the woman planning to do this weekend?",
+            "question": "Question 6:",
             "options": [
-              "Go hiking",
-              "Visit a museum",
-              "Attend a concert",
-              "Stay at home"
+              "A) They sent out a message to calm the town.",
+              "B) They promised to stop the construction work.",
+              "C) They told the people the military exercises were over.",
+              "D) They set off to inspect the site of the plane crash."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 7,
-            "question": "Why does the man suggest changing the plan?",
+            "question": "Question 7:",
             "options": [
-              "The weather is bad",
-              "He has to work",
-              "The museum is closed",
-              "He prefers a different activity"
+              "A) Keep warm.",
+              "B) Take caution.",
+              "C) Avoid driving.",
+              "D) Use a service."
             ],
-            "answer": "A"
-          },
-          {
-            "section": "B",
-            "number": 8,
-            "question": "Where does the conversation most likely take place?",
-            "options": [
-              "In a classroom",
-              "In a restaurant",
-              "In a library",
-              "In a park"
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "B",
-            "number": 9,
-            "question": "What is the relationship between the two speakers?",
-            "options": [
-              "Teacher and student",
-              "Doctor and patient",
-              "Employer and employee",
-              "Friends"
-            ],
-            "answer": "D"
-          },
-          {
-            "section": "B",
-            "number": 10,
-            "question": "What does the woman agree to do at the end?",
-            "options": [
-              "Meet earlier",
-              "Reschedule the plan",
-              "Bring some food",
-              "Invite more people"
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "C",
-            "number": 11,
-            "question": "What is the speaker mainly discussing?",
-            "options": [
-              "The benefits of exercise",
-              "The importance of sleep",
-              "The dangers of stress",
-              "The value of a balanced diet"
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "C",
-            "number": 12,
-            "question": "According to the passage, what is one recommended way to manage stress?",
-            "options": [
-              "Working longer hours",
-              "Listening to music",
-              "Eating more",
-              "Watching TV"
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "C",
-            "number": 13,
-            "question": "What does the speaker say about chronic stress?",
-            "options": [
-              "It is easy to ignore",
-              "It can cause health problems",
-              "It only affects adults",
-              "It is not serious"
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "C",
-            "number": 14,
-            "question": "What example does the speaker give for physical activity?",
-            "options": [
-              "Running",
-              "Yoga",
-              "Walking",
-              "Swimming"
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "C",
-            "number": 15,
-            "question": "What is the speaker's final advice?",
-            "options": [
-              "Seek professional help",
-              "Take a vacation",
-              "Talk to friends",
-              "All of the above"
-            ],
-            "answer": "D"
+            "answer": ""
           }
         ]
       },
@@ -638,188 +528,158 @@
       },
       {
         "type": "listening",
-        "title": "Part II Listening Comprehension",
+        "title": "Part II Listening Comprehension (25 minutes)",
         "passage": "",
         "questions": [
           {
-            "section": "A",
-            "number": 1,
-            "question": "What is the main purpose of the new government policy mentioned in the news report?",
+            "question": "Questions 1 and 2 are based on the news report you have just heard. 1. What does the news report say about the two people?",
             "options": [
-              "A. To reduce carbon emissions",
-              "B. To promote electric vehicle usage",
-              "C. To increase public transport funding",
-              "D. To ban private cars in city centers"
+              "A) Their brains work in harmony.",
+              "B) They are generally the same age.",
+              "C) Their interests are quite similar.",
+              "D) They have the same ethnic background."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 2,
-            "question": "According to the report, how many people were rescued from the flood in the southern province?",
+            "question": "2. What does the speaker say about friendship?",
             "options": [
-              "A. Over 200",
-              "B. Approximately 150",
-              "C. More than 300",
-              "D. Exactly 250"
+              "A) It can be touching.",
+              "B) It is hard to predict.",
+              "C) It can work both ways.",
+              "D) It resembles family ties."
             ],
-            "answer": "C"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 3,
-            "question": "What caused the delay in the international flight at the airport?",
+            "question": "Questions 3 and 4 are based on the news report you have just heard. 3. What did the two men decide to do?",
             "options": [
-              "A. Bad weather conditions",
-              "B. Technical problems with the aircraft",
-              "C. A security alert",
-              "D. Staff shortage"
+              "A) Search for their half-brothers.",
+              "B) Identify their biological fathers.",
+              "C) Find out more about their ancestry.",
+              "D) See whether they are actually related."
             ],
-            "answer": "A"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 4,
-            "question": "What did the scientists discover about the newly found species?",
+            "question": "4. What do we learn about the two men from the news report?",
             "options": [
-              "A. It can survive in extreme cold",
-              "B. It produces a rare chemical",
-              "C. It is related to ancient plants",
-              "D. It lives only in deep oceans"
+              "A) They were both given up for adoption.",
+              "B) They were born to the same mother.",
+              "C) They flew 737 airplanes as pilots.",
+              "D) They were both 60 years of age."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 5,
-            "question": "What is the focus of the international conference held this week?",
+            "question": "Questions 5 to 7 are based on the news report you have just heard. 5. What made the five tourists decide to clean up the beach?",
             "options": [
-              "A. Global health issues",
-              "B. Climate change solutions",
-              "C. Space exploration",
-              "D. Economic cooperation"
+              "A) One of his friends was caught littering.",
+              "B) Other tourists refused to join in the cleanup.",
+              "C) The beautiful beach was spoiled with lots of trash.",
+              "D) The kilometer-long beach was practically deserted."
             ],
-            "answer": "D"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 6,
-            "question": "What are the speakers mainly discussing?",
+            "question": "6. Who videotaped the cleanup?",
             "options": [
-              "A. A plan to start a small business",
-              "B. Their favorite movies",
-              "C. A recent trip to the beach",
-              "D. The man's new job offer"
+              "A) A passerby.",
+              "B) A local woman.",
+              "C) The beach authorities.",
+              "D) One of the five tourists."
             ],
-            "answer": "A"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 7,
-            "question": "Why does the woman suggest postponing the opening date?",
+            "question": "7. What does the news report say about the beach?",
             "options": [
-              "A. They lack enough capital",
-              "B. The location is not ready",
-              "C. A competitor opened nearby",
-              "D. They need more staff training"
+              "A) The tourists' good deed was not noticed by the locals.",
+              "B) Some natives were selling poor-quality food to tourists.",
+              "C) The number of tourists to the beach is on a steady decline.",
+              "D) It was tourists not natives who were cleaning up the beach."
             ],
-            "answer": "C"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 8,
-            "question": "What does the man think about the woman's idea?",
+            "question": "Questions 8 to 11 are based on the conversation you have just heard. 8. Why can't the man go to the zoo with the woman?",
             "options": [
-              "A. He completely agrees with her",
-              "B. He is uncertain and wants more time",
-              "C. He strongly opposes it",
-              "D. He suggests a different approach"
+              "A) He has to play football with workmates.",
+              "B) He has got some books to read.",
+              "C) He is going to visit a friend.",
+              "D) He is physically unfit for it."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 9,
-            "question": "What is the woman's main concern regarding the business?",
+            "question": "9. What is the woman's purpose in going to the zoo?",
             "options": [
-              "A. Making a profit",
-              "B. Attracting customers",
-              "C. Managing employees",
-              "D. Finding suppliers"
+              "A) To teach kids about animal protection.",
+              "B) To learn how popular zoos could be.",
+              "C) To see some rare animals in cages.",
+              "D) To give her little nephew a treat."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 10,
-            "question": "What do they finally decide to do?",
+            "question": "10. What do we learn about the man from the conversation?",
             "options": [
-              "A. Open as planned next month",
-              "B. Delay the opening by two months",
-              "C. Look for a different location",
-              "D. Consult a business advisor"
+              "A) He enjoys excellent health.",
+              "B) He is keen on extreme sports.",
+              "C) He coaches tennis players every week.",
+              "D) He spends most of his time in the gym."
             ],
-            "answer": "D"
+            "answer": ""
           },
           {
-            "section": "C",
-            "number": 11,
-            "question": "What is the main topic of the passage?",
+            "question": "11. What is the man going to do this weekend?",
             "options": [
-              "A. The benefits of regular exercise",
-              "B. The history of modern medicine",
-              "C. The importance of sleep for health",
-              "D. The effects of stress on the body"
+              "A) Tending to his swollen ankle.",
+              "B) Concentrating on reading.",
+              "C) Writing three book reports.",
+              "D) Planning Christmas celebrations."
             ],
-            "answer": "C"
+            "answer": ""
           },
           {
-            "section": "C",
-            "number": 12,
-            "question": "According to the speaker, how much sleep do most adults need per night?",
+            "question": "Questions 12 to 15 are based on the conversation you have just heard. 12. What does the woman say about the book?",
             "options": [
-              "A. 5 to 6 hours",
-              "B. 7 to 9 hours",
-              "C. 8 to 10 hours",
-              "D. 6 to 7 hours"
+              "A) It is being debated by hundreds of retirees.",
+              "B) It is attracting many people's attention.",
+              "C) It partly records his own experience.",
+              "D) It argues for postponing retirement."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "C",
-            "number": 13,
-            "question": "What is one negative effect of long-term sleep deprivation mentioned?",
+            "question": "13. What does the man think one should do?",
             "options": [
-              "A. Increased risk of heart disease",
-              "B. Poor memory and concentration",
-              "C. Weakened immune system",
-              "D. All of the above"
+              "A) One should foresee a financial crisis.",
+              "B) One should trust financial planners.",
+              "C) One should have one million dollars to retire.",
+              "D) One should start saving as early as possible."
             ],
-            "answer": "D"
+            "answer": ""
           },
           {
-            "section": "C",
-            "number": 14,
-            "question": "What does the speaker suggest for people who have trouble sleeping?",
+            "question": "14. What does the woman think of working after retirement?",
             "options": [
-              "A. Drink warm milk before bed",
-              "B. Avoid using electronic devices at night",
-              "C. Take sleeping pills regularly",
-              "D. Exercise vigorously before sleep"
+              "A) It doesn't need to be permanent.",
+              "B) It shouldn't be considered risky.",
+              "C) It helps to reduce travel expenses.",
+              "D) It is the way to quit a job one hates."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "C",
-            "number": 15,
-            "question": "What is the speaker's overall message?",
+            "question": "15. How can one ensure a comfortable retirement according to the woman?",
             "options": [
-              "A. Sleep is less important than diet",
-              "B. Everyone needs the same amount of sleep",
-              "C. Good sleep habits are crucial for health",
-              "D. Sleep problems are easy to solve"
+              "A) By keeping close contact with one's employers.",
+              "B) By retiring when one reaches sixty years old.",
+              "C) By investing half of one's monthly income.",
+              "D) By following the counsel of financial planners."
             ],
-            "answer": "C"
+            "answer": ""
           }
         ]
       },
@@ -1234,188 +1094,258 @@
       },
       {
         "type": "listening",
-        "title": "Part II Listening Comprehension",
-        "passage": "",
+        "title": "Section A Listening Comprehension (30 minutes)",
+        "passage": "Directions: In this section, you will hear two long conversations. At the end of each conversation, you will hear four questions. Both the conversation and the questions will be spoken only once. After you hear a question, you must choose the best answer from the four choices marked A), B), C) and D). Then mark the corresponding letter on Answer Sheet 1 with a single line through the centre.",
         "questions": [
           {
-            "section": "A",
-            "number": 1,
-            "question": "What is the main focus of the news report?",
+            "question": "Questions 1 to 4 are based on the conversation you have just heard.\n1. What are the speakers mainly doing?",
             "options": [
-              "A. A new climate agreement signed by world leaders.",
-              "B. A breakthrough in renewable energy technology.",
-              "C. The impact of extreme weather on global agriculture.",
-              "D. A report on rising sea levels affecting coastal cities."
+              "A) Preparing for a job interview.",
+              "B) Writing a work report together.",
+              "C) Going through a couple of issues the company faces.",
+              "D) Discussing the woman's annual performance review."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 2,
-            "question": "According to the report, what caused the delay in the space mission?",
+            "question": "2. What does the woman think is the most important factor in her work?",
             "options": [
-              "A. Technical malfunctions in the rocket system.",
-              "B. Unfavorable weather conditions at the launch site.",
-              "C. Budget constraints from the funding agency.",
-              "D. Last-minute changes to the crew composition."
+              "A) The overall culture of the company.",
+              "B) The instruction from her supervisor.",
+              "C) The honesty of the manager.",
+              "D) The recognition of her merits."
             ],
-            "answer": "A"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 3,
-            "question": "What measure did the government propose to address the housing crisis?",
+            "question": "3. What is the woman's main weakness according to the conversation?",
             "options": [
-              "A. Subsidizing rent for low-income families.",
-              "B. Building more affordable housing units.",
-              "C. Reducing property taxes for first-time buyers.",
-              "D. Imposing stricter regulations on real estate developers."
+              "A) Her inadequate language proficiency.",
+              "B) Her inability to interact with colleagues properly.",
+              "C) Her inappropriate behavior at company meetings.",
+              "D) Her simplistic approach to dealing with others."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 4,
-            "question": "What is the reported outcome of the international trade negotiations?",
+            "question": "4. Why does the woman prefer to be direct in communication?",
             "options": [
-              "A. Tariffs were reduced on electronic goods.",
-              "B. A new free trade agreement was signed.",
-              "C. Talks collapsed due to disagreements on agriculture.",
-              "D. Both sides agreed to further consultations."
+              "A) To avoid offending the recipients.",
+              "B) To show her unique writing style.",
+              "C) To save time.",
+              "D) To be frank."
             ],
-            "answer": "C"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 5,
-            "question": "What does the news say about the recent archaeological discovery?",
+            "question": "Questions 5 to 8 are based on the conversation you have just heard.\n5. What is the woman's ultimate goal?",
             "options": [
-              "A. It is the oldest human settlement ever found.",
-              "B. It contains well-preserved ancient artifacts.",
-              "C. It challenges previous theories about migration patterns.",
-              "D. It was accidentally uncovered during a construction project."
+              "A) Provide medical service to the community.",
+              "B) Make healthcare in her hometown the best.",
+              "C) Obtain a doctoral degree in internal medicine.",
+              "D) Have a profound impact on people around her."
             ],
-            "answer": "D"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 6,
-            "question": "What is the woman's main concern about the new job offer?",
+            "question": "6. How have the woman's parents supported her?",
             "options": [
-              "A. The salary is too low for her qualifications.",
-              "B. The commute to the office is too long.",
-              "C. The company's reputation is questionable.",
-              "D. The work schedule conflicts with her family time."
+              "A) They have constantly urged her to study hard.",
+              "B) They have worked hard to finance her education.",
+              "C) They have tried to create a positive learning environment.",
+              "D) They have pursued the family's dreams together with her."
             ],
-            "answer": "D"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 7,
-            "question": "What does the man suggest they do to solve the problem?",
+            "question": "7. What does the man say about internal medicine?",
             "options": [
-              "A. Hire a part-time assistant.",
-              "B. Renegotiate the contract terms.",
-              "C. Use a software tool to automate tasks.",
-              "D. Relocate the office to a cheaper area."
+              "A) It is a key medical branch conducive to realizing her dreams.",
+              "B) It connects many other specialties with its broad coverage.",
+              "C) It has a long history in the man's prestigious institution.",
+              "D) It is a medical branch both of her parents specialize in."
             ],
-            "answer": "C"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 8,
-            "question": "Why does the woman hesitate to travel by plane?",
+            "question": "8. What does the woman think of the man's advice?",
             "options": [
-              "A. She has a fear of flying.",
-              "B. The ticket prices are too high.",
-              "C. She prefers to drive for flexibility.",
-              "D. The flight schedule is inconvenient."
+              "A) Problematic.",
+              "B) Competitive.",
+              "C) Inconsistent.",
+              "D) Trustworthy."
             ],
-            "answer": "A"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 9,
-            "question": "What is the relationship between the two speakers?",
+            "question": "Questions 9 to 11 are based on the passage you have just heard.\n9. What is the purpose of the new system?",
             "options": [
-              "A. Professor and student.",
-              "B. Boss and employee.",
-              "C. Doctor and patient.",
-              "D. Travel agent and client."
+              "A) To prevent hackers from accessing user codes.",
+              "B) To ensure official guidelines are followed.",
+              "C) To provide evidence of a forgotten password.",
+              "D) To convince users to trust the computer system."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 10,
-            "question": "What decision do they finally make?",
+            "question": "10. What is one benefit of the new approach?",
             "options": [
-              "A. To postpone the project deadline.",
-              "B. To allocate more budget for marketing.",
-              "C. To collaborate with an external consultant.",
-              "D. To cancel the upcoming product launch."
+              "A) Punish hacking phenomenon.",
+              "B) Help people remember their passwords.",
+              "C) Reduce the number of password attempts.",
+              "D) Explain the difference between multiple accounts."
             ],
-            "answer": "A"
+            "answer": ""
           },
           {
-            "section": "C",
-            "number": 11,
-            "question": "What is the main idea of the passage?",
+            "question": "11. What does the speaker suggest for the future?",
             "options": [
-              "A. The history of the Internet and its impact on society.",
-              "B. The importance of digital literacy in modern education.",
-              "C. The challenges of online privacy in the age of social media.",
-              "D. The rise of artificial intelligence in everyday life."
+              "A) Innovate technology to ensure safer user accounts.",
+              "B) Provide incentives for applying creative passwords.",
+              "C) Explore the possibility of using simple secret codes.",
+              "D) Take steps to encourage users to change passwords often."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "C",
-            "number": 12,
-            "question": "According to the speaker, what is a key factor in successful language learning?",
+            "question": "Questions 12 to 15 are based on the passage you have just heard.\n12. What happened to the man's business?",
             "options": [
-              "A. Immersion in a native-speaking environment.",
-              "B. Regular practice with a language partner.",
-              "C. Using a variety of learning resources.",
-              "D. Setting realistic goals and tracking progress."
+              "A) He got a stronger interest in it.",
+              "B) His brain injury got worse.",
+              "C) He fell into a mental slump.",
+              "D) His business deteriorated."
             ],
-            "answer": "D"
+            "answer": ""
           },
           {
-            "section": "C",
-            "number": 13,
-            "question": "What does the passage suggest about the role of sleep in memory consolidation?",
+            "question": "13. What did the man decide to do to recover?",
             "options": [
-              "A. Sleep helps to transfer information from short-term to long-term memory.",
-              "B. Sleep deprivation has no significant effect on learning.",
-              "C. Dreaming is essential for memory formation.",
-              "D. Napping is more effective than full-night sleep for memory."
+              "A) Help others reach their fitness goals.",
+              "B) Design personalized training programmes.",
+              "C) Strengthen his emotional bonds worldwide.",
+              "D) Select well-qualified coaches."
             ],
-            "answer": "A"
+            "answer": ""
           },
           {
-            "section": "C",
-            "number": 14,
-            "question": "What is the speaker's attitude towards the new policy?",
+            "question": "14. What is a key feature of the man's training method?",
             "options": [
-              "A. Strongly supportive.",
-              "B. Neutral and objective.",
-              "C. Critically skeptical.",
-              "D. Enthusiastically optimistic."
+              "A) The exercises are repeated.",
+              "B) The exercises are low in price.",
+              "C) The exercises are extremely intense.",
+              "D) The exercises are focused on a single goal."
             ],
-            "answer": "C"
+            "answer": ""
           },
           {
-            "section": "C",
-            "number": 15,
-            "question": "What conclusion does the passage draw about sustainable urban development?",
+            "question": "15. What does the speaker say about the man's approach?",
             "options": [
-              "A. It requires significant investment in public transportation.",
-              "B. It is impossible without government intervention.",
-              "C. It depends on community participation and green technologies.",
-              "D. It focuses primarily on reducing carbon emissions."
+              "A) It is likely to lack a human touch in training.",
+              "B) It is likely to comprehend the full profiles of runners.",
+              "C) It can achieve optimal results with a systematic approach.",
+              "D) It can accommodate human arrangements in flexible work schedules."
             ],
-            "answer": "C"
+            "answer": ""
+          },
+          {
+            "question": "Questions 16 to 18 are based on the recording you have just heard.\n16. What does the speaker say about morality?",
+            "options": [
+              "A) All societies build their cornerstone on moral values.",
+              "B) Everyone everywhere demonstrates the same character traits.",
+              "C) All societies develop their own set of moral rules.",
+              "D) Everyone everywhere shares a universal moral standard."
+            ],
+            "answer": ""
+          },
+          {
+            "question": "17. What is the purpose of the study mentioned?",
+            "options": [
+              "A) To ascertain whether people refer to authority to define right and wrong.",
+              "B) To find out whether different societies have different versions of morality.",
+              "C) To make clear whether all societies face the same moral issues.",
+              "D) To find out whether right and wrong depend on a group's loyalty."
+            ],
+            "answer": ""
+          },
+          {
+            "question": "18. What does the speaker suggest researchers should do?",
+            "options": [
+              "A) Make an independent description of culture around the world.",
+              "B) Strive to understand the basic differences between peoples.",
+              "C) Appreciate the foundation of moral values that exist in data.",
+              "D) Carry out systematic field studies of the data."
+            ],
+            "answer": ""
+          },
+          {
+            "question": "Questions 19 to 21 are based on the recording you have just heard.\n19. What does the speaker say about taste?",
+            "options": [
+              "A) The sense of taste is important in our eating experience.",
+              "B) The natural function of taste is to direct our actions.",
+              "C) The tongue is the window to the soul.",
+              "D) The soul is the source of our taste."
+            ],
+            "answer": ""
+          },
+          {
+            "question": "20. What does the speaker say about the food industry?",
+            "options": [
+              "A) It attracts many companies' growing attention.",
+              "B) It has a diverse impact on our eating experience.",
+              "C) It invariably determines what foods we buy.",
+              "D) It changes the shape of our taste buds."
+            ],
+            "answer": ""
+          },
+          {
+            "question": "21. What is one application of taste research?",
+            "options": [
+              "A) Enhance the taste of food.",
+              "B) Make predictions about food preferences.",
+              "C) Identify distinct flavors.",
+              "D) Enrich the eating experience."
+            ],
+            "answer": ""
+          },
+          {
+            "question": "Questions 22 to 25 are based on the recording you have just heard.\n22. What is the main topic of the recording?",
+            "options": [
+              "A) Social status.",
+              "B) Financial resources.",
+              "C) Meaning.",
+              "D) Happiness."
+            ],
+            "answer": ""
+          },
+          {
+            "question": "23. What does the speaker say about social contexts?",
+            "options": [
+              "A) They affect people's happiness more than previously stated.",
+              "B) They influence people's lives in various social contexts.",
+              "C) They affect people's experience of meaning.",
+              "D) They ensure people's overall well-being."
+            ],
+            "answer": ""
+          },
+          {
+            "question": "24. What is special about the new study?",
+            "options": [
+              "A) It questions the overall differences found in the first study.",
+              "B) It focuses on the sense of meaning in the participants.",
+              "C) It analyzes data from daily life of residents.",
+              "D) It examines data collected from multiple countries."
+            ],
+            "answer": ""
+          },
+          {
+            "question": "25. What is the conclusion of the study?",
+            "options": [
+              "A) The highest value comes from external sources of happiness.",
+              "B) The highest focus is on individual life satisfaction and meaning.",
+              "C) The highest goal is to affect the community's overall feeling.",
+              "D) The highest goal is to have a diverse impact on daily life and achieve purpose."
+            ],
+            "answer": ""
           }
         ]
       },
@@ -1939,188 +1869,78 @@
       },
       {
         "type": "listening",
-        "title": "Part II Listening Comprehension",
-        "passage": "",
+        "title": "Part II Listening Comprehension (25 minutes) - Section A",
+        "passage": "Directions: In this section, you will hear three news reports. At the end of each news report, you will hear two or three questions. Both the news report and the questions will be spoken only once. After you hear a question, you must choose the best answer from the four choices marked A), B), C) and D). Then mark the corresponding letter on Answer Sheet 1 with a single line through the centre.",
         "questions": [
           {
-            "section": "A",
-            "number": 1,
-            "question": "What is the main topic of the news report?",
+            "question": "Questions 1 and 2 are based on the news report you have just heard. 1. What caused the residents to leave their apartments?",
             "options": [
-              "A) A new species of butterfly discovered in the Amazon.",
-              "B) A major earthquake struck a remote island nation.",
-              "C) A breakthrough in solar energy technology.",
-              "D) A local festival celebrating traditional music."
+              "A) Due to a fire alarm in their apartments.",
+              "B) Because of the smoke and heat damage.",
+              "C) Due to the water used to extinguish the flames.",
+              "D) Because of the collapse of the three-story building."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 2,
-            "question": "Why did the government issue a travel warning?",
+            "question": "2. What are the authorities doing now?",
             "options": [
-              "A) Due to a volcanic eruption.",
-              "B) Because of widespread flooding.",
-              "C) Following a series of cyber attacks.",
-              "D) After a rare snowstorm in the region."
+              "A) Investigating the cause of the incident.",
+              "B) Helping search for the suspect of the crime.",
+              "C) Rescuing the businessmen trapped in the building.",
+              "D) Checking town records for the property developer."
             ],
-            "answer": "C"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 3,
-            "question": "What did the scientists announce at the conference?",
+            "question": "Questions 3 and 4 are based on the news report you have just heard. 3. What does the new study say about sleep?",
             "options": [
-              "A) A new vaccine for malaria.",
-              "B) The discovery of water on Mars.",
-              "C) A method to reduce plastic waste.",
-              "D) The extinction of a bird species."
+              "A) It plays a less important role in one's health than nutrient intake.",
+              "B) It impacts people's health to a lesser degree than sun exposure.",
+              "C) It is associated with people's mental health conditions.",
+              "D) It is linked with older adults' symptoms of depression."
             ],
-            "answer": "A"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 4,
-            "question": "How did the community respond to the power outage?",
+            "question": "4. What did the researchers say about the relationship between sleep and depression?",
             "options": [
-              "A) They evacuated the area immediately.",
-              "B) They organized a neighborhood watch.",
-              "C) They set up emergency shelters.",
-              "D) They shared generators and supplies."
+              "A) It was indefinite.",
+              "B) It was systematic.",
+              "C) It was straightforward.",
+              "D) It was insignificant."
             ],
-            "answer": "D"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 5,
-            "question": "What is the purpose of the new policy mentioned?",
+            "question": "Questions 5 to 7 are based on the news report you have just heard. 5. What is special about the cloned dog?",
             "options": [
-              "A) To increase taxes on luxury goods.",
-              "B) To promote renewable energy use.",
-              "C) To reduce traffic congestion in cities.",
-              "D) To improve public transportation safety."
+              "A) It has helped solve several murder cases.",
+              "B) It has become a star police dog in Beijing.",
+              "C) It has surpassed its mother in performance.",
+              "D) It has done better than naturally born dogs."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 6,
-            "question": "What is the woman's main concern about the trip?",
+            "question": "6. Why was the dog cloned?",
             "options": [
-              "A) The cost of the flight.",
-              "B) The weather conditions.",
-              "C) The safety of the destination.",
-              "D) The language barrier."
+              "A) To speed up investigation into criminal cases.",
+              "B) To test the feasibility of cloning technology.",
+              "C) To cut down training expenses.",
+              "D) To reduce their training time."
             ],
-            "answer": "C"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 7,
-            "question": "Why does the man suggest taking the train?",
+            "question": "7. What is the main challenge for cloning police dogs?",
             "options": [
-              "A) It is faster than flying.",
-              "B) It offers scenic views.",
-              "C) It is more environmentally friendly.",
-              "D) It has cheaper tickets."
+              "A) Cloning is too complicated a process.",
+              "B) The technology is yet to be accepted.",
+              "C) Cloning is ethically controversial.",
+              "D) The technology is too expensive."
             ],
-            "answer": "C"
-          },
-          {
-            "section": "B",
-            "number": 8,
-            "question": "What do the speakers agree to do together?",
-            "options": [
-              "A) Attend a cooking class.",
-              "B) Visit an art exhibition.",
-              "C) Join a hiking club.",
-              "D) Start a book club."
-            ],
-            "answer": "A"
-          },
-          {
-            "section": "B",
-            "number": 9,
-            "question": "What is the relationship between the two speakers?",
-            "options": [
-              "A) Teacher and student.",
-              "B) Doctor and patient.",
-              "C) Colleagues at work.",
-              "D) Neighbors."
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "B",
-            "number": 10,
-            "question": "What does the woman advise the man to do?",
-            "options": [
-              "A) Take a break from work.",
-              "B) Change his diet.",
-              "C) Exercise more regularly.",
-              "D) See a specialist."
-            ],
-            "answer": "D"
-          },
-          {
-            "section": "C",
-            "number": 11,
-            "question": "What is the passage mainly about?",
-            "options": [
-              "A) The history of the Olympic Games.",
-              "B) The benefits of team sports.",
-              "C) The impact of technology on education.",
-              "D) The importance of sleep for health."
-            ],
-            "answer": "D"
-          },
-          {
-            "section": "C",
-            "number": 12,
-            "question": "How many hours of sleep do adults typically need?",
-            "options": [
-              "A) 5-6 hours.",
-              "B) 7-9 hours.",
-              "C) 10-11 hours.",
-              "D) 12-14 hours."
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "C",
-            "number": 13,
-            "question": "What is one effect of chronic sleep deprivation?",
-            "options": [
-              "A) Improved memory.",
-              "B) Increased creativity.",
-              "C) Weakened immune system.",
-              "D) Enhanced mood."
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "C",
-            "number": 14,
-            "question": "According to the passage, what can help improve sleep quality?",
-            "options": [
-              "A) Drinking coffee before bed.",
-              "B) Using electronic devices in bed.",
-              "C) Maintaining a consistent sleep schedule.",
-              "D) Eating heavy meals at night."
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "C",
-            "number": 15,
-            "question": "What is the speaker's overall message?",
-            "options": [
-              "A) Sleep is less important than exercise.",
-              "B) People should prioritize sleep.",
-              "C) Napping is harmful to health.",
-              "D) Sleep patterns cannot be changed."
-            ],
-            "answer": "B"
+            "answer": ""
           }
         ]
       },
@@ -2655,188 +2475,78 @@
       },
       {
         "type": "listening",
-        "title": "Part II Listening Comprehension",
-        "passage": "",
+        "title": "Part II Listening Comprehension (25 minutes) - Section A",
+        "passage": "Directions: In this section, you will hear three news reports. At the end of each news report, you will hear two or three questions. Both the news report and the questions will be spoken only once. After you hear a question, you must choose the best answer from the four choices marked A), B), C) and D). Then mark the corresponding letter on Answer Sheet 1 with a single line through the centre.",
         "questions": [
           {
-            "section": "Section A",
-            "number": 1,
-            "question": "What is the main topic of the news report?",
+            "question": "Questions 1 and 2 are based on the news report you have just heard. 1. How is the corn prepared according to the news report?",
             "options": [
-              "A new urban park opening",
-              "A breakthrough in renewable energy",
-              "A major cultural festival",
-              "An international sports event"
+              "A) By slapping some butter on it.",
+              "B) By enhancing its nourishment.",
+              "C) By growing it in South Dakota.",
+              "D) By cooking it in vegetable oil."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "Section A",
-            "number": 2,
-            "question": "According to the report, what caused the traffic disruption?",
+            "question": "2. Why did the corn growers go to the state's Corn Palace?",
             "options": [
-              "A severe storm",
-              "A construction project",
-              "A parade",
-              "A vehicle accident"
+              "A) To introduce their corn to tourists.",
+              "B) To attend an honorary ceremony.",
+              "C) To share experience with other corn growers.",
+              "D) To exhibit their corn at the state's Corn Palace."
             ],
-            "answer": "D"
+            "answer": ""
           },
           {
-            "section": "Section A",
-            "number": 3,
-            "question": "What did the scientists discover?",
+            "question": "Questions 3 and 4 are based on the news report you have just heard. 3. What did the criminals do according to the news report?",
             "options": [
-              "A new species of fish",
-              "A cure for a common disease",
-              "An ancient artifact",
-              "A new planet"
+              "A) Stole mail several times.",
+              "B) Forged postal keys illegally.",
+              "C) Attacked postmen on multiple occasions.",
+              "D) Broke a number of postal collection boxes."
             ],
-            "answer": "A"
+            "answer": ""
           },
           {
-            "section": "Section A",
-            "number": 4,
-            "question": "What is the government's new policy about?",
+            "question": "4. What punishment did the criminals receive?",
             "options": [
-              "Reducing taxes",
-              "Promoting education",
-              "Protecting the environment",
-              "Improving healthcare"
+              "A) A sentence for life.",
+              "B) Loss of all their possessions.",
+              "C) Twenty-three years' hard labor.",
+              "D) Up to fifteen years in prison."
             ],
-            "answer": "C"
+            "answer": ""
           },
           {
-            "section": "Section A",
-            "number": 5,
-            "question": "How many people were rescued in the flood?",
+            "question": "Questions 5 to 7 are based on the news report you have just heard. 5. What is the problem with fast fashion according to the news report?",
             "options": [
-              "50",
-              "120",
-              "200",
-              "350"
+              "A) It escapes regulation and misleads consumers.",
+              "B) It ignores economically feasible recycling options.",
+              "C) It creates waste and severely impacts the environment.",
+              "D) It produces clothes affordable only to a tiny minority."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "Section B",
-            "number": 6,
-            "question": "What are the speakers mainly discussing?",
+            "question": "6. What is the purpose of the proposed measures?",
             "options": [
-              "A travel plan",
-              "A job interview",
-              "A school project",
-              "A shopping list"
+              "A) To cut consumers' expenses in buying quality clothes.",
+              "B) To enable the whole fast-fashion industry to be sustainable.",
+              "C) To incentivize manufacturers to be more consumer-friendly.",
+              "D) To urge manufacturers and consumers to reduce waste."
             ],
-            "answer": "C"
+            "answer": ""
           },
           {
-            "section": "Section B",
-            "number": 7,
-            "question": "Why does the woman refuse the man's invitation?",
+            "question": "7. What is the first step to solving the problem according to the news report?",
             "options": [
-              "She is too busy",
-              "She doesn't like the activity",
-              "She has a prior engagement",
-              "She is feeling unwell"
+              "A) Recognizing the impact on consumers.",
+              "B) Identifying the source of the problem.",
+              "C) Abandoning the current business model.",
+              "D) Establishing powerful regulatory bodies."
             ],
-            "answer": "A"
-          },
-          {
-            "section": "Section B",
-            "number": 8,
-            "question": "What does the man suggest doing?",
-            "options": [
-              "Going to a café",
-              "Taking a walk",
-              "Watching a movie",
-              "Studying together"
-            ],
-            "answer": "D"
-          },
-          {
-            "section": "Section B",
-            "number": 9,
-            "question": "What is the relationship between the speakers?",
-            "options": [
-              "Teacher and student",
-              "Doctor and patient",
-              "Colleagues",
-              "Friends"
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "Section B",
-            "number": 10,
-            "question": "What will the woman do next?",
-            "options": [
-              "Make a phone call",
-              "Write a report",
-              "Attend a meeting",
-              "Leave the office"
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "Section C",
-            "number": 11,
-            "question": "What is the passage mainly about?",
-            "options": [
-              "The history of the Internet",
-              "The benefits of exercise",
-              "The importance of sleep",
-              "The effects of climate change"
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "Section C",
-            "number": 12,
-            "question": "According to the speaker, what is a key factor for success?",
-            "options": [
-              "Talent",
-              "Luck",
-              "Hard work",
-              "Networking"
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "Section C",
-            "number": 13,
-            "question": "What does the speaker recommend for improving memory?",
-            "options": [
-              "Reading books",
-              "Playing games",
-              "Eating healthy food",
-              "Practicing meditation"
-            ],
-            "answer": "D"
-          },
-          {
-            "section": "Section C",
-            "number": 14,
-            "question": "What is the main challenge mentioned in the passage?",
-            "options": [
-              "Lack of resources",
-              "Time management",
-              "Communication difficulties",
-              "Technical problems"
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "Section C",
-            "number": 15,
-            "question": "What conclusion does the speaker draw?",
-            "options": [
-              "Change is inevitable",
-              "Teamwork is essential",
-              "Education is the key",
-              "Health comes first"
-            ],
-            "answer": "A"
+            "answer": ""
           }
         ]
       },
@@ -3251,188 +2961,88 @@
       },
       {
         "type": "listening",
-        "title": "Part II Listening Comprehension",
-        "passage": "",
+        "title": "Section A Listening Comprehension (30 minutes)",
+        "passage": "Directions: In this section, you will hear two long conversations. At the end of each conversation, you will hear four questions. Both the conversation and the questions will be spoken only once. After you hear a question, you must choose the best answer from the four choices marked A), B), C) and D). Then mark the corresponding letter on Answer Sheet 1 with a single line through the centre.",
         "questions": [
           {
-            "section": "A",
-            "number": 1,
-            "question": "What is the main focus of the news report?",
+            "question": "Questions 1 to 4 are based on the conversation you have just heard. 1. What did the man do?",
             "options": [
-              "A) A new climate policy announced by the government",
-              "B) A breakthrough in renewable energy storage",
-              "C) A major flood affecting coastal cities",
-              "D) A global summit on carbon emissions"
+              "A) Read numerous comments users put online.",
+              "B) Blended all his food without using a machine.",
+              "C) Searched for the state-of-the-art models of blenders.",
+              "D) Did thorough research on the price of kitchen appliances."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 2,
-            "question": "Why did the company recall its products?",
+            "question": "2. What does the woman think about?",
             "options": [
-              "A) Defective batteries causing fire hazards",
-              "B) Mislabeling of ingredients in food items",
-              "C) Failure to meet safety standards in toys",
-              "D) Software glitches in electronic devices"
+              "A) Eating any blended food.",
+              "B) Buying a blender herself.",
+              "C) Using machines to do her cooking.",
+              "D) Making soups and juices for herself."
             ],
-            "answer": "A"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 3,
-            "question": "What does the report say about the new space mission?",
+            "question": "3. What does the man do regularly?",
             "options": [
-              "A) It aims to land astronauts on Mars by 2030",
-              "B) It will study asteroid composition for mining",
-              "C) It involves a satellite to monitor space debris",
-              "D) It tests a new propulsion system for deep space"
+              "A) Cooking every meal creatively in the kitchen.",
+              "B) Paying due attention to his personal hygiene.",
+              "C) Eating breakfast punctually every morning.",
+              "D) Making his own fresh fruit juice regularly."
             ],
-            "answer": "D"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 4,
-            "question": "What is the primary cause of the recent power outage?",
+            "question": "4. What does the woman say about the blended food?",
             "options": [
-              "A) Cyberattack on the electrical grid",
-              "B) Extreme weather damaging transmission lines",
-              "C) Overload due to high summer demand",
-              "D) Equipment failure at a major power plant"
+              "A) One-tenth of it is sugar.",
+              "B) It looks healthy and attractive.",
+              "C) One's fancy may be tickled by it.",
+              "D) It contains an assortment of nutrients."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 5,
-            "question": "What is the key finding of the health study?",
+            "question": "Questions 5 to 8 are based on the conversation you have just heard. 5. What is the man mainly talking about?",
             "options": [
-              "A) Sleep deprivation increases heart disease risk",
-              "B) Vegetarian diets reduce cancer rates by 30%",
-              "C) Exercise in the morning boosts metabolism",
-              "D) Social media use correlates with anxiety in teens"
+              "A) How he has made himself popular as the mayor of Berktown.",
+              "B) How the residents will turn Berktown into a tourist attraction.",
+              "C) How charming he himself considers the village of Berktown to be.",
+              "D) How he has led people of Berktown to change the village radically."
             ],
-            "answer": "A"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 6,
-            "question": "Why does the woman want to change her flight?",
+            "question": "6. What does the man say about Berktown in the past?",
             "options": [
-              "A) She missed her original departure",
-              "B) She needs to attend an urgent meeting earlier",
-              "C) Her connecting flight was cancelled",
-              "D) She wants to upgrade to first class"
+              "A) It was developed only to a limited extent.",
+              "B) It was totally isolated as a sleepy village.",
+              "C) It was relatively unknown to the outside.",
+              "D) It was endowed with rare natural resources."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 7,
-            "question": "What does the man suggest about the restaurant?",
+            "question": "7. What does the woman say about Berktown?",
             "options": [
-              "A) It has the best seafood in town",
-              "B) It is too expensive for a casual dinner",
-              "C) The service is slow during peak hours",
-              "D) It requires reservations weeks in advance"
+              "A) All the properties in Berktown were designed by the same architect.",
+              "B) The majority of residents lived in harmony with their neighbours.",
+              "C) The majority of residents enjoyed cosy housing conditions.",
+              "D) All the houses in Berktown looked aesthetically similar."
             ],
-            "answer": "D"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 8,
-            "question": "What is the woman's main concern about the job offer?",
+            "question": "8. What does the man say about the changes in Berktown?",
             "options": [
-              "A) The salary is below industry average",
-              "B) The location requires a long commute",
-              "C) The company has a poor work-life balance",
-              "D) She lacks the required qualifications"
+              "A) They have helped boost the local economy.",
+              "B) They have made the residents unusually proud.",
+              "C) They have contributed considerably to its popularity.",
+              "D) They have brought happiness to everyone in the village."
             ],
-            "answer": "C"
-          },
-          {
-            "section": "B",
-            "number": 9,
-            "question": "Why is the man reluctant to attend the concert?",
-            "options": [
-              "A) He dislikes the band's music style",
-              "B) He has to finish a project by tomorrow",
-              "C) The tickets are too expensive",
-              "D) He is feeling unwell"
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "B",
-            "number": 10,
-            "question": "What do the speakers agree on about the movie?",
-            "options": [
-              "A) The plot was too predictable",
-              "B) The special effects were impressive",
-              "C) The acting was mediocre",
-              "D) The soundtrack was outstanding"
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "C",
-            "number": 11,
-            "question": "What is the passage mainly about?",
-            "options": [
-              "A) The history of artificial intelligence development",
-              "B) Ethical concerns in AI decision-making",
-              "C) How AI is transforming healthcare diagnostics",
-              "D) The economic impact of automation on jobs"
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "C",
-            "number": 12,
-            "question": "What does the speaker say about ancient navigation methods?",
-            "options": [
-              "A) They relied heavily on star patterns",
-              "B) They were less accurate than modern GPS",
-              "C) They used ocean currents and wind direction",
-              "D) They were primarily developed in the Pacific"
-            ],
-            "answer": "A"
-          },
-          {
-            "section": "C",
-            "number": 13,
-            "question": "What is the recommended strategy for reducing plastic waste?",
-            "options": [
-              "A) Banning single-use plastics entirely",
-              "B) Improving recycling infrastructure globally",
-              "C) Developing biodegradable alternatives",
-              "D) Encouraging consumer behavior change through taxes"
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "C",
-            "number": 14,
-            "question": "What does the passage suggest about learning a second language?",
-            "options": [
-              "A) It is easier for children than for adults",
-              "B) It improves cognitive function in old age",
-              "C) It requires immersive exposure for fluency",
-              "D) It is best learned through grammar drills"
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "C",
-            "number": 15,
-            "question": "What is the main cause of the decline in bee populations?",
-            "options": [
-              "A) Pesticide use in agriculture",
-              "B) Habitat loss due to urbanization",
-              "C) Climate change affecting flowering seasons",
-              "D) Viral infections spreading through colonies"
-            ],
-            "answer": "A"
+            "answer": ""
           }
         ]
       },
@@ -3685,193 +3295,6 @@
         "title": "Part I Writing",
         "passage": "Directions: For this part, you are allowed 30 minutes to write an essay that begins with the sentence \"Nowadays, more and more people are aware of the importance of mental health.\" You can make comments, cite examples, or use personal experiences to develop your essay. You should write at least 150 words but no more than 200 words.",
         "questions": []
-      },
-      {
-        "type": "listening",
-        "title": "Part II Listening Comprehension",
-        "passage": "",
-        "questions": [
-          {
-            "section": "A",
-            "number": 1,
-            "question": "What is the main focus of the news report?",
-            "options": [
-              "A new environmental policy",
-              "A recent scientific discovery",
-              "A major political event",
-              "A global economic crisis"
-            ],
-            "answer": "A new environmental policy"
-          },
-          {
-            "section": "A",
-            "number": 2,
-            "question": "Why did the government implement the new regulation?",
-            "options": [
-              "To reduce air pollution",
-              "To increase tax revenue",
-              "To promote tourism",
-              "To improve public health"
-            ],
-            "answer": "To reduce air pollution"
-          },
-          {
-            "section": "A",
-            "number": 3,
-            "question": "According to the report, what is the expected outcome of the measure?",
-            "options": [
-              "A decrease in industrial output",
-              "An increase in employment",
-              "A reduction in carbon emissions",
-              "A rise in energy costs"
-            ],
-            "answer": "A reduction in carbon emissions"
-          },
-          {
-            "section": "A",
-            "number": 4,
-            "question": "What challenge did the authorities face?",
-            "options": [
-              "Lack of public support",
-              "Funding shortages",
-              "Technical difficulties",
-              "International criticism"
-            ],
-            "answer": "Lack of public support"
-          },
-          {
-            "section": "A",
-            "number": 5,
-            "question": "What does the expert suggest?",
-            "options": [
-              "Delaying the policy",
-              "Adjusting the timeline",
-              "Expanding the program",
-              "Reversing the decision"
-            ],
-            "answer": "Adjusting the timeline"
-          },
-          {
-            "section": "B",
-            "number": 6,
-            "question": "What is the conversation mainly about?",
-            "options": [
-              "Planning a vacation",
-              "Discussing a book",
-              "Choosing a career",
-              "Buying a house"
-            ],
-            "answer": "Planning a vacation"
-          },
-          {
-            "section": "B",
-            "number": 7,
-            "question": "What does the woman suggest?",
-            "options": [
-              "Going to a beach resort",
-              "Visiting historical sites",
-              "Taking a hiking trip",
-              "Staying in a city hotel"
-            ],
-            "answer": "Going to a beach resort"
-          },
-          {
-            "section": "B",
-            "number": 8,
-            "question": "Why does the man prefer the alternative?",
-            "options": [
-              "It is cheaper",
-              "It is more adventurous",
-              "It is less crowded",
-              "It is closer to home"
-            ],
-            "answer": "It is more adventurous"
-          },
-          {
-            "section": "B",
-            "number": 9,
-            "question": "What is their final decision?",
-            "options": [
-              "Compromising on a destination",
-              "Postponing the trip",
-              "Splitting the time",
-              "Seeking more options"
-            ],
-            "answer": "Compromising on a destination"
-          },
-          {
-            "section": "B",
-            "number": 10,
-            "question": "What is their attitude toward the plan?",
-            "options": [
-              "Excited",
-              "Indifferent",
-              "Worried",
-              "Frustrated"
-            ],
-            "answer": "Excited"
-          },
-          {
-            "section": "C",
-            "number": 11,
-            "question": "What is the passage mainly about?",
-            "options": [
-              "The history of the Internet",
-              "The impact of social media",
-              "The future of artificial intelligence",
-              "The challenges of cybersecurity"
-            ],
-            "answer": "The impact of social media"
-          },
-          {
-            "section": "C",
-            "number": 12,
-            "question": "What does the speaker say about online interactions?",
-            "options": [
-              "They are less meaningful",
-              "They are more convenient",
-              "They are always positive",
-              "They are rarely honest"
-            ],
-            "answer": "They are less meaningful"
-          },
-          {
-            "section": "C",
-            "number": 13,
-            "question": "How does social media affect mental health according to the passage?",
-            "options": [
-              "It reduces stress",
-              "It increases anxiety",
-              "It improves memory",
-              "It enhances creativity"
-            ],
-            "answer": "It increases anxiety"
-          },
-          {
-            "section": "C",
-            "number": 14,
-            "question": "What is a suggested solution?",
-            "options": [
-              "Limiting screen time",
-              "Using more platforms",
-              "Ignoring negative comments",
-              "Connecting with strangers"
-            ],
-            "answer": "Limiting screen time"
-          },
-          {
-            "section": "C",
-            "number": 15,
-            "question": "What is the overall tone of the passage?",
-            "options": [
-              "Optimistic",
-              "Pessimistic",
-              "Neutral",
-              "Critical"
-            ],
-            "answer": "Critical"
-          }
-        ]
       },
       {
         "type": "reading",
@@ -4241,193 +3664,6 @@
         "title": "Part I Writing",
         "passage": "Directions: Suppose the student union of your university is collecting opinions on improving its work for the coming year. You are now to write a response by suggesting how it can better enrich student life. You will have 30 minutes to write the essay. You should write at least 120 words but no more than 180 words.",
         "questions": []
-      },
-      {
-        "type": "listening",
-        "title": "Part II Listening Comprehension",
-        "passage": "",
-        "questions": [
-          {
-            "section": "A",
-            "number": 1,
-            "question": "What is the main topic of the news report?",
-            "options": [
-              "A. A new energy policy",
-              "B. A severe earthquake",
-              "C. An international summit",
-              "D. A technological innovation"
-            ],
-            "answer": "A"
-          },
-          {
-            "section": "A",
-            "number": 2,
-            "question": "According to the report, how many people were affected by the disaster?",
-            "options": [
-              "A. 100",
-              "B. 500",
-              "C. 1,000",
-              "D. 2,500"
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "A",
-            "number": 3,
-            "question": "What measure is being taken to address the issue?",
-            "options": [
-              "A. Raising taxes",
-              "B. Providing subsidies",
-              "C. Building new facilities",
-              "D. Implementing restrictions"
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "A",
-            "number": 4,
-            "question": "When did the event occur?",
-            "options": [
-              "A. Last week",
-              "B. Yesterday",
-              "C. This morning",
-              "D. Two days ago"
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "A",
-            "number": 5,
-            "question": "What is the expected outcome of the new policy?",
-            "options": [
-              "A. Economic growth",
-              "B. Environmental improvement",
-              "C. Social stability",
-              "D. Educational reform"
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "B",
-            "number": 6,
-            "question": "What are the speakers mainly discussing?",
-            "options": [
-              "A. A travel plan",
-              "B. A job interview",
-              "C. A study project",
-              "D. A shopping list"
-            ],
-            "answer": "A"
-          },
-          {
-            "section": "B",
-            "number": 7,
-            "question": "When will the speakers meet?",
-            "options": [
-              "A. Friday afternoon",
-              "B. Saturday morning",
-              "C. Sunday evening",
-              "D. Monday noon"
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "B",
-            "number": 8,
-            "question": "What does the woman suggest doing?",
-            "options": [
-              "A. Booking a hotel",
-              "B. Checking the weather",
-              "C. Buying tickets online",
-              "D. Packing light luggage"
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "B",
-            "number": 9,
-            "question": "Why does the man hesitate?",
-            "options": [
-              "A. He has a tight budget",
-              "B. He is afraid of flying",
-              "C. He dislikes crowds",
-              "D. He has other plans"
-            ],
-            "answer": "A"
-          },
-          {
-            "section": "B",
-            "number": 10,
-            "question": "What is the final decision?",
-            "options": [
-              "A. Cancel the trip",
-              "B. Postpone the trip",
-              "C. Go by train",
-              "D. Travel alone"
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "C",
-            "number": 11,
-            "question": "What is the passage mainly about?",
-            "options": [
-              "A. The history of coffee",
-              "B. The benefits of exercise",
-              "C. The impact of social media",
-              "D. The importance of sleep"
-            ],
-            "answer": "D"
-          },
-          {
-            "section": "C",
-            "number": 12,
-            "question": "According to the passage, how many hours of sleep are recommended for adults?",
-            "options": [
-              "A. 5-6 hours",
-              "B. 7-8 hours",
-              "C. 8-9 hours",
-              "D. 9-10 hours"
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "C",
-            "number": 13,
-            "question": "What is one consequence of insufficient sleep mentioned?",
-            "options": [
-              "A. Weight gain",
-              "B. Memory loss",
-              "C. Skin problems",
-              "D. Hearing decline"
-            ],
-            "answer": "A"
-          },
-          {
-            "section": "C",
-            "number": 14,
-            "question": "What does the speaker suggest to improve sleep quality?",
-            "options": [
-              "A. Drinking warm milk",
-              "B. Listening to music",
-              "C. Taking a hot bath",
-              "D. Reducing screen time"
-            ],
-            "answer": "D"
-          },
-          {
-            "section": "C",
-            "number": 15,
-            "question": "What is the speaker's overall tone?",
-            "options": [
-              "A. Critical",
-              "B. Humorous",
-              "C. Informative",
-              "D. Persuasive"
-            ],
-            "answer": "C"
-          }
-        ]
       },
       {
         "type": "reading",
@@ -4969,193 +4205,6 @@
         "questions": []
       },
       {
-        "type": "listening",
-        "title": "Part II Listening Comprehension",
-        "passage": "",
-        "questions": [
-          {
-            "section": "A",
-            "number": 1,
-            "question": "What is the main purpose of the new recycling program introduced in the city?",
-            "options": [
-              "To reduce plastic waste",
-              "To create more jobs",
-              "To lower energy costs",
-              "To improve public health"
-            ],
-            "answer": "To reduce plastic waste"
-          },
-          {
-            "section": "A",
-            "number": 2,
-            "question": "According to the news report, why did the airline cancel several flights?",
-            "options": [
-              "Due to bad weather",
-              "Due to a technical fault",
-              "Due to a staff strike",
-              "Due to security threats"
-            ],
-            "answer": "Due to a technical fault"
-          },
-          {
-            "section": "A",
-            "number": 3,
-            "question": "What did the latest study reveal about sleep patterns?",
-            "options": [
-              "People sleep more on weekends",
-              "Teenagers need less sleep than adults",
-              "Blue light affects sleep quality",
-              "Exercise improves sleep duration"
-            ],
-            "answer": "Blue light affects sleep quality"
-          },
-          {
-            "section": "A",
-            "number": 4,
-            "question": "How did the local community respond to the new park development?",
-            "options": [
-              "They protested against it",
-              "They volunteered for clean-up",
-              "They donated money",
-              "They organized a celebration"
-            ],
-            "answer": "They protested against it"
-          },
-          {
-            "section": "A",
-            "number": 5,
-            "question": "What is the main challenge facing the farmers in the region?",
-            "options": [
-              "Lack of water supply",
-              "Rising land costs",
-              "Pest infestations",
-              "Market price drops"
-            ],
-            "answer": "Lack of water supply"
-          },
-          {
-            "section": "B",
-            "number": 6,
-            "question": "What does the woman suggest they do for the weekend?",
-            "options": [
-              "Go hiking in the mountains",
-              "Visit a science museum",
-              "Attend a music festival",
-              "Have a picnic by the lake"
-            ],
-            "answer": "Visit a science museum"
-          },
-          {
-            "section": "B",
-            "number": 7,
-            "question": "Why is the man late for the meeting?",
-            "options": [
-              "His car broke down",
-              "He got stuck in traffic",
-              "He forgot the time",
-              "He had a doctor's appointment"
-            ],
-            "answer": "He got stuck in traffic"
-          },
-          {
-            "section": "B",
-            "number": 8,
-            "question": "What is the woman's opinion about online learning?",
-            "options": [
-              "It is less interactive",
-              "It is more flexible",
-              "It is too expensive",
-              "It is time-consuming"
-            ],
-            "answer": "It is more flexible"
-          },
-          {
-            "section": "B",
-            "number": 9,
-            "question": "What are the speakers mainly discussing?",
-            "options": [
-              "A new movie release",
-              "A restaurant recommendation",
-              "A travel destination",
-              "A book club meeting"
-            ],
-            "answer": "A restaurant recommendation"
-          },
-          {
-            "section": "B",
-            "number": 10,
-            "question": "What does the man plan to do after graduation?",
-            "options": [
-              "Start his own business",
-              "Work for a big company",
-              "Pursue a master's degree",
-              "Travel around the world"
-            ],
-            "answer": "Pursue a master's degree"
-          },
-          {
-            "section": "C",
-            "number": 11,
-            "question": "What is the passage mainly about?",
-            "options": [
-              "The history of coffee",
-              "The health benefits of tea",
-              "The cultural significance of chocolate",
-              "The production process of wine"
-            ],
-            "answer": "The health benefits of tea"
-          },
-          {
-            "section": "C",
-            "number": 12,
-            "question": "According to the speaker, what is a key factor in successful teamwork?",
-            "options": [
-              "Clear leadership",
-              "Frequent meetings",
-              "Trust among members",
-              "Individual rewards"
-            ],
-            "answer": "Trust among members"
-          },
-          {
-            "section": "C",
-            "number": 13,
-            "question": "What advice does the passage give for improving memory?",
-            "options": [
-              "Practice meditation",
-              "Eat more fish",
-              "Use mnemonic devices",
-              "Sleep more"
-            ],
-            "answer": "Use mnemonic devices"
-          },
-          {
-            "section": "C",
-            "number": 14,
-            "question": "What is the main cause of urban heat islands?",
-            "options": [
-              "Lack of green spaces",
-              "High population density",
-              "Industrial activities",
-              "Vehicle emissions"
-            ],
-            "answer": "Lack of green spaces"
-          },
-          {
-            "section": "C",
-            "number": 15,
-            "question": "What does the speaker say about the future of electric vehicles?",
-            "options": [
-              "They will replace all cars soon",
-              "Battery technology still needs improvement",
-              "They are too expensive for most people",
-              "Government subsidies will increase"
-            ],
-            "answer": "Battery technology still needs improvement"
-          }
-        ]
-      },
-      {
         "type": "reading",
         "title": "Section A - Banked Cloze",
         "passage": "The Internet has made it possible for people to work from home. However, this has also created some problems. For example, it can be difficult to separate work from personal life. Many people find themselves working longer hours than they would in an office. This can lead to stress and burnout. To avoid this, it is important to set clear boundaries. You should have a dedicated workspace and a set schedule. It is also helpful to take regular breaks and to disconnect from work at the end of the day. By doing so, you can enjoy the benefits of working from home without the negative effects.",
@@ -5342,188 +4391,88 @@
       },
       {
         "type": "listening",
-        "title": "Part II Listening Comprehension",
-        "passage": "",
+        "title": "Part II Listening Comprehension (30 minutes) - Section A",
+        "passage": "In this section, you will hear two conversations. At the end of each conversation, you will hear four questions. Both the conversation and the questions will be spoken only once. After you hear a question, you must choose the best answer from the four choices marked A), B), C) and D). Then mark the corresponding letter on Answer Sheet 1 with a single line through the centre.",
         "questions": [
           {
-            "section": "A",
-            "number": 1,
-            "question": "What is the main focus of the news report?",
+            "question": "Questions 1 to 4 are based on the conversation you have just heard.",
             "options": [
-              "A. A new climate policy announced by the UN.",
-              "B. A breakthrough in renewable energy storage.",
-              "C. The impact of extreme weather on agriculture.",
-              "D. International cooperation on space exploration."
+              "A) He is distinguishing himself in foreign service.",
+              "B) He is his country's ambassador to Ethiopia.",
+              "C) He is currently an electric engineer.",
+              "D) He has drawn attention to the media."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 2,
-            "question": "Why did the government issue an emergency alert?",
+            "question": "",
             "options": [
-              "A. A major cyberattack on national infrastructure.",
-              "B. An approaching volcanic eruption.",
-              "C. A sudden outbreak of a contagious disease.",
-              "D. A large-scale power grid failure."
+              "A) Government reshuffle.",
+              "B) Fundamental reform.",
+              "C) Some moral or political orientation.",
+              "D) Some moral or legitimacy."
             ],
-            "answer": "C"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 3,
-            "question": "What was the outcome of the peace negotiations?",
+            "question": "",
             "options": [
-              "A. Both sides agreed to a ceasefire.",
-              "B. The talks collapsed due to disagreements.",
-              "C. A temporary truce was established for aid delivery.",
-              "D. The conflict escalated into a full-scale war."
+              "A) A diplomat always favors a similar style.",
+              "B) It is a prerequisite for practicing diplomacy.",
+              "C) Different people play different roles.",
+              "D) It must first obtain a degree."
             ],
-            "answer": "A"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 4,
-            "question": "What does the report say about the new tech startup?",
+            "question": "",
             "options": [
-              "A. It has developed a revolutionary AI chip.",
-              "B. It received record funding from venture capitalists.",
-              "C. It was acquired by a major tech company.",
-              "D. It faced legal challenges over data privacy."
+              "A) Key skills required for a diplomat.",
+              "B) The making of an experienced diplomat.",
+              "C) Diplomatic discourse and rhetoric.",
+              "D) Contribution of diplomats and envoys."
             ],
-            "answer": "D"
+            "answer": ""
           },
           {
-            "section": "A",
-            "number": 5,
-            "question": "How did the community respond to the flood relief efforts?",
+            "question": "Questions 5 to 8 are based on the conversation you have just heard.",
             "options": [
-              "A. They criticized the slow response of authorities.",
-              "B. They organized volunteer teams to distribute supplies.",
-              "C. They refused outside help due to cultural reasons.",
-              "D. They demanded more government compensation."
+              "A) The work is too boring.",
+              "B) The work is too tiring.",
+              "C) The team is getting nowhere anyway.",
+              "D) The team is too anxious to come."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 6,
-            "question": "What is the woman's main concern about the project?",
+            "question": "",
             "options": [
-              "A. The budget is insufficient.",
-              "B. The deadline is too tight.",
-              "C. The team lacks expertise.",
-              "D. The client's requirements keep changing."
+              "A) The team members' insufficient support.",
+              "B) Two members voted against the contract.",
+              "C) Working without any progress.",
+              "D) The team's lack of concentration on the project."
             ],
-            "answer": "D"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 7,
-            "question": "What does the man suggest doing first?",
+            "question": "",
             "options": [
-              "A. Hiring a consultant for technical advice.",
-              "B. Conducting a market survey.",
-              "C. Redesigning the project timeline.",
-              "D. Discussing with the client directly."
+              "A) Unprofessional.",
+              "B) Inspirational.",
+              "C) Exceptional.",
+              "D) Delusional."
             ],
-            "answer": "C"
+            "answer": ""
           },
           {
-            "section": "B",
-            "number": 8,
-            "question": "Why does the woman hesitate to travel abroad?",
+            "question": "",
             "options": [
-              "A. She is afraid of flying.",
-              "B. She cannot afford the high cost.",
-              "C. She has a tight work schedule.",
-              "D. She worries about safety in foreign countries."
+              "A) Fewer specifications in the contract.",
+              "B) More support for team members.",
+              "C) The full implementation of the project.",
+              "D) The alignment of the election contract."
             ],
-            "answer": "C"
-          },
-          {
-            "section": "B",
-            "number": 9,
-            "question": "What is the man's opinion on online education?",
-            "options": [
-              "A. It is less effective than traditional classrooms.",
-              "B. It provides more flexibility for students.",
-              "C. It requires expensive equipment.",
-              "D. It is only suitable for certain subjects."
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "B",
-            "number": 10,
-            "question": "What are the speakers mainly discussing?",
-            "options": [
-              "A. A new restaurant they want to try.",
-              "B. A book they both recently read.",
-              "C. A movie that received mixed reviews.",
-              "D. A concert they plan to attend."
-            ],
-            "answer": "A"
-          },
-          {
-            "section": "C",
-            "number": 11,
-            "question": "What is the main idea of the passage?",
-            "options": [
-              "A. The benefits of mindfulness meditation.",
-              "B. The history of ancient Greek philosophy.",
-              "C. The impact of social media on mental health.",
-              "D. The importance of physical exercise for seniors."
-            ],
-            "answer": "A"
-          },
-          {
-            "section": "C",
-            "number": 12,
-            "question": "According to the speaker, what is one key factor for successful teamwork?",
-            "options": [
-              "A. Strong leadership from a single person.",
-              "B. Clear division of roles and responsibilities.",
-              "C. Frequent meetings to discuss progress.",
-              "D. Use of advanced communication tools."
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "C",
-            "number": 13,
-            "question": "What does the passage say about the rise of electric vehicles?",
-            "options": [
-              "A. It has significantly reduced carbon emissions.",
-              "B. It faces challenges in battery recycling.",
-              "C. It has led to a decline in oil prices.",
-              "D. It is mainly driven by government subsidies."
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "C",
-            "number": 14,
-            "question": "Why does the speaker recommend learning a second language?",
-            "options": [
-              "A. It improves cognitive abilities.",
-              "B. It increases job opportunities.",
-              "C. It helps understand other cultures.",
-              "D. All of the above."
-            ],
-            "answer": "D"
-          },
-          {
-            "section": "C",
-            "number": 15,
-            "question": "What is the speaker's attitude towards artificial intelligence?",
-            "options": [
-              "A. Optimistic about its potential.",
-              "B. Concerned about job displacement.",
-              "C. Skeptical about its reliability.",
-              "D. Indifferent to its development."
-            ],
-            "answer": "A"
+            "answer": ""
           }
         ]
       },
@@ -6108,188 +5057,88 @@
       },
       {
         "type": "listening",
-        "title": "Part II Listening Comprehension",
-        "passage": "",
+        "title": "Part II Listening Comprehension (30 minutes) - Section A",
+        "passage": "Directions: In this section, you will hear two conversations. At the end of each conversation, you will hear four questions. Both the conversation and the questions will be spoken only once. After you hear a question, you must choose the best answer from the four choices marked A), B), C) and D). Then mark the corresponding letter on Answer Sheet 1 with a single line through the centre.",
         "questions": [
           {
-            "section": "Section A",
-            "number": 1,
-            "question": "What is the man going to do?",
+            "question": "Questions 1 to 4 are based on the conversation you have just heard. 1. What does the man want to do?",
             "options": [
               "A) Meet a computer technician.",
               "B) Talk about his trouble.",
-              "C) Call the phone company.",
+              "C) Call the company.",
               "D) Visit the phone maintenance."
             ],
-            "answer": "D"
+            "answer": ""
           },
           {
-            "section": "Section A",
-            "number": 2,
-            "question": "What does the woman suggest the man do?",
+            "question": "2. What does the woman suggest the man do?",
             "options": [
               "A) Consult someone in charge.",
-              "B) Come up with a possible solution.",
-              "C) Inform the traffic police.",
+              "B) Come back if possible.",
+              "C) Inform the traffic office.",
               "D) Designate an engineer in charge."
             ],
-            "answer": "A"
+            "answer": ""
           },
           {
-            "section": "Section A",
-            "number": 3,
-            "question": "What is the man's feeling?",
+            "question": "3. How does the man feel?",
             "options": [
               "A) Frustration.",
               "B) Intimidation.",
               "C) Desperation.",
               "D) Indignation."
             ],
-            "answer": "A"
+            "answer": ""
           },
           {
-            "section": "Section A",
-            "number": 4,
-            "question": "What does the woman want to know?",
+            "question": "4. What does the woman ask about?",
             "options": [
-              "A) Whether the content has been backed up.",
-              "B) Whether the main line comes from somewhere else.",
-              "C) Whether the latter will arrive at a low cost.",
-              "D) Whether the fee is paid through the directory."
+              "A) Whether the content has a backup.",
+              "B) Whether the cable comes from somewhere else.",
+              "C) Whether the latter store has arrived at the cost.",
+              "D) Whether the fee for the physical directory is clear."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "Section A",
-            "number": 5,
-            "question": "What does the man think of the job?",
+            "question": "Questions 5 to 8 are based on the conversation you have just heard. 5. What does the man think of the job?",
             "options": [
               "A) It's boring.",
               "B) It's challenging.",
               "C) It's beautiful.",
               "D) It's unlike most jobs."
             ],
-            "answer": "B"
+            "answer": ""
           },
           {
-            "section": "Section A",
-            "number": 6,
-            "question": "What does the job involve according to the man?",
+            "question": "6. What is the main responsibility of the job?",
             "options": [
               "A) Arbitrating between disagreeing solicitors.",
               "B) Preventing disputes from escalating.",
               "C) Buying and selling property.",
               "D) Mediating in disputes."
             ],
-            "answer": "D"
+            "answer": ""
           },
           {
-            "section": "Section A",
-            "number": 7,
-            "question": "What does the woman say about courts?",
+            "question": "7. What does the man say about courts?",
             "options": [
-              "A) Courts are intended to mix into legal disputes.",
-              "B) Courts are thought to be a bureaucratic function.",
+              "A) Courts tend to mix into major disputes.",
+              "B) Courts are a bureaucratic function.",
               "C) Courts are frustrating and expensive.",
-              "D) Courts are frightening and arbitrary."
+              "D) Courts are right and arbitrary."
             ],
-            "answer": "C"
+            "answer": ""
           },
           {
-            "section": "Section A",
-            "number": 8,
-            "question": "What skill does the man mention as important for the job?",
+            "question": "8. What skill is important for the job?",
             "options": [
-              "A) The ability to make an argument uniquely.",
-              "B) The skill to prevent conflict between parties concerned.",
-              "C) The skill to foresee the potential stake of the work.",
+              "A) The ability to argue uniquely.",
+              "B) The skill of preventing conflict between parties concerned.",
+              "C) The skill of foreseeing potential risks in the work.",
               "D) The ability to express oneself clearly and forcefully."
             ],
-            "answer": "B"
-          },
-          {
-            "section": "Section B",
-            "number": 9,
-            "question": "What did the researchers do according to the passage?",
-            "options": [
-              "A) They looked into the relationship between one's prior knowledge and creativity.",
-              "B) They offered novel ways to help older adults to keep their memories from aging.",
-              "C) They proposed an explanation for old people's difficulty in retrieving memories.",
-              "D) They advanced a new model concerning human information storage and retrieval."
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "Section B",
-            "number": 10,
-            "question": "What does the passage say about memory retrieval?",
-            "options": [
-              "A) Young adults rely on memory while older adults keep notes as a reminder.",
-              "B) Older adults often retrieve irrelevant memories along with what they want.",
-              "C) Young adults accumulate knowledge much more quickly than older adults.",
-              "D) Older adults generally perform cognitive tasks much slower than young adults."
-            ],
-            "answer": "B"
-          },
-          {
-            "section": "Section B",
-            "number": 11,
-            "question": "What does the passage say about older adults?",
-            "options": [
-              "A) They show preserved, and sometimes enhanced, creativity.",
-              "B) They frequently suffer from disorderly crowded memories.",
-              "C) They can rely on their accumulated wisdom in an emergency.",
-              "D) They may well be served by forgetting their prior knowledge."
-            ],
-            "answer": "A"
-          },
-          {
-            "section": "Section B",
-            "number": 12,
-            "question": "What does the passage say about many workers?",
-            "options": [
-              "A) They are actually proud of the goods and services they produce.",
-              "B) They are worried about being alienated from the outside world.",
-              "C) They are rarely in control of many things related to their work.",
-              "D) They are longing to share the profits made from their work."
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "Section B",
-            "number": 13,
-            "question": "What is one consequence of the situation described in the passage?",
-            "options": [
-              "A) The steady decrease in productivity.",
-              "B) The adverse effect on physical health.",
-              "C) The feeling of being time poor.",
-              "D) The rising economic inequality."
-            ],
-            "answer": "C"
-          },
-          {
-            "section": "Section B",
-            "number": 14,
-            "question": "What does the passage say about technology?",
-            "options": [
-              "A) It alters the structure of work.",
-              "B) It puts jobs and wages at risk.",
-              "C) It liberates people from tedious and laborious work.",
-              "D) It creates new work opportunities in the IT industry."
-            ],
-            "answer": "A"
-          },
-          {
-            "section": "Section B",
-            "number": 15,
-            "question": "What does the passage suggest as a solution?",
-            "options": [
-              "A) Finding meaning in work.",
-              "B) Prioritizing life over work.",
-              "C) Improving relationships in the community.",
-              "D) Realizing one's social value in the workplace."
-            ],
-            "answer": "B"
+            "answer": ""
           }
         ]
       },
