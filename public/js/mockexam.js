@@ -43,7 +43,10 @@ examPaperId = paperId;
   // Dynamically add listening section
   const mm = String(examPaper.month).padStart(2, '0');
   const audioUrl = `/api/listening/audio/${examPaper.level}_${examPaper.year}_${mm}_s1.mp3`;
-  examPaper.sections.splice(1, 0, { type: 'listening', title: '🎧 Part II 听力理解', audioUrl: audioUrl });
+  // Only add listening if not already in seed data
+  if (!examPaper.sections.some(function(s){ return s.type === 'listening'; })) {
+    examPaper.sections.splice(1, 0, { type: 'listening', title: '🎧 Part II 听力理解', audioUrl: audioUrl });
+  }
  examAnswers = {};
   examSeconds = EXAM_DURATIONS[examPaper.level] || EXAM_DURATIONS.cet4;
 
@@ -158,10 +161,21 @@ function switchSection(idx) {
     }
    html += '</div>';
   } else if (sec.type === 'listening') {
-    html += '<div class="exam-listening">';
-    html += '<div class="audio-player-box"><audio id="examListeningAudio" controls src="' + (sec.audioUrl || '') + '" preload="auto"></audio></div>';
-    html += '<button class="btn-primary" id="loadExamListeningBtn" onclick="loadExamListeningQuestions()">📋 加载听力题目</button>';
+   html += '<div class="exam-listening">';
+    // Build audio URL from paper data if not in section
+    var _audioUrl = sec.audioUrl;
+    if (!_audioUrl && examPaper.year && examPaper.month && examPaper.level) {
+      var _mm = String(examPaper.month).padStart(2, '0');
+      _audioUrl = '/api/listening/audio/' + examPaper.level + '_' + examPaper.year + '_' + _mm + '_s1.mp3';
+    }
+    html += '<div class="audio-player-box"><audio id="examListeningAudio" controls src="' + (_audioUrl || '') + '" preload="auto"></audio></div>';
     html += '<div id="examListeningQuestions"></div>';
+    if (sec.questions && sec.questions.length > 0) {
+      // Has pre-extracted questions from seed data
+      setTimeout(function(){ renderExamListeningQuestions(sec.questions); }, 0);
+    } else {
+      html += '<button class="btn-primary" id="loadExamListeningBtn" onclick="loadExamListeningQuestions()">📋 加载听力题目</button>';
+    }
     html += '</div>';
  } else if (sec.type === 'translation') {
     html += '<div class="exam-translation"><div class="exam-passage markable" style="font-size:1.2rem;">' + (sec.passage || '无原文') + '</div><textarea class="exam-textarea" id="examTranslation" placeholder="在此输入英文翻译..." rows="6">' + (examAnswers['translation'] || '') + '</textarea></div>';
