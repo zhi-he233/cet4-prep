@@ -287,7 +287,7 @@ window.evaluateExamTranslation = evaluateExamTranslation;
 
 async function loadExamListeningQuestions(secIdx) {
   const btn = document.getElementById('loadExamListeningBtn');
-  if (btn) { btn.disabled = true; btn.textContent = 'AI 生成题目中...'; }
+  if (btn) { btn.disabled = true; btn.textContent = '解析题目中...'; }
   const container = document.getElementById('examListeningQuestions');
   if (container) container.innerHTML = '<p style="padding:1rem;">🤖 AI 正在生成听力题目...</p>';
   const data = await API.post('/api/listening/questions', {

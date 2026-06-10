@@ -59,7 +59,7 @@ async function startListening(id, exercises) {
 async function loadListeningQuestions() {
   const btn = document.getElementById('loadQuestionsBtn');
   btn.disabled = true;
-  btn.textContent = 'AI 解析中...';
+  btn.textContent = '解析题目中...';
 
   const data = await API.post('/api/listening/questions', { level: currentExercise.level, year: currentExercise.year, month: currentExercise.month });
   

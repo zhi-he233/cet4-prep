@@ -540,7 +540,23 @@ app.get('/api/listening', async (req, res) => {
 // Parse listening questions from PDF
 app.post('/api/listening/questions', async (req, res) => {
   try {
-    const { pdfPath, level, year, month } = req.body;
+    let { pdfPath, level, year, month } = req.body;
+    // Look up PDF by year/month if not provided (works when seed data has no pdfPath)
+    if (!pdfPath && level && year) {
+      try {
+        const label = level === 'cet6' ? '六级' : '四级';
+        const ym = String(month).padStart(2, '0');
+        const baseDir = path.join(EXAM_BASE, '大学生英语' + label + '历年真题（已更新至2025年12月）', '【2013年-2025年12月】历年' + label + '真题+答案解析+听力音频');
+        if (require('fs').existsSync(baseDir)) {
+          const periodFolder = require('fs').readdirSync(baseDir).find(function(d) { return d.includes('【' + year + '年' + ym + '月】') && d.match(/【\d{4}年\d{2}月】/); });
+          if (periodFolder) {
+            const pdfDir = path.join(baseDir, periodFolder);
+            const pdfFiles = require('fs').readdirSync(pdfDir).filter(function(f) { return f.includes('真题第1套') && f.endsWith('.pdf') && !f.includes('解析'); });
+            if (pdfFiles.length > 0) pdfPath = path.join(pdfDir, pdfFiles[0]);
+          }
+        }
+      } catch(e) { /* pdf lookup failed, fall through to AI */ }
+    }
     // Try PDF first if available
     if (pdfPath && require('fs').existsSync(pdfPath)) {
       const pdfParse = require('pdf-parse');
