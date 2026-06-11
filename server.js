@@ -29,7 +29,7 @@ app.use(express.static('public'));
 const EXAM_CONFIG = {
   cet4: {
     label: '四级',
-    translateMaxChars: 50,
+    translateMaxChars: 100,
     clozeWords: '120-150',
     writingTopics: [
       "The Importance of Environmental Protection",
@@ -51,7 +51,7 @@ const EXAM_CONFIG = {
   },
   cet6: {
     label: '六级',
-    translateMaxChars: 70,
+    translateMaxChars: 120,
     clozeWords: '150-180',
     writingTopics: [
       "The Influence of Digital Technology on Learning",
@@ -97,7 +97,7 @@ async function askDeepSeek(systemPrompt, userMessage) {
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userMessage }
       ],
-      temperature: 0.7,
+      temperature: 0.9,
       max_tokens: 2000
     })
   });
@@ -257,16 +257,30 @@ app.get('/api/translate/random', async (req, res) => {
   try {
     res.set('Cache-Control', 'no-store');
     const exam = getRequestExam(req);
-    const seed = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    const topics = [
+      '中国文化与传统节日','现代科技与人工智能','环境保护与气候变化',
+      '教育与就业','社交媒体与网络生活','健康与运动',
+      '经济发展与社会变化','旅游与文化交流','城乡发展与城镇化',
+      '家庭与代际关系','创新与创业','阅读与学习习惯',
+      '食品安全与公共卫生','交通与基础设施','人口老龄化与社会保障',
+      '电影与娱乐','体育运动','大学校园生活',
+      '传统文化复兴','航天科技与探索','一带一路与国际合作',
+      '数字经济与电子支付','碳中和与绿色能源','乡村振兴',
+      '在线教育','心理健康','人工智能伦理',
+      '历史人物与文化遗产','节日与习俗','艺术与审美教育'
+    ];
+    const topic = topics[Math.floor(Math.random() * topics.length)];
+    const bigRand = Math.random().toString(36).substring(2, 12) + Date.now().toString(36) + Math.random();
     const sentence = await askDeepSeek(
-      `你是${exam.label}翻译出题老师。请现场原创生成一个${exam.translateMaxChars}字以内的中文句子，适合${exam.label}学生翻译成英文。句子要贴近中国文化、社会生活、科技发展、校园日常或社会热点。不要使用固定题库，不要复述示例。只输出句子本身，不要任何解释、编号、引号。`,
-      `请根据这个随机种子原创生成一道新的${exam.label}翻译练习中文句子：${seed}`
+      '你是' + exam.label + '翻译出题老师。请原创生成一个全新的中文段落（2-3句话），适合' + exam.label + '学生翻译成英文。主题：' + topic + '。字数在' + exam.translateMaxChars + '字以内。要求：1. 内容贴合真实' + exam.label + '翻译真题风格和难度 2. 包含2-3个信息点 3. 包含1-2个' + exam.label + '高频词汇或句式 4. 绝对原创 5. 只输出段落本身，不要任何解释、编号或引号。随机种子：' + bigRand,
+      '请创作一段全新的' + exam.label + '翻译练习。主题：' + topic + '。段落2-3句话，字数在' + exam.translateMaxChars + '字以内。种子：' + bigRand
     );
     res.json({ sentence: sentence.trim().replace(/^[\u201c\u2018"]|[\u201d\u2019"]$/g, '') });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
+
 
 app.post('/api/writing/evaluate', async (req, res) => {
   try {
