@@ -1,12 +1,9 @@
-﻿const API = {
+const API = {
   async post(url, data) {
     try {
-      const headers = { 'Content-Type': 'application/json' };
-      const token = localStorage.getItem('cet4token');
-      if (token) headers['Authorization'] = `Bearer ${token}`;
       const res = await fetch(url, {
         method: 'POST',
-        headers,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ level: getExamLevel(), ...(data || {}) })
       });
       const json = await res.json();
@@ -16,13 +13,11 @@
       return { error: '网络连接失败' };
     }
   },
+
   async get(url) {
     try {
-      const headers = { 'Content-Type': 'application/json' };
-      const token = localStorage.getItem('cet4token');
-      if (token) headers['Authorization'] = `Bearer ${token}`;
       const separator = url.includes('?') ? '&' : '?';
-      const res = await fetch(`${url}${separator}level=${encodeURIComponent(getExamLevel())}`, { headers });
+      const res = await fetch(`${url}${separator}level=${encodeURIComponent(getExamLevel())}`);
       const json = await res.json();
       if (!res.ok) return { error: json.error || `请求失败 (${res.status})` };
       return json;
@@ -33,8 +28,8 @@
 };
 
 const EXAM_LEVELS = {
-  cet4: { label: '四级', title: '四级速通助手' },
-  cet6: { label: '六级', title: '六级速通助手' }
+  cet4: { label: '四级', title: '四级翻译练习' },
+  cet6: { label: '六级', title: '六级翻译练习' }
 };
 
 function getExamLevel() {
@@ -46,14 +41,54 @@ function getExamLabel() {
   return EXAM_LEVELS[getExamLevel()].label;
 }
 
+function getCurrentUserId() {
+  return 'local';
+}
+
+function getUserStorageKey(name, userId = getCurrentUserId(), level = getExamLevel()) {
+  return `${userId}_${level}_${name}`;
+}
+
+function parseJson(value, fallback) {
+  try {
+    return value ? JSON.parse(value) : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
+function getUserJson(name, fallback, legacyKey) {
+  const key = getUserStorageKey(name);
+  const stored = localStorage.getItem(key);
+  if (stored) return parseJson(stored, fallback);
+
+  const legacyValue = legacyKey ? localStorage.getItem(legacyKey) : null;
+  if (legacyValue) {
+    localStorage.setItem(key, legacyValue);
+    return parseJson(legacyValue, fallback);
+  }
+
+  return fallback;
+}
+
+function setUserJson(name, data) {
+  localStorage.setItem(getUserStorageKey(name), JSON.stringify(data));
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text || '';
+  return div.innerHTML;
+}
+
 function updateExamLevelText() {
-  const title = EXAM_LEVELS[getExamLevel()].title;
-  document.title = title;
-  document.querySelectorAll('[data-exam-label]').forEach(el => {
-    el.textContent = getExamLabel();
+  const config = EXAM_LEVELS[getExamLevel()];
+  document.title = config.title;
+  document.querySelectorAll('[data-exam-title]').forEach((el) => {
+    el.textContent = config.title;
   });
-  document.querySelectorAll('[data-exam-title]').forEach(el => {
-    el.textContent = title;
+  document.querySelectorAll('[data-exam-label]').forEach((el) => {
+    el.textContent = config.label;
   });
 }
 
@@ -76,131 +111,25 @@ function toggleThemeMode() {
 function switchExamLevel(level) {
   if (!EXAM_LEVELS[level]) return;
   localStorage.setItem('cet_examLevel', level);
-  const select = document.getElementById('examLevelSelect');
-  if (select) select.value = level;
   updateExamLevelText();
-  if (typeof refreshWordUserData === 'function') refreshWordUserData();
-
-  const activeTab = document.querySelector('.tab-btn.active');
-  if (activeTab) {
-    const tab = activeTab.dataset.tab;
-    if (tab === 'words') showStudyHistory();
-    else if (tab === 'translate') {
-      showTranslateHistory();
-      if (typeof loadRandomSentence === 'function') loadRandomSentence();
-    } else if (tab === 'wrongbook') loadWrongBook('wrong-words');
-    else if (tab === 'favorites') loadFavorites();
-    else if (tab === 'writing' && typeof refreshWritingForExamLevel === 'function') {
-      refreshWritingForExamLevel();
-    } else if (tab === 'chat') {
-      stopPolling();
-      loadChat();
-    }
-  }
-
-  document.getElementById('wordResult') && (document.getElementById('wordResult').innerHTML = '');
-  document.getElementById('quizResult') && (document.getElementById('quizResult').innerHTML = '');
-  document.getElementById('translateResult') && (document.getElementById('translateResult').innerHTML = '');
-  document.getElementById('writingResult') && (document.getElementById('writingResult').innerHTML = '');
+  showTranslateHistory();
+  if (typeof loadRandomSentence === 'function') loadRandomSentence();
+  const result = document.getElementById('translateResult');
+  const review = document.getElementById('translateReviewPanel');
+  if (result) result.innerHTML = '';
+  if (review) review.style.display = 'none';
 }
 
-// 获取用户列表
-function getUsers() {
-  return JSON.parse(localStorage.getItem('cet4_users') || '["默认用户"]');
-}
-function saveUsers(users) {
-  localStorage.setItem('cet4_users', JSON.stringify(users));
-}
-function getCurrentUserId() {
-  return (typeof currentUser !== 'undefined' && currentUser && currentUser.username) ? currentUser.username : (localStorage.getItem('cet4_currentUser') || '默认用户');
-}
-
-function parseJson(value, fallback) {
-  try {
-    return value ? JSON.parse(value) : fallback;
-  } catch (e) {
-    return fallback;
-  }
-}
-
-function getUserStorageKey(name, userId = getCurrentUserId(), level = getExamLevel()) {
-  return `${userId}_${level}_${name}`;
-}
-
-function getUserJson(name, fallback, legacyKey) {
-  const key = getUserStorageKey(name);
-  const stored = localStorage.getItem(key);
-  if (stored) return parseJson(stored, fallback);
-
-  if (getExamLevel() === 'cet4') {
-    const candidates = [`${getCurrentUserId()}_${name}`].concat(legacyKey ? [].concat(legacyKey) : []);
-    for (const candidate of candidates) {
-      const legacyValue = localStorage.getItem(candidate);
-      const migrationFlag = `${candidate}_migrated_to_${key}`;
-      if (!legacyValue || localStorage.getItem(migrationFlag)) continue;
-      if (legacyValue && !localStorage.getItem(migrationFlag)) {
-        localStorage.setItem(key, legacyValue);
-        localStorage.setItem(migrationFlag, '1');
-        return parseJson(legacyValue, fallback);
-      }
-    }
-  }
-
-  return fallback;
-}
-
-function setUserJson(name, data) {
-  localStorage.setItem(getUserStorageKey(name), JSON.stringify(data));
-}
-
-function switchUser(userId) {
-  localStorage.setItem('cet4_currentUser', userId);
-  // 更新下拉框
-    if (typeof refreshWordUserData === 'function') refreshWordUserData();
-  // 刷新各模块显示
-  const activeTab = document.querySelector('.tab-btn.active');
-  if (activeTab) {
-    const tab = activeTab.dataset.tab;
-    if (tab === 'words') showStudyHistory();
-    else if (tab === 'translate') showTranslateHistory();
-    else if (tab === 'wrongbook') loadWrongBook('wrong-words');
-    else if (tab === 'favorites') loadFavorites();
-    else if (tab === 'writing' && typeof refreshWritingForExamLevel === 'function') refreshWritingForExamLevel();
-    else if (tab === 'chat') { stopPolling(); loadChat(); }
-  }
-  // 清空各结果区域
-  document.getElementById('wordResult') && (document.getElementById('wordResult').innerHTML = '');
-  document.getElementById('quizResult') && (document.getElementById('quizResult').innerHTML = '');
-  document.getElementById('translateResult') && (document.getElementById('translateResult').innerHTML = '');
-  document.getElementById('writingResult') && (document.getElementById('writingResult').innerHTML = '');
-}
-// 初始化下拉框
-function initUserSelect() {
+function initAppShell() {
   const examSelect = document.getElementById('examLevelSelect');
   if (examSelect) {
     examSelect.value = getExamLevel();
-    examSelect.onchange = () => switchExamLevel(examSelect.value);
+    examSelect.addEventListener('change', () => switchExamLevel(examSelect.value));
   }
+
   const themeBtn = document.getElementById('themeToggleBtn');
-  if (themeBtn) themeBtn.onclick = toggleThemeMode;
+  if (themeBtn) themeBtn.addEventListener('click', toggleThemeMode);
+
   updateExamLevelText();
   applyThemeMode();
 }
-document.getElementById('confirmNewUser').addEventListener('click', () => {
-  const name = document.getElementById('newUserName').value.trim();
-  if (!name) return;
-  const users = getUsers();
-  if (users.includes(name)) { alert('用户已存在'); return; }
-  users.push(name);
-  saveUsers(users);
-  // 重新初始化下拉框并切换到新用户
-  initUserSelect();
-  switchUser(name);
-  document.getElementById('newUserName').value = '';
-  document.getElementById('newUserName').style.display = 'none';
-  document.getElementById('confirmNewUser').style.display = 'none';
-});
-
-
-
-

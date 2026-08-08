@@ -1,365 +1,90 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>四级速通助手 - 备考平台</title>
+  <title>四级翻译练习</title>
   <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-
-  <!-- ===== 登录/注册弹窗 ===== -->
-  <div id="authModal" class="modal-overlay" style="display:none;">
-    <div class="modal-content auth-modal">
-      <h3>👤 登录 / 注册</h3>
-      <div id="authMsg" style="color:var(--danger);font-size:0.9rem;margin-bottom:0.5rem;"></div>
-      <div class="auth-tabs">
-        <button class="auth-tab-btn active" data-auth="login">登录</button>
-        <button class="auth-tab-btn" data-auth="register">注册</button>
-      </div>
-      <div id="loginForm" class="auth-form">
-        <input type="text" id="loginUsername" placeholder="用户名">
-        <input type="password" id="loginPassword" placeholder="密码">
-        <button class="btn-primary" onclick="doLogin()" style="width:100%;">登 录</button>
-      </div>
-      <div id="registerForm" class="auth-form" style="display:none;">
-        <input type="text" id="regUsername" placeholder="用户名 (2-20个字符)">
-        <input type="password" id="regPassword" placeholder="密码 (3-50个字符)">
-        <button class="btn-primary" onclick="doRegister()" style="width:100%;">注 册</button>
-      </div>
-      <button class="btn-secondary" onclick="hideAuthModal()" style="margin-top:0.8rem;width:100%;">取消</button>
-    </div>
-  </div>
-
   <div class="container">
-    <h1>📌 <span data-exam-title>四级速通助手</span></h1>
+    <header class="app-header">
+      <h1 data-exam-title>四级翻译练习</h1>
+      <div class="toolbar">
+        <label for="examLevelSelect">备考级别</label>
+        <select id="examLevelSelect">
+          <option value="cet4">四级 CET-4</option>
+          <option value="cet6">六级 CET-6</option>
+        </select>
+        <button id="themeToggleBtn" type="button" class="btn-secondary">深色模式</button>
+      </div>
+    </header>
 
-    <!-- 用户和考试模式切换 -->
-    <div class="user-switch">
-      <span><strong id="authUserDisplay">未登录</strong></span>
-      <button id="authLoginBtn" onclick="showAuthModal()">🔑 登录</button>
-      <button id="authLogoutBtn" onclick="doLogout()" style="display:none;">退出</button>
-      <label>备考级别：</label>
-      <select id="examLevelSelect">
-        <option value="cet4">四级 CET-4</option>
-        <option value="cet6">六级 CET-6</option>
-      </select>
-      <button id="themeToggleBtn" type="button">深色模式</button>
-      <button id="layoutToggleBtn" type="button">📺 桌面版</button>
-    </div>
-
-    <nav class="tabs">
-      <button class="tab-btn" data-tab="reading">📖 阅读训练</button>
-      <button class="tab-btn active" data-tab="words">🔉 词汇学习</button>
-      <button class="tab-btn" data-tab="translate">🌪 句子翻译</button>
-      <button class="tab-btn" data-tab="writing">✍️ 作文批改</button>
-      <button class="tab-btn" data-tab="wrongbook">📃 学习档案</button>
-      <button class="tab-btn" data-tab="chat">💰 交流角</button>
+    <nav class="tabs" aria-label="功能切换">
+      <button class="tab-btn active" type="button" data-tab="translate">翻译练习</button>
+      <button class="tab-btn" type="button" data-tab="history">翻译记录</button>
     </nav>
 
-    <!-- ========== 阅读训练 ========== -->
-    <section id="tab-reading" class="tab-content">
-      <div id="readingContent">
-        <p>加载试卷列表中...</p>
-      </div>
-      <div id="listeningSection" style="margin-top:1.5rem;">
-        <div style="text-align:center;padding:1rem 0;">
-         <span style="color:var(--text-muted);font-size:0.85rem;">更多训练：</span>
-         <button class="sub-tab-btn" onclick="loadExamSelector()" style="margin-left:0.5rem;">📝 模拟考试</button>
-       </div>
-       <div id="mockExamContent" style="margin-top:0.5rem;"></div>
-      </div>
-    </section>
+    <main>
+      <section id="tab-translate" class="tab-content active">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow" data-exam-label>四级</p>
+              <h2>句子翻译评分</h2>
+            </div>
+            <button id="refreshSentenceBtn" type="button" class="btn-secondary">换一题</button>
+          </div>
 
-    <!-- 背单词模块 -->
-    <section id="tab-words" class="tab-content active">
-      <div class="word-card">
-        <div class="word-toolbar">
-          <div class="word-filter-row">
-            <label for="wordFilterSelect">词库：</label>
-            <select id="wordFilterSelect">
-              <option value="all">全部词</option>
-              <option value="due">今日复习</option>
-              <option value="wrong">薄弱词</option>
-              <option value="favorites">收藏词</option>
-              <option value="unseen">未学词</option>
-            </select>
-            <input type="text" id="wordSearchInput" placeholder="搜索单词或释义">
+          <div class="prompt-box">
+            <span class="label">中文原句</span>
+            <div id="chineseDisplay" class="chinese-sentence">加载中...</div>
           </div>
-          <div id="wordStatsLine" class="word-stats-line"></div>
-        </div>
-        <div id="studyMode" class="mode-panel">
-          <div class="word-big" id="studyWord">abandon</div>
-          <div class="phonetic-big" id="studyPhonetic">/əˈbændən/</div>
-          <div class="meaning-big" id="studyMeaning" style="display:none;">v. 放弃；抛弃</div>
-          <div class="study-actions">
-            <button id="toggleMeaningBtn" class="btn-secondary">显示释义</button>
-            <button id="knowWordBtn" class="btn-secondary">认识</button>
-            <button id="weakWordBtn" class="btn-secondary">不熟</button>
-            <button id="nextWordStudyBtn" class="btn-secondary">下一个</button>
-            <button id="switchToDictationBtn" class="btn-primary">切换到默写模式</button>
-            <button id="favoriteBtn" class="btn-star">☆ 收藏</button>
-          </div>
-        </div>
-        <div id="dictationMode" class="mode-panel" style="display:none;">
-          <div class="meaning-big dictation-meaning" id="dictationMeaning">v. 放弃；抛弃</div>
-          <div class="dictation-input-row">
-            <input type="text" id="dictationInput" placeholder="请拼写单词" autocomplete="off">
-            <button id="checkSpellBtn" class="btn-primary">检查拼写</button>
-          </div>
-          <div id="spellResult" class="spell-result"></div>
-          <div class="dictation-actions">
-            <button id="nextWordAfterCheckBtn" class="btn-secondary">下一个</button>
-            <button id="switchToStudyBtn" class="btn-outline">返回背诵模式</button>
-          </div>
-        </div>
-        <div class="ai-buttons">
-          <button id="aiExplainBtn" class="ai-btn">🤖 AI 深度讲解</button>
-          <button id="aiQuizBtn" class="ai-btn" style="background:#0ea5e9;">📑 AI 出题</button>
-        </div>
-        <div id="quizTypeModal" class="modal-overlay" style="display:none;">
-          <div class="modal-content">
-            <h3>选择题目类型</h3>
-            <button class="quiz-type-btn" data-type="choice">📑 单选题（拼写/用法）</button>
-            <button class="quiz-type-btn" data-type="cloze">📫 选词填空（15选10）</button>
-            <button class="quiz-type-btn" data-type="match">🔆 信息匹配（用法辨析）</button>
-            <button class="quiz-type-btn cancel-btn" id="closeQuizModal">取消</button>
-          </div>
-        </div>
-        <div id="wordResult" class="result-box"></div>
-        <div id="quizResult" class="result-box"></div>
-        <div style="margin-top:1rem;">
-          <h3>📵 背诵记录</h3>
-          <ul id="studyHistoryList"></ul>
-          <button onclick="clearStudyHistory()" class="btn-secondary">清空记录</button>
-        </div>
-        <div style="margin-top:1rem;">
-          <input type="file" id="wordFile" accept=".json">
-          <small>可导入当前级别的 JSON 词库</small>
-        </div>
-      </div>
-    </section>
 
-    <!-- 句子翻译模块 -->
-    <section id="tab-translate" class="tab-content">
-      <h2>翻译评分</h2>
-      <div class="question-box">
-        <p>📑 请翻译以下句子：</p>
-        <div id="chineseDisplay" class="chinese-sentence">加载中...</div>
-        <button id="refreshSentenceBtn" class="btn-secondary" style="margin-top:0.5rem;">换一题</button>
-      </div>
-      <textarea id="translationInput" rows="3" placeholder="输入你的英文翻译..."></textarea>
-      <button id="evaluateTranslationBtn" class="ai-btn">📳 AI 评分及建议</button>
-      <div id="translateResult" class="result-box"></div>
-      <div id="translateHistoryPanel" style="margin-top:1rem;">
-        <h3>📐 翻译记录</h3>
-        <input type="text" id="historySearch" placeholder="搜索中文或英文..." />
-        <ul id="historyList"></ul>
-      </div>
-      <div id="translateReviewPanel" class="translate-review-panel" style="display:none;"></div>
-    </section>
+          <label class="input-label" for="translationInput">你的英文翻译</label>
+          <textarea id="translationInput" rows="5" placeholder="输入你的英文翻译..."></textarea>
 
-    <!-- 作文批改（含教学模式）-->
-    <section id="tab-writing" class="tab-content">
-      <h2>✍️ 作文批改</h2>
-      <div class="writing-mode-switch">
-        <button id="directEvalMode" class="btn-outline active">直接批改</button>
-        <button id="teachMode" class="btn-outline">🎗 教学模式</button>
-      </div>
-      <div id="directModeContent">
-        <input type="text" id="essayTopic" placeholder="作文题目，如：Online Shopping">
-        <textarea id="essayText" rows="8" placeholder="输入你的英文作文..."></textarea>
-        <button id="evaluateBtn" class="ai-btn">📑 批改作文</button>
-        <div id="writingResult" class="result-box"></div>
-      </div>
-      <div id="teachModeContent" style="display:none;">
-        <div class="teach-step" id="step1">
-          <h3>📕 第一步：选择或输入作文题目</h3>
-          <div id="topicListContainer">
-            <p class="teach-hint">加载<span data-exam-label>四级</span>常考题目中...</p>
+          <div class="actions">
+            <button id="evaluateTranslationBtn" type="button" class="btn-primary">AI 评分及建议</button>
           </div>
-          <div class="teach-custom-topic">
-            <input type="text" id="customTopicInput" placeholder="或手动输入自定义题目">
-            <button id="useCustomTopicBtn" class="btn-secondary">使用</button>
+
+          <div id="translateResult" class="result-box" aria-live="polite"></div>
+          <div id="translateReviewPanel" class="review-panel" style="display:none;"></div>
+        </div>
+      </section>
+
+      <section id="tab-history" class="tab-content">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">复习</p>
+              <h2>翻译记录</h2>
+            </div>
+            <button id="clearHistoryBtn" type="button" class="btn-secondary">清空记录</button>
           </div>
+          <input type="text" id="historySearch" class="search-input" placeholder="搜索中文或英文...">
+          <ul id="historyList" class="history-list"></ul>
         </div>
-        <div class="teach-step" id="step2" style="display:none;">
-          <h3>📵 第二步：查看写作大纲 <span id="selectedTopicDisplay"></span></h3>
-          <button id="generateOutlineBtn" class="ai-btn" style="background:#8b5cf6;">🤖 AI 生成大纲</button>
-          <div id="outlineResult" class="result-box"></div>
-        </div>
-        <div class="teach-step" id="step3" style="display:none;">
-          <h3>🔜 第三步：学习关键词汇</h3>
-          <button id="generateVocabBtn" class="ai-btn" style="background:#06b6d4;">🔜 AI 推荐词汇</button>
-          <div id="vocabResult" class="result-box"></div>
-        </div>
-        <div class="teach-step" id="step4" style="display:none;">
-          <h3>✍️ 第四步：开始写作</h3>
-          <p class="teach-hint">参考大纲和词汇，在下面写下你的作文</p>
-          <textarea id="teachEssayText" rows="8" placeholder="参考上面的提纲和词汇，开始写作文..."></textarea>
-          <button id="evaluateTeachBtn" class="ai-btn">📑 提交批改</button>
-          <div id="teachResult" class="result-box"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 学习档案 -->
-    <section id="tab-wrongbook" class="tab-content">
-      <h2>📃 学习档案</h2>
-      <div class="sub-tabs">
-        <button class="sub-tab-btn active" data-subtab="wrong-words">📉 错词本</button>
-        <button class="sub-tab-btn" data-subtab="wrong-translate">🌪 翻译记录</button>
-        <button class="sub-tab-btn" data-subtab="wrong-writing">✍️ 作文记录</button>
-      </div>
-      <div id="wrongbookContent">
-        <p>暂无错题，去背单词模块做一个 AI 出题吧！</p>
-      </div>
-      <div id="detailModal" class="modal-overlay" style="display:none;">
-        <div class="modal-content modal-detail">
-          <div id="detailContent"></div>
-          <button id="closeDetailBtn" class="btn-secondary" style="margin-top:1rem;">关闭</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- 收藏夹 -->
-    <section id="tab-favorites" class="tab-content">
-      <h2>⭐ 我的收藏</h2>
-      <div id="favoritesContent">
-        <p>还没有收藏的单词，点击背单词页面的 ☆ 收藏按钮添加。</p>
-      </div>
-    </section>
-
-    <!-- 交流角 -->
-    <section id="tab-chat" class="tab-content">
-      <div id="chatContent"></div>
-    </section>
+      </section>
+    </main>
   </div>
 
+  <script src="lib/marked.min.js" defer></script>
   <script src="js/api.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/cet6_words.js"></script>
-  <script src="js/words.js"></script>
-  <script src="js/reading.js"></script>
-  <script src="js/listening.js"></script>
-  <script src="js/mockexam.js"></script>
-  <script src="js/translate.js"></script>
-  <script src="js/writing.js"></script>
-  <script src="js/exam.js"></script>
-  <script src="js/wrongbook.js"></script>
-  <script src="js/favorites.js"></script>
   <script src="js/history.js"></script>
-  <script src="js/chat.js"></script>
+  <script src="js/translate.js"></script>
   <script>
-    // Initialize user select and auth
-    initUserSelect();
+    initAppShell();
 
-    // Auth modal overlay click to close
-    document.getElementById('authModal').addEventListener('click', function(e) {
-      if (e.target === this) hideAuthModal();
-    });
-    // Detail modal overlay click to close
-    document.getElementById('detailModal').addEventListener('click', function(e) {
-      if (e.target === this) this.style.display = 'none';
-    });
-
-    // Auth modal tab switching
-    document.querySelectorAll('.auth-tab-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('.auth-tab-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        document.getElementById('loginForm').style.display = this.dataset.auth === 'login' ? 'block' : 'none';
-        document.getElementById('registerForm').style.display = this.dataset.auth === 'register' ? 'block' : 'none';
-        document.getElementById('authMsg').textContent = '';
-      });
-    });
-
-    // Quiz type modal
-    const quizModal = document.getElementById('quizTypeModal');
-    document.getElementById('aiQuizBtn').addEventListener('click', () => { quizModal.style.display = 'flex'; });
-    document.getElementById('closeQuizModal').addEventListener('click', () => { quizModal.style.display = 'none'; });
-    quizModal.addEventListener('click', (e) => { if (e.target === quizModal) quizModal.style.display = 'none'; });
-    document.querySelectorAll('.quiz-type-btn:not(.cancel-btn)').forEach(btn => {
+    document.querySelectorAll('.tab-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
-        const type = btn.dataset.type;
-        quizModal.style.display = 'none';
-        if (type === 'choice') startChoiceQuiz();
-        else if (type === 'cloze') startClozeQuiz();
-        else if (type === 'match') startInfoMatchQuiz();
+        document.querySelectorAll('.tab-btn').forEach((item) => item.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach((item) => item.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab)?.classList.add('active');
+        if (btn.dataset.tab === 'history') showTranslateHistory();
       });
     });
-
-    // Sub-tabs
-    document.querySelectorAll('.sub-tab-btn').forEach(b => {
-      b.addEventListener('click', () => {
-        document.querySelectorAll('.sub-tab-btn').forEach(x => x.classList.remove('active'));
-        b.classList.add('active');
-        loadWrongBook(b.dataset.subtab);
-      });
-    });
-
-    document.getElementById('closeDetailBtn').addEventListener('click', () => {
-      document.getElementById('detailModal').style.display = 'none';
-    });
-
-    // Tab switching
-    document.querySelectorAll('.tab-btn').forEach(b => {
-      b.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
-        b.classList.add('active');
-        const tabId = 'tab-' + b.dataset.tab;
-        const el = document.getElementById(tabId);
-        if (el) el.classList.add('active');
-        if (b.dataset.tab === 'reading') loadPaperList();
-        if (b.dataset.tab === 'wrongbook') loadWrongBook('wrong-words');
-        if (b.dataset.tab === 'favorites') loadFavorites();
-        if (b.dataset.tab === 'translate') showTranslateHistory();
-        if (b.dataset.tab === 'words') showStudyHistory();
-
-    // Layout toggle - desktop/phone
-    (function(){
-      const lb = document.getElementById('layoutToggleBtn');
-      if (!lb) return;
-      lb.onclick = function(){
-        const w = document.body.classList.toggle('layout-desktop');
-        lb.textContent = w ? '📱 手机版' : '📺 桌面版';
-        localStorage.setItem('cet_layout', w?'desktop':'phone');
-      };
-      if ((localStorage.getItem('cet_layout')||'desktop')==='desktop'){
-        document.body.classList.add('layout-desktop');
-        lb.textContent='📱 手机版';
-      }
-    })();
-        if (b.dataset.tab === 'chat') loadChat();
-      });
-    });
-    showStudyHistory();
-
-    // Layout toggle - desktop/phone
-    (function(){
-      const lb = document.getElementById('layoutToggleBtn');
-      if (!lb) return;
-      lb.onclick = function(){
-        const w = document.body.classList.toggle('layout-desktop');
-        lb.textContent = w ? '📱 手机版' : '📺 桌面版';
-        localStorage.setItem('cet_layout', w?'desktop':'phone');
-      };
-      if ((localStorage.getItem('cet_layout')||'desktop')==='desktop'){
-        document.body.classList.add('layout-desktop');
-        lb.textContent='📱 手机版';
-      }
-    })();
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
