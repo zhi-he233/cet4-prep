@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cet-translation-shell-v4';
+const CACHE_NAME = 'cet-translation-shell-v6';
 const SHELL_ASSETS = [
   '/',
   '/index.html',
@@ -8,7 +8,10 @@ const SHELL_ASSETS = [
   '/js/history.js',
   '/js/translate.js',
   '/manifest.webmanifest',
-  '/icons/app-icon.svg'
+  '/icons/app-icon.svg',
+  '/icons/app-icon-180.png',
+  '/icons/app-icon-192.png',
+  '/icons/app-icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {

@@ -120,6 +120,16 @@ function applyThemeMode() {
   if (btn) btn.textContent = dark ? '浅色模式' : '深色模式';
 }
 
+function updateNetworkStatus() {
+  const online = navigator.onLine;
+  document.body.classList.toggle('is-offline', !online);
+  const el = document.getElementById('networkStatus');
+  if (el) {
+    el.textContent = online ? '在线' : '离线';
+    el.title = online ? '可以使用 AI 出题和评分' : '离线时可用本地题库练习并保存记录';
+  }
+}
+
 function toggleThemeMode() {
   localStorage.setItem('cet_theme', getThemeMode() === 'dark' ? 'light' : 'dark');
   applyThemeMode();
@@ -150,4 +160,7 @@ function initAppShell() {
 
   updateExamLevelText();
   applyThemeMode();
+  updateNetworkStatus();
+  window.addEventListener('online', updateNetworkStatus);
+  window.addEventListener('offline', updateNetworkStatus);
 }

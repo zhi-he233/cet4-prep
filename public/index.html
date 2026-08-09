@@ -2,15 +2,19 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#2563eb">
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="翻译练习">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="format-detection" content="telephone=no">
   <title>四级翻译练习</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icons/app-icon.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/app-icon-180.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="icons/app-icon-192.png">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -42,6 +46,7 @@
       <h1 data-exam-title>四级翻译练习</h1>
       <div class="toolbar">
         <span id="authStatus" class="auth-status">未登录，本机保存</span>
+        <span id="networkStatus" class="network-status">在线</span>
         <button id="loginBtn" type="button" class="btn-secondary">登录</button>
         <button id="logoutBtn" type="button" class="btn-secondary" style="display:none;">退出</button>
         <label for="examLevelSelect">备考级别</label>
@@ -95,6 +100,7 @@
 
           <div class="actions">
             <button id="evaluateTranslationBtn" type="button" class="btn-primary">AI 评分及建议</button>
+            <button id="savePracticeBtn" type="button" class="btn-secondary">先保存</button>
           </div>
 
           <div id="translateResult" class="result-box" aria-live="polite"></div>
@@ -109,7 +115,12 @@
               <p class="eyebrow">复习</p>
               <h2>翻译记录</h2>
             </div>
-            <button id="clearHistoryBtn" type="button" class="btn-secondary">清空记录</button>
+            <div class="panel-actions">
+              <button id="exportHistoryBtn" type="button" class="btn-secondary">导出</button>
+              <button id="importHistoryBtn" type="button" class="btn-secondary">导入</button>
+              <button id="clearHistoryBtn" type="button" class="btn-secondary">清空</button>
+              <input id="importHistoryFile" type="file" accept="application/json,.json" hidden>
+            </div>
           </div>
           <input type="text" id="historySearch" class="search-input" placeholder="搜索中文或英文...">
           <ul id="historyList" class="history-list"></ul>

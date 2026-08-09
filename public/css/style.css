@@ -20,11 +20,12 @@
 
 body {
   min-height: 100vh;
-  padding: 24px 14px;
+  padding: max(24px, env(safe-area-inset-top)) 14px max(24px, env(safe-area-inset-bottom));
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
 }
 
 button,
@@ -36,6 +37,7 @@ select {
 
 button {
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 button:disabled {
@@ -94,6 +96,23 @@ h3 {
   background: #f8fafc;
 }
 
+.network-status {
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 1px solid #bbf7d0;
+  border-radius: var(--radius);
+  color: #166534;
+  font-size: 0.9rem;
+  font-weight: 800;
+  background: #f0fdf4;
+}
+
+.is-offline .network-status {
+  border-color: #fed7aa;
+  color: #9a3412;
+  background: #fff7ed;
+}
+
 .toolbar label,
 .input-label,
 .label {
@@ -138,7 +157,7 @@ textarea:focus {
 .btn-secondary,
 .history-actions button,
 .translate-actions button {
-  min-height: 40px;
+  min-height: 44px;
   padding: 9px 16px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -190,6 +209,13 @@ textarea:focus {
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 18px;
+}
+
+.panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
 .eyebrow {
@@ -318,6 +344,9 @@ body.fallback-visible .fallback-input-section {
 }
 
 .actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
   margin-top: 14px;
 }
 
@@ -488,9 +517,20 @@ body.fallback-visible .fallback-input-section {
 .theme-dark .history-item,
 .theme-dark .empty-state,
 .theme-dark .auth-status,
+.theme-dark .network-status,
 .theme-dark .segment-input-card,
 .theme-dark .prompt-segments li {
   background: #172033;
+}
+
+.theme-dark .network-status {
+  border-color: #3f6212;
+  color: #bef264;
+}
+
+.theme-dark.is-offline .network-status {
+  border-color: #9a3412;
+  color: #fed7aa;
 }
 
 @media (min-width: 720px) {
@@ -509,7 +549,7 @@ body.fallback-visible .fallback-input-section {
 
 @media (max-width: 560px) {
   body {
-    padding: 14px 10px 22px;
+    padding: max(14px, env(safe-area-inset-top)) 10px max(18px, env(safe-area-inset-bottom));
   }
 
   .app-header {
@@ -528,12 +568,21 @@ body.fallback-visible .fallback-input-section {
   .toolbar {
     justify-content: stretch;
     gap: 8px;
+    padding: 10px;
   }
 
   .toolbar select,
   .toolbar button,
-  .auth-status {
+  .auth-status,
+  .network-status {
     flex: 1 1 auto;
+    min-width: calc(50% - 8px);
+  }
+
+  select,
+  .search-input,
+  textarea {
+    font-size: 16px;
   }
 
   .panel {
@@ -545,10 +594,27 @@ body.fallback-visible .fallback-input-section {
     gap: 12px;
   }
 
-  .panel-header button,
-  .actions button,
+  .panel-actions,
   .tabs button {
     width: 100%;
+  }
+
+  .panel-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .actions {
+    position: sticky;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    z-index: 10;
+    grid-template-columns: 1fr 0.72fr;
+    padding: 10px;
+    margin: 14px -10px 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--panel);
+    box-shadow: var(--shadow);
   }
 
   .tabs {
@@ -578,5 +644,14 @@ body.fallback-visible .fallback-input-section {
 
   .input-tools button {
     width: 100%;
+  }
+
+  .tab-btn,
+  .btn-primary,
+  .btn-secondary,
+  .history-actions button,
+  .translate-actions button {
+    min-height: 48px;
+    padding-inline: 12px;
   }
 }

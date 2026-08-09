@@ -9,6 +9,7 @@ const segmentInputList = document.getElementById('segmentInputList');
 const clearTranslationBtn = document.getElementById('clearTranslationBtn');
 const translationStats = document.getElementById('translationStats');
 const fallbackInputSection = document.getElementById('fallbackInputSection');
+const savePracticeBtn = document.getElementById('savePracticeBtn');
 
 const canUseSegmentedInputs = Boolean(
   promptSegmentsEl &&
@@ -21,6 +22,23 @@ const canUseSegmentedInputs = Boolean(
 let currentChinese = '';
 let currentSegments = [];
 
+const LOCAL_SENTENCE_BANK = {
+  cet4: [
+    '近年来，越来越多的年轻人选择在周末参观博物馆。他们希望通过这种方式了解历史，并放松紧张的学习生活。',
+    '中国的高铁发展迅速，已经连接了许多大中城市。它不仅缩短了旅行时间，也促进了地区之间的交流。',
+    '保护环境需要每个人的参与。少用一次性塑料制品、节约用水用电，都是普通人可以做到的小事。',
+    '阅读可以帮助学生扩大词汇量，也能培养他们独立思考的能力。因此，很多学校鼓励学生每天坚持阅读。',
+    '随着移动支付的普及，人们出门购物越来越方便。即使不带现金，也可以完成大多数日常消费。'
+  ],
+  cet6: [
+    '人工智能正在改变人们的学习和工作方式。与此同时，我们也需要关注数据安全、职业变化以及技术伦理等问题。',
+    '乡村振兴不仅要改善基础设施，还要发展特色产业。只有让年轻人看到机会，乡村才能保持长期活力。',
+    '城市公共交通的完善有助于缓解拥堵并减少污染。越来越多的人愿意乘坐地铁、公交或骑自行车出行。',
+    '心理健康教育越来越受到高校重视。及时的沟通和专业支持，可以帮助学生更好地面对压力和挫折。',
+    '传统文化的传播需要结合现代媒介。短视频、数字展览和互动课程，让更多年轻人愿意主动了解文化遗产。'
+  ]
+};
+
 function setFallbackVisible(visible) {
   document.body.classList.toggle('fallback-visible', visible);
   if (fallbackInputSection) fallbackInputSection.hidden = !visible;
@@ -28,6 +46,24 @@ function setFallbackVisible(visible) {
 
 function renderMarkdown(text) {
   return escapeHtml(text || '').replace(/\n/g, '<br>');
+}
+
+function pickLocalSentence() {
+  const bank = LOCAL_SENTENCE_BANK[getExamLevel()] || LOCAL_SENTENCE_BANK.cet4;
+  return bank[Math.floor(Math.random() * bank.length)];
+}
+
+function showSoftMessage(message) {
+  if (!translateResult) return;
+  translateResult.textContent = message;
+}
+
+function useLocalSentence(message) {
+  currentChinese = pickLocalSentence();
+  translationInput.value = '';
+  renderPromptAndInputs(currentChinese);
+  showSoftMessage(message);
+  segmentInputList?.querySelector('.segment-translation-input')?.focus();
 }
 
 function extractStandardTranslation(evaluation) {
@@ -178,7 +214,9 @@ function updateTranslationStats(text = getCurrentTranslationText()) {
 
 function updateCombinedTranslation() {
   const text = getSegmentTranslationText();
-  if (text) translationInput.value = text;
+  if (document.body.classList.contains('segmented-ready')) {
+    translationInput.value = text;
+  }
   updateTranslationStats(text || translationInput.value || '');
 }
 
@@ -199,12 +237,18 @@ async function loadRandomSentence() {
   try {
     refreshSentenceBtn.disabled = true;
     chineseDisplay.textContent = '加载中...';
+    translateResult.innerHTML = '';
     document.body.classList.remove('segmented-ready');
     setFallbackVisible(false);
     if (canUseSegmentedInputs) {
       promptSegmentsEl.innerHTML = '';
       promptSegmentCount.textContent = '';
       segmentInputList.innerHTML = '';
+    }
+
+    if (!navigator.onLine) {
+      useLocalSentence('当前离线，已切换到本地题库。练习可以先保存，联网后再做 AI 评分。');
+      return;
     }
 
     const data = await API.get('/api/translate/random');
@@ -214,19 +258,37 @@ async function loadRandomSentence() {
       renderPromptAndInputs(currentChinese);
       segmentInputList?.querySelector('.segment-translation-input')?.focus();
     } else {
-      currentChinese = '';
-      chineseDisplay.textContent = data.error || '获取句子失败，请重试';
-      setFallbackVisible(true);
-      updateTranslationStats('');
+      useLocalSentence(data.error ? `AI 出题暂时不可用：${data.error}。已切换到本地题库。` : 'AI 出题暂时不可用，已切换到本地题库。');
     }
   } catch (e) {
-    currentChinese = '';
-    chineseDisplay.textContent = '请求出错，请检查服务器连接';
-    setFallbackVisible(true);
-    updateTranslationStats('');
+    useLocalSentence('服务器连接失败，已切换到本地题库。');
   } finally {
     refreshSentenceBtn.disabled = false;
   }
+}
+
+function createPracticeRecord(evaluation = '', savedOffline = false) {
+  return {
+    chinese: currentChinese,
+    english: getCurrentTranslationText(),
+    standard: extractStandardTranslation(evaluation),
+    evaluation,
+    time: new Date().toISOString(),
+    savedOffline
+  };
+}
+
+function savePractice(savedOffline = !navigator.onLine) {
+  updateCombinedTranslation();
+  const translation = getCurrentTranslationText();
+  if (!currentChinese) return alert('请先加载一道翻译题');
+  if (!translation) return alert('请输入你的英文翻译');
+
+  const records = getTranslateHistory();
+  records.push(createPracticeRecord('', savedOffline));
+  saveTranslateHistory(getCurrentUserId(), records);
+  showTranslateHistory();
+  showSoftMessage(savedOffline ? '已离线保存。联网后可以从记录里重新翻译并做 AI 评分。' : '已保存到翻译记录。');
 }
 
 async function evaluateTranslation() {
@@ -234,6 +296,11 @@ async function evaluateTranslation() {
   const translation = getCurrentTranslationText();
   if (!currentChinese) return alert('请等待句子加载完成');
   if (!translation) return alert('请输入你的英文翻译');
+
+  if (!navigator.onLine) {
+    savePractice(true);
+    return;
+  }
 
   evaluateBtn.disabled = true;
   translateResult.textContent = 'AI 评分中...';
@@ -246,17 +313,11 @@ async function evaluateTranslation() {
   if (data.evaluation) {
     translateResult.innerHTML = renderMarkdown(data.evaluation);
     const records = getTranslateHistory();
-    records.push({
-      chinese: currentChinese,
-      english: translation,
-      standard: extractStandardTranslation(data.evaluation),
-      evaluation: data.evaluation,
-      time: new Date().toISOString()
-    });
+    records.push(createPracticeRecord(data.evaluation, false));
     saveTranslateHistory(getCurrentUserId(), records);
     showTranslateHistory();
   } else {
-    translateResult.textContent = '出错：' + (data.error || '评分失败');
+    translateResult.textContent = '出错：' + (data.error || '评分失败') + '。可以先保存，稍后再评分。';
   }
 
   evaluateBtn.disabled = false;
@@ -318,6 +379,7 @@ refreshSentenceBtn.addEventListener('click', () => {
 });
 
 evaluateBtn.addEventListener('click', evaluateTranslation);
+savePracticeBtn?.addEventListener('click', () => savePractice(false));
 clearTranslationBtn?.addEventListener('click', clearTranslationInputs);
 translationInput?.addEventListener('input', () => updateTranslationStats(translationInput.value || ''));
 
