@@ -2,8 +2,14 @@ function getTranslateHistory(uid = getCurrentUserId()) {
   return getUserJson('translateHistory', [], `${uid}_translateHistory`);
 }
 
+async function syncTranslateHistoryToServer(records) {
+  if (!isLoggedIn()) return;
+  await API.post('/api/user/history', { records });
+}
+
 function saveTranslateHistory(uid, data) {
   setUserJson('translateHistory', data);
+  syncTranslateHistoryToServer(data);
 }
 
 function getScoreText(evaluation) {

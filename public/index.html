@@ -3,14 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="翻译练习">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>四级翻译练习</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/app-icon.svg">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <div class="modal-overlay" id="authModal" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="authModalTitle">登录</h2>
+        <button type="button" class="icon-btn" id="closeAuthModalBtn" aria-label="关闭">×</button>
+      </div>
+      <p class="auth-hint">登录后，翻译记录会保存到本机服务端，换浏览器也能继续复习。</p>
+      <div id="authMessage" class="auth-message"></div>
+      <label class="input-label" for="authUsername">用户名</label>
+      <input id="authUsername" class="search-input" type="text" autocomplete="username" maxlength="20">
+      <label class="input-label" for="authPassword">密码</label>
+      <input id="authPassword" class="search-input" type="password" autocomplete="current-password" maxlength="50">
+      <div id="inviteCodeRow" style="display:none;">
+        <label class="input-label" for="inviteCodeInput">邀请码</label>
+        <input id="inviteCodeInput" class="search-input" type="text" autocomplete="off" maxlength="20" placeholder="注册时填写">
+      </div>
+      <div class="auth-actions">
+        <button id="authSubmitBtn" type="button" class="btn-primary">登录</button>
+        <button id="authSwitchBtn" type="button" class="btn-secondary">去注册</button>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
     <header class="app-header">
       <h1 data-exam-title>四级翻译练习</h1>
       <div class="toolbar">
+        <span id="authStatus" class="auth-status">未登录，本机保存</span>
+        <button id="loginBtn" type="button" class="btn-secondary">登录</button>
+        <button id="logoutBtn" type="button" class="btn-secondary" style="display:none;">退出</button>
         <label for="examLevelSelect">备考级别</label>
         <select id="examLevelSelect">
           <option value="cet4">四级 CET-4</option>
@@ -69,12 +102,13 @@
     </main>
   </div>
 
-  <script src="lib/marked.min.js" defer></script>
   <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/history.js"></script>
   <script src="js/translate.js"></script>
   <script>
     initAppShell();
+    initAuth();
 
     document.querySelectorAll('.tab-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -85,6 +119,12 @@
         if (btn.dataset.tab === 'history') showTranslateHistory();
       });
     });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
   </script>
 </body>
 </html>

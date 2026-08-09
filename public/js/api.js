@@ -1,9 +1,12 @@
+const AUTH_TOKEN_KEY = 'cet_auth_token';
+const AUTH_USER_KEY = 'cet_auth_user';
+
 const API = {
   async post(url, data) {
     try {
       const res = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getRequestHeaders(),
         body: JSON.stringify({ level: getExamLevel(), ...(data || {}) })
       });
       const json = await res.json();
@@ -17,7 +20,9 @@ const API = {
   async get(url) {
     try {
       const separator = url.includes('?') ? '&' : '?';
-      const res = await fetch(`${url}${separator}level=${encodeURIComponent(getExamLevel())}`);
+      const res = await fetch(`${url}${separator}level=${encodeURIComponent(getExamLevel())}`, {
+        headers: getRequestHeaders()
+      });
       const json = await res.json();
       if (!res.ok) return { error: json.error || `请求失败 (${res.status})` };
       return json;
@@ -32,17 +37,29 @@ const EXAM_LEVELS = {
   cet6: { label: '六级', title: '六级翻译练习' }
 };
 
+function getRequestHeaders() {
+  const headers = { 'Content-Type': 'application/json' };
+  const token = localStorage.getItem(AUTH_TOKEN_KEY);
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
+}
+
+function getStoredAuthUser() {
+  return parseJson(localStorage.getItem(AUTH_USER_KEY), null);
+}
+
+function isLoggedIn() {
+  return !!localStorage.getItem(AUTH_TOKEN_KEY) && !!getStoredAuthUser();
+}
+
 function getExamLevel() {
   const saved = localStorage.getItem('cet_examLevel') || 'cet4';
   return EXAM_LEVELS[saved] ? saved : 'cet4';
 }
 
-function getExamLabel() {
-  return EXAM_LEVELS[getExamLevel()].label;
-}
-
 function getCurrentUserId() {
-  return 'local';
+  const user = getStoredAuthUser();
+  return user?.username || 'local';
 }
 
 function getUserStorageKey(name, userId = getCurrentUserId(), level = getExamLevel()) {
@@ -108,10 +125,11 @@ function toggleThemeMode() {
   applyThemeMode();
 }
 
-function switchExamLevel(level) {
+async function switchExamLevel(level) {
   if (!EXAM_LEVELS[level]) return;
   localStorage.setItem('cet_examLevel', level);
   updateExamLevelText();
+  if (typeof loadServerHistoryForCurrentLevel === 'function') await loadServerHistoryForCurrentLevel();
   showTranslateHistory();
   if (typeof loadRandomSentence === 'function') loadRandomSentence();
   const result = document.getElementById('translateResult');

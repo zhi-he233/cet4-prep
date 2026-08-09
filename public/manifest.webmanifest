@@ -1,0 +1,21 @@
+{
+  "name": "四级翻译练习",
+  "short_name": "翻译练习",
+  "description": "面向四级和六级的句子翻译练习与记录复习工具。",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "zh-CN"
+}

@@ -1,24 +1,87 @@
 require('dotenv').config();
 
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 
 const app = express();
+const DATA_DIR = path.join(__dirname, 'data');
+const USERS_FILE = path.join(DATA_DIR, 'auth-users.json');
+const HISTORY_FILE = path.join(DATA_DIR, 'translate-history.json');
+const TOKEN_SECRET = process.env.JWT_SECRET || process.env.AUTH_SECRET || 'cet-translation-local-secret';
+const REGISTRATION_INVITE_CODE = process.env.REGISTRATION_INVITE_CODE || 'swh';
+const TOKEN_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(express.static('public'));
 
+fs.mkdirSync(DATA_DIR, { recursive: true });
+
 const EXAM_CONFIG = {
-  cet4: {
-    label: '四级',
-    translateMaxChars: 100
-  },
-  cet6: {
-    label: '六级',
-    translateMaxChars: 120
-  }
+  cet4: { label: '四级', translateMaxChars: 100 },
+  cet6: { label: '六级', translateMaxChars: 120 }
 };
+
+function readJson(file, fallback) {
+  try {
+    if (!fs.existsSync(file)) return fallback;
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch (e) {
+    return fallback;
+  }
+}
+
+function writeJson(file, value) {
+  fs.writeFileSync(file, JSON.stringify(value, null, 2), 'utf8');
+}
+
+function base64url(value) {
+  return Buffer.from(value).toString('base64url');
+}
+
+function signPayload(payload) {
+  const encoded = base64url(JSON.stringify(payload));
+  const signature = crypto.createHmac('sha256', TOKEN_SECRET).update(encoded).digest('base64url');
+  return `${encoded}.${signature}`;
+}
+
+function verifyToken(token) {
+  if (!token || !token.includes('.')) return null;
+  const [encoded, signature] = token.split('.');
+  const expected = crypto.createHmac('sha256', TOKEN_SECRET).update(encoded).digest('base64url');
+  const sigBuffer = Buffer.from(signature || '');
+  const expectedBuffer = Buffer.from(expected);
+  if (sigBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(sigBuffer, expectedBuffer)) {
+    return null;
+  }
+  const payload = JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8'));
+  if (!payload.exp || Date.now() > payload.exp) return null;
+  return payload;
+}
+
+function hashPassword(password, salt = crypto.randomBytes(16).toString('hex')) {
+  const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+  return { salt, hash };
+}
+
+function isValidPassword(password, stored) {
+  const { hash } = hashPassword(password, stored.salt);
+  const a = Buffer.from(hash, 'hex');
+  const b = Buffer.from(stored.hash, 'hex');
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
+function authMiddleware(req, res, next) {
+  const header = req.headers.authorization || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : '';
+  const payload = verifyToken(token);
+  if (!payload) return res.status(401).json({ error: '未登录或登录已过期' });
+  req.user = payload;
+  next();
+}
 
 function getExamConfig(level) {
   return EXAM_CONFIG[level] || EXAM_CONFIG.cet4;
@@ -26,6 +89,10 @@ function getExamConfig(level) {
 
 function getRequestExam(req) {
   return getExamConfig(req.body?.level || req.query?.level);
+}
+
+function normalizeLevel(level) {
+  return EXAM_CONFIG[level] ? level : 'cet4';
 }
 
 async function askDeepSeek(systemPrompt, userMessage) {
@@ -60,6 +127,94 @@ async function askDeepSeek(systemPrompt, userMessage) {
   const data = await response.json();
   return data.choices?.[0]?.message?.content || '';
 }
+
+function buildAuthResponse(user) {
+  const safeUser = { id: user.id, username: user.username, createdAt: user.createdAt };
+  const token = signPayload({
+    userId: user.id,
+    username: user.username,
+    exp: Date.now() + TOKEN_MAX_AGE_MS
+  });
+  return { token, user: safeUser };
+}
+
+app.post('/api/auth/register', (req, res) => {
+  try {
+    const username = String(req.body.username || '').trim();
+    const password = String(req.body.password || '');
+    const inviteCode = String(req.body.inviteCode || '').trim();
+    if (username.length < 2 || username.length > 20) {
+      return res.status(400).json({ error: '用户名需为2-20个字符' });
+    }
+    if (password.length < 3 || password.length > 50) {
+      return res.status(400).json({ error: '密码需为3-50个字符' });
+    }
+    if (inviteCode !== REGISTRATION_INVITE_CODE) {
+      return res.status(403).json({ error: '邀请码不正确' });
+    }
+
+    const users = readJson(USERS_FILE, []);
+    if (users.some((user) => user.username.toLowerCase() === username.toLowerCase())) {
+      return res.status(400).json({ error: '用户名已存在' });
+    }
+
+    const passwordData = hashPassword(password);
+    const user = {
+      id: crypto.randomUUID(),
+      username,
+      salt: passwordData.salt,
+      hash: passwordData.hash,
+      createdAt: new Date().toISOString()
+    };
+    users.push(user);
+    writeJson(USERS_FILE, users);
+
+    res.json(buildAuthResponse(user));
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.post('/api/auth/login', (req, res) => {
+  try {
+    const username = String(req.body.username || '').trim();
+    const password = String(req.body.password || '');
+    const users = readJson(USERS_FILE, []);
+    const user = users.find((item) => item.username.toLowerCase() === username.toLowerCase());
+    if (!user || !isValidPassword(password, user)) {
+      return res.status(400).json({ error: '用户名或密码错误' });
+    }
+    res.json(buildAuthResponse(user));
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get('/api/auth/me', authMiddleware, (req, res) => {
+  res.json({
+    user: {
+      id: req.user.userId,
+      username: req.user.username
+    }
+  });
+});
+
+app.get('/api/user/history', authMiddleware, (req, res) => {
+  const level = normalizeLevel(req.query.level);
+  const allHistory = readJson(HISTORY_FILE, {});
+  const userHistory = allHistory[req.user.userId] || {};
+  res.json({ history: userHistory[level] || [] });
+});
+
+app.post('/api/user/history', authMiddleware, (req, res) => {
+  const level = normalizeLevel(req.body.level);
+  const records = Array.isArray(req.body.records) ? req.body.records.slice(-500) : [];
+  const allHistory = readJson(HISTORY_FILE, {});
+  if (!allHistory[req.user.userId]) allHistory[req.user.userId] = {};
+  allHistory[req.user.userId][level] = records;
+  writeJson(HISTORY_FILE, allHistory);
+  res.json({ success: true });
+});
 
 app.get('/api/translate/random', async (req, res) => {
   try {

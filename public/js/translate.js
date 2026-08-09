@@ -7,9 +7,7 @@ const refreshSentenceBtn = document.getElementById('refreshSentenceBtn');
 let currentChinese = '';
 
 function renderMarkdown(text) {
-  if (!text) return '';
-  if (window.marked && typeof window.marked.parse === 'function') return window.marked.parse(text);
-  return escapeHtml(text).replace(/\n/g, '<br>');
+  return escapeHtml(text || '').replace(/\n/g, '<br>');
 }
 
 function extractStandardTranslation(evaluation) {
