@@ -3,8 +3,14 @@ const translationInput = document.getElementById('translationInput');
 const evaluateBtn = document.getElementById('evaluateTranslationBtn');
 const translateResult = document.getElementById('translateResult');
 const refreshSentenceBtn = document.getElementById('refreshSentenceBtn');
+const promptSegmentsEl = document.getElementById('promptSegments');
+const promptSegmentCount = document.getElementById('promptSegmentCount');
+const segmentInputList = document.getElementById('segmentInputList');
+const clearTranslationBtn = document.getElementById('clearTranslationBtn');
+const translationStats = document.getElementById('translationStats');
 
 let currentChinese = '';
+let currentSegments = [];
 
 function renderMarkdown(text) {
   return escapeHtml(text || '').replace(/\n/g, '<br>');
@@ -25,17 +31,142 @@ function extractStandardTranslation(evaluation) {
   return '';
 }
 
+function splitChineseText(text) {
+  const normalized = (text || '').trim().replace(/\s+/g, ' ');
+  if (!normalized) return [];
+
+  const sentencePieces = normalized.match(/[^。！？；!?;]+[。！？；!?;]?/g) || [normalized];
+  const segments = [];
+
+  sentencePieces.forEach((piece) => {
+    const clean = piece.trim();
+    if (!clean) return;
+    if (clean.length <= 46) {
+      segments.push(clean);
+      return;
+    }
+    splitLongChineseSegment(clean).forEach((part) => segments.push(part));
+  });
+
+  return segments.length ? segments : [normalized];
+}
+
+function splitLongChineseSegment(text) {
+  const roughParts = [];
+  let buffer = '';
+  for (const char of text) {
+    buffer += char;
+    if ('，、,：:'.includes(char)) {
+      roughParts.push(buffer.trim());
+      buffer = '';
+    }
+  }
+  if (buffer.trim()) roughParts.push(buffer.trim());
+
+  const packed = [];
+  let current = '';
+  roughParts.forEach((part) => {
+    if ((current + part).length <= 46) {
+      current += part;
+    } else {
+      if (current) packed.push(current);
+      current = part;
+    }
+  });
+  if (current) packed.push(current);
+
+  return packed.flatMap((part) => {
+    if (part.length <= 54) return [part];
+    const chunks = [];
+    for (let i = 0; i < part.length; i += 42) {
+      chunks.push(part.slice(i, i + 42));
+    }
+    return chunks;
+  });
+}
+
+function renderPromptAndInputs(text, translationText = '') {
+  currentSegments = splitChineseText(text);
+  chineseDisplay.textContent = text || '加载中...';
+  chineseDisplay.style.display = currentSegments.length > 1 ? 'none' : 'block';
+
+  promptSegmentsEl.innerHTML = currentSegments.map((segment, index) => `
+    <li>
+      <span class="segment-number">${index + 1}</span>
+      <span>${escapeHtml(segment)}</span>
+    </li>
+  `).join('');
+  promptSegmentsEl.style.display = currentSegments.length > 1 ? 'grid' : 'none';
+  promptSegmentCount.textContent = currentSegments.length > 1 ? `${currentSegments.length} 段` : '';
+
+  const existingParts = translationText
+    ? translationText.split(/\n{2,}/).map((part) => part.trim())
+    : [];
+
+  segmentInputList.innerHTML = currentSegments.map((segment, index) => `
+    <div class="segment-input-card">
+      <div class="segment-source">
+        <span class="segment-number">${index + 1}</span>
+        <span>${escapeHtml(segment)}</span>
+      </div>
+      <textarea class="segment-translation-input" rows="3" data-index="${index}" placeholder="翻译第 ${index + 1} 段...">${escapeHtml(existingParts[index] || '')}</textarea>
+    </div>
+  `).join('');
+
+  bindSegmentInputs();
+  updateCombinedTranslation();
+}
+
+function bindSegmentInputs() {
+  segmentInputList.querySelectorAll('.segment-translation-input').forEach((input) => {
+    input.addEventListener('input', () => {
+      autoGrowTextarea(input);
+      updateCombinedTranslation();
+    });
+    autoGrowTextarea(input);
+  });
+}
+
+function autoGrowTextarea(input) {
+  input.style.height = 'auto';
+  input.style.height = Math.max(input.scrollHeight, 96) + 'px';
+}
+
+function getSegmentTranslationText() {
+  return Array.from(segmentInputList.querySelectorAll('.segment-translation-input'))
+    .map((input) => input.value.trim())
+    .filter(Boolean)
+    .join('\n\n');
+}
+
+function updateCombinedTranslation() {
+  const text = getSegmentTranslationText();
+  translationInput.value = text;
+  const words = text.match(/[A-Za-z]+(?:[-'][A-Za-z]+)?/g) || [];
+  translationStats.textContent = `${words.length} 词`;
+}
+
+function clearTranslationInputs() {
+  segmentInputList.querySelectorAll('.segment-translation-input').forEach((input) => {
+    input.value = '';
+    autoGrowTextarea(input);
+  });
+  updateCombinedTranslation();
+  segmentInputList.querySelector('.segment-translation-input')?.focus();
+}
+
 async function loadRandomSentence() {
   try {
     refreshSentenceBtn.disabled = true;
     chineseDisplay.textContent = '加载中...';
+    promptSegmentsEl.innerHTML = '';
+    segmentInputList.innerHTML = '';
 
     const data = await API.get('/api/translate/random');
     if (data.sentence) {
       currentChinese = data.sentence;
-      chineseDisplay.textContent = currentChinese;
-      translationInput.value = '';
-      translationInput.focus();
+      renderPromptAndInputs(currentChinese);
+      segmentInputList.querySelector('.segment-translation-input')?.focus();
     } else {
       currentChinese = '';
       chineseDisplay.textContent = data.error || '获取句子失败，请重试';
@@ -49,6 +180,7 @@ async function loadRandomSentence() {
 }
 
 async function evaluateTranslation() {
+  updateCombinedTranslation();
   const translation = translationInput.value.trim();
   if (!currentChinese) return alert('请等待句子加载完成');
   if (!translation) return alert('请输入你的英文翻译');
@@ -85,12 +217,11 @@ function reviewTranslateRecord(index) {
   const item = getTranslateHistory()[index];
   if (!item) return;
   currentChinese = item.chinese || '';
-  chineseDisplay.textContent = currentChinese;
-  translationInput.value = '';
+  renderPromptAndInputs(currentChinese);
   translateResult.innerHTML = '';
   showTranslateReviewPanel(item, index, true);
   document.querySelector('[data-tab="translate"]')?.click();
-  translationInput.focus();
+  segmentInputList.querySelector('.segment-translation-input')?.focus();
 }
 
 function showTranslateComparison(index) {
@@ -137,5 +268,6 @@ refreshSentenceBtn.addEventListener('click', () => {
 });
 
 evaluateBtn.addEventListener('click', evaluateTranslation);
+clearTranslationBtn.addEventListener('click', clearTranslationInputs);
 
 loadRandomSentence();

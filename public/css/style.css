@@ -206,10 +206,64 @@ textarea:focus {
   background: #f8fafc;
 }
 
+.prompt-title-row,
+.translation-input-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.prompt-meta,
+.input-stats {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
 .chinese-sentence {
   margin-top: 8px;
   font-size: 1.15rem;
   font-weight: 700;
+}
+
+.prompt-segments {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+  list-style: none;
+}
+
+.prompt-segments li,
+.segment-source {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+.prompt-segments li {
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.segment-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 0.82rem;
+  font-weight: 900;
 }
 
 .input-label {
@@ -221,6 +275,38 @@ textarea {
   min-height: 150px;
   padding: 14px;
   resize: vertical;
+}
+
+.segment-input-list {
+  display: grid;
+  gap: 12px;
+}
+
+.segment-input-card {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #f8fafc;
+}
+
+.segment-source {
+  margin-bottom: 10px;
+  color: var(--text);
+  font-size: 0.96rem;
+  font-weight: 700;
+}
+
+.segment-translation-input {
+  min-height: 96px;
+  overflow: hidden;
+  resize: none;
+  line-height: 1.55;
+}
+
+.input-tools {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
 }
 
 .actions {
@@ -393,7 +479,9 @@ textarea {
 .theme-dark .review-panel,
 .theme-dark .history-item,
 .theme-dark .empty-state,
-.theme-dark .auth-status {
+.theme-dark .auth-status,
+.theme-dark .segment-input-card,
+.theme-dark .prompt-segments li {
   background: #172033;
 }
 
@@ -412,8 +500,41 @@ textarea {
 }
 
 @media (max-width: 560px) {
+  body {
+    padding: 14px 10px 22px;
+  }
+
+  .app-header {
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    font-size: 1.7rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  .toolbar {
+    justify-content: stretch;
+    gap: 8px;
+  }
+
+  .toolbar select,
+  .toolbar button,
+  .auth-status {
+    flex: 1 1 auto;
+  }
+
+  .panel {
+    padding: 16px;
+  }
+
   .panel-header {
     display: grid;
+    gap: 12px;
   }
 
   .panel-header button,
@@ -425,5 +546,29 @@ textarea {
   .tabs {
     display: grid;
     grid-template-columns: 1fr 1fr;
+  }
+
+  .prompt-box,
+  .segment-input-card,
+  .result-box,
+  .review-panel {
+    padding: 12px;
+  }
+
+  .chinese-sentence {
+    font-size: 1rem;
+  }
+
+  .prompt-segments li,
+  .segment-source {
+    font-size: 0.95rem;
+  }
+
+  textarea {
+    padding: 12px;
+  }
+
+  .input-tools button {
+    width: 100%;
   }
 }

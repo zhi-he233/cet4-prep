@@ -255,7 +255,7 @@ app.get('/api/translate/random', async (req, res) => {
     const seed = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 
     const sentence = await askDeepSeek(
-      `你是${exam.label}翻译出题老师。请原创生成一段适合${exam.label}学生翻译成英文的中文材料。要求：2-3句话，${exam.translateMaxChars}字以内，贴近真实${exam.label}翻译题风格，包含2-3个信息点，只输出段落本身，不要解释、编号或引号。`,
+      `你是${exam.label}翻译出题老师。请原创生成一段适合${exam.label}学生翻译成英文的中文材料。要求：2-3句话，${exam.translateMaxChars}字以内，单句尽量不超过45字，贴近真实${exam.label}翻译题风格，包含2-3个信息点，只输出段落本身，不要解释、编号或引号。`,
       `主题：${topic}\n随机种子：${seed}`
     );
 

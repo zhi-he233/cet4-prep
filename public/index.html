@@ -70,12 +70,23 @@
           </div>
 
           <div class="prompt-box">
-            <span class="label">中文原句</span>
+            <div class="prompt-title-row">
+              <span class="label">中文原句</span>
+              <span id="promptSegmentCount" class="prompt-meta"></span>
+            </div>
             <div id="chineseDisplay" class="chinese-sentence">加载中...</div>
+            <ol id="promptSegments" class="prompt-segments"></ol>
           </div>
 
-          <label class="input-label" for="translationInput">你的英文翻译</label>
-          <textarea id="translationInput" rows="5" placeholder="输入你的英文翻译..."></textarea>
+          <div class="translation-input-header">
+            <label class="input-label">逐段翻译</label>
+            <span id="translationStats" class="input-stats">0 词</span>
+          </div>
+          <div id="segmentInputList" class="segment-input-list"></div>
+          <textarea id="translationInput" hidden></textarea>
+          <div class="input-tools">
+            <button id="clearTranslationBtn" type="button" class="btn-secondary">清空输入</button>
+          </div>
 
           <div class="actions">
             <button id="evaluateTranslationBtn" type="button" class="btn-primary">AI 评分及建议</button>
