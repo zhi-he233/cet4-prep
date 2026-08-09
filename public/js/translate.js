@@ -9,6 +9,14 @@ const segmentInputList = document.getElementById('segmentInputList');
 const clearTranslationBtn = document.getElementById('clearTranslationBtn');
 const translationStats = document.getElementById('translationStats');
 
+const canUseSegmentedInputs = Boolean(
+  promptSegmentsEl &&
+  promptSegmentCount &&
+  segmentInputList &&
+  clearTranslationBtn &&
+  translationStats
+);
+
 let currentChinese = '';
 let currentSegments = [];
 
@@ -41,7 +49,7 @@ function splitChineseText(text) {
   sentencePieces.forEach((piece) => {
     const clean = piece.trim();
     if (!clean) return;
-    if (clean.length <= 46) {
+    if (clean.length <= 42) {
       segments.push(clean);
       return;
     }
@@ -66,7 +74,7 @@ function splitLongChineseSegment(text) {
   const packed = [];
   let current = '';
   roughParts.forEach((part) => {
-    if ((current + part).length <= 46) {
+    if ((current + part).length <= 42) {
       current += part;
     } else {
       if (current) packed.push(current);
@@ -76,10 +84,10 @@ function splitLongChineseSegment(text) {
   if (current) packed.push(current);
 
   return packed.flatMap((part) => {
-    if (part.length <= 54) return [part];
+    if (part.length <= 50) return [part];
     const chunks = [];
-    for (let i = 0; i < part.length; i += 42) {
-      chunks.push(part.slice(i, i + 42));
+    for (let i = 0; i < part.length; i += 38) {
+      chunks.push(part.slice(i, i + 38));
     }
     return chunks;
   });
@@ -88,8 +96,15 @@ function splitLongChineseSegment(text) {
 function renderPromptAndInputs(text, translationText = '') {
   currentSegments = splitChineseText(text);
   chineseDisplay.textContent = text || '加载中...';
-  chineseDisplay.style.display = currentSegments.length > 1 ? 'none' : 'block';
 
+  if (!canUseSegmentedInputs) {
+    document.body.classList.remove('segmented-ready');
+    if (translationText) translationInput.value = translationText;
+    updateTranslationStats();
+    return;
+  }
+
+  chineseDisplay.style.display = currentSegments.length > 1 ? 'none' : 'block';
   promptSegmentsEl.innerHTML = currentSegments.map((segment, index) => `
     <li>
       <span class="segment-number">${index + 1}</span>
@@ -113,11 +128,13 @@ function renderPromptAndInputs(text, translationText = '') {
     </div>
   `).join('');
 
+  document.body.classList.toggle('segmented-ready', currentSegments.length > 0);
   bindSegmentInputs();
   updateCombinedTranslation();
 }
 
 function bindSegmentInputs() {
+  if (!canUseSegmentedInputs) return;
   segmentInputList.querySelectorAll('.segment-translation-input').forEach((input) => {
     input.addEventListener('input', () => {
       autoGrowTextarea(input);
@@ -133,47 +150,69 @@ function autoGrowTextarea(input) {
 }
 
 function getSegmentTranslationText() {
+  if (!canUseSegmentedInputs) return '';
   return Array.from(segmentInputList.querySelectorAll('.segment-translation-input'))
     .map((input) => input.value.trim())
     .filter(Boolean)
     .join('\n\n');
 }
 
-function updateCombinedTranslation() {
-  const text = getSegmentTranslationText();
-  translationInput.value = text;
+function getCurrentTranslationText() {
+  const segmentedText = getSegmentTranslationText();
+  return segmentedText || (translationInput?.value || '').trim();
+}
+
+function updateTranslationStats(text = getCurrentTranslationText()) {
+  if (!translationStats) return;
   const words = text.match(/[A-Za-z]+(?:[-'][A-Za-z]+)?/g) || [];
   translationStats.textContent = `${words.length} 词`;
 }
 
+function updateCombinedTranslation() {
+  const text = getSegmentTranslationText();
+  if (text) translationInput.value = text;
+  updateTranslationStats(text || translationInput.value || '');
+}
+
 function clearTranslationInputs() {
-  segmentInputList.querySelectorAll('.segment-translation-input').forEach((input) => {
-    input.value = '';
-    autoGrowTextarea(input);
-  });
-  updateCombinedTranslation();
-  segmentInputList.querySelector('.segment-translation-input')?.focus();
+  if (canUseSegmentedInputs) {
+    segmentInputList.querySelectorAll('.segment-translation-input').forEach((input) => {
+      input.value = '';
+      autoGrowTextarea(input);
+    });
+  }
+  translationInput.value = '';
+  updateTranslationStats('');
+  segmentInputList?.querySelector('.segment-translation-input')?.focus();
+  if (!document.body.classList.contains('segmented-ready')) translationInput.focus();
 }
 
 async function loadRandomSentence() {
   try {
     refreshSentenceBtn.disabled = true;
     chineseDisplay.textContent = '加载中...';
-    promptSegmentsEl.innerHTML = '';
-    segmentInputList.innerHTML = '';
+    document.body.classList.remove('segmented-ready');
+    if (canUseSegmentedInputs) {
+      promptSegmentsEl.innerHTML = '';
+      promptSegmentCount.textContent = '';
+      segmentInputList.innerHTML = '';
+    }
 
     const data = await API.get('/api/translate/random');
     if (data.sentence) {
       currentChinese = data.sentence;
+      translationInput.value = '';
       renderPromptAndInputs(currentChinese);
-      segmentInputList.querySelector('.segment-translation-input')?.focus();
+      segmentInputList?.querySelector('.segment-translation-input')?.focus();
     } else {
       currentChinese = '';
       chineseDisplay.textContent = data.error || '获取句子失败，请重试';
+      updateTranslationStats('');
     }
   } catch (e) {
     currentChinese = '';
     chineseDisplay.textContent = '请求出错，请检查服务器连接';
+    updateTranslationStats('');
   } finally {
     refreshSentenceBtn.disabled = false;
   }
@@ -181,7 +220,7 @@ async function loadRandomSentence() {
 
 async function evaluateTranslation() {
   updateCombinedTranslation();
-  const translation = translationInput.value.trim();
+  const translation = getCurrentTranslationText();
   if (!currentChinese) return alert('请等待句子加载完成');
   if (!translation) return alert('请输入你的英文翻译');
 
@@ -221,7 +260,7 @@ function reviewTranslateRecord(index) {
   translateResult.innerHTML = '';
   showTranslateReviewPanel(item, index, true);
   document.querySelector('[data-tab="translate"]')?.click();
-  segmentInputList.querySelector('.segment-translation-input')?.focus();
+  segmentInputList?.querySelector('.segment-translation-input')?.focus();
 }
 
 function showTranslateComparison(index) {
@@ -268,6 +307,7 @@ refreshSentenceBtn.addEventListener('click', () => {
 });
 
 evaluateBtn.addEventListener('click', evaluateTranslation);
-clearTranslationBtn.addEventListener('click', clearTranslationInputs);
+clearTranslationBtn?.addEventListener('click', clearTranslationInputs);
+translationInput?.addEventListener('input', () => updateTranslationStats(translationInput.value || ''));
 
 loadRandomSentence();

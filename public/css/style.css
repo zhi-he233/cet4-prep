@@ -282,6 +282,14 @@ textarea {
   gap: 12px;
 }
 
+.fallback-input-section {
+  display: block;
+}
+
+.segmented-ready .fallback-input-section {
+  display: none;
+}
+
 .segment-input-card {
   padding: 12px;
   border: 1px solid var(--border);

@@ -18,9 +18,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <h2 id="authModalTitle">登录</h2>
-        <button type="button" class="icon-btn" id="closeAuthModalBtn" aria-label="关闭">×</button>
+        <button type="button" class="icon-btn" id="closeAuthModalBtn" aria-label="关闭">x</button>
       </div>
-      <p class="auth-hint">登录后，翻译记录会保存到本机服务端，换浏览器也能继续复习。</p>
+      <p class="auth-hint">登录后，翻译记录会保存到服务端，换浏览器也能继续复习。</p>
       <div id="authMessage" class="auth-message"></div>
       <label class="input-label" for="authUsername">用户名</label>
       <input id="authUsername" class="search-input" type="text" autocomplete="username" maxlength="20">
@@ -83,7 +83,12 @@
             <span id="translationStats" class="input-stats">0 词</span>
           </div>
           <div id="segmentInputList" class="segment-input-list"></div>
-          <textarea id="translationInput" hidden></textarea>
+
+          <div id="fallbackInputSection" class="fallback-input-section">
+            <label class="input-label" for="translationInput">完整英文翻译</label>
+            <textarea id="translationInput" rows="5" placeholder="输入你的英文翻译..."></textarea>
+          </div>
+
           <div class="input-tools">
             <button id="clearTranslationBtn" type="button" class="btn-secondary">清空输入</button>
           </div>
