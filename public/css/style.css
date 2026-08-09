@@ -283,11 +283,11 @@ textarea {
 }
 
 .fallback-input-section {
-  display: block;
+  display: none;
 }
 
-.segmented-ready .fallback-input-section {
-  display: none;
+body.fallback-visible .fallback-input-section {
+  display: block;
 }
 
 .segment-input-card {

@@ -8,6 +8,7 @@ const promptSegmentCount = document.getElementById('promptSegmentCount');
 const segmentInputList = document.getElementById('segmentInputList');
 const clearTranslationBtn = document.getElementById('clearTranslationBtn');
 const translationStats = document.getElementById('translationStats');
+const fallbackInputSection = document.getElementById('fallbackInputSection');
 
 const canUseSegmentedInputs = Boolean(
   promptSegmentsEl &&
@@ -19,6 +20,11 @@ const canUseSegmentedInputs = Boolean(
 
 let currentChinese = '';
 let currentSegments = [];
+
+function setFallbackVisible(visible) {
+  document.body.classList.toggle('fallback-visible', visible);
+  if (fallbackInputSection) fallbackInputSection.hidden = !visible;
+}
 
 function renderMarkdown(text) {
   return escapeHtml(text || '').replace(/\n/g, '<br>');
@@ -99,6 +105,7 @@ function renderPromptAndInputs(text, translationText = '') {
 
   if (!canUseSegmentedInputs) {
     document.body.classList.remove('segmented-ready');
+    setFallbackVisible(true);
     if (translationText) translationInput.value = translationText;
     updateTranslationStats();
     return;
@@ -129,6 +136,7 @@ function renderPromptAndInputs(text, translationText = '') {
   `).join('');
 
   document.body.classList.toggle('segmented-ready', currentSegments.length > 0);
+  setFallbackVisible(currentSegments.length === 0);
   bindSegmentInputs();
   updateCombinedTranslation();
 }
@@ -184,7 +192,7 @@ function clearTranslationInputs() {
   translationInput.value = '';
   updateTranslationStats('');
   segmentInputList?.querySelector('.segment-translation-input')?.focus();
-  if (!document.body.classList.contains('segmented-ready')) translationInput.focus();
+  if (document.body.classList.contains('fallback-visible')) translationInput.focus();
 }
 
 async function loadRandomSentence() {
@@ -192,6 +200,7 @@ async function loadRandomSentence() {
     refreshSentenceBtn.disabled = true;
     chineseDisplay.textContent = '加载中...';
     document.body.classList.remove('segmented-ready');
+    setFallbackVisible(false);
     if (canUseSegmentedInputs) {
       promptSegmentsEl.innerHTML = '';
       promptSegmentCount.textContent = '';
@@ -207,11 +216,13 @@ async function loadRandomSentence() {
     } else {
       currentChinese = '';
       chineseDisplay.textContent = data.error || '获取句子失败，请重试';
+      setFallbackVisible(true);
       updateTranslationStats('');
     }
   } catch (e) {
     currentChinese = '';
     chineseDisplay.textContent = '请求出错，请检查服务器连接';
+    setFallbackVisible(true);
     updateTranslationStats('');
   } finally {
     refreshSentenceBtn.disabled = false;
