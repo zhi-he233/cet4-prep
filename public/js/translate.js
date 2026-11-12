@@ -21,6 +21,12 @@ const canUseSegmentedInputs = Boolean(
 
 let currentChinese = '';
 let currentSegments = [];
+let currentAssessment = null;
+let evaluationPending = false;
+
+function plainFeedback(text) {
+  return String(text ?? '').replace(/\*\*|__|`/g, '').replace(/^#{1,6}\s+/gm, '').trim();
+}
 
 const LOCAL_SENTENCE_BANK = {
   cet4: [
@@ -45,7 +51,69 @@ function setFallbackVisible(visible) {
 }
 
 function renderMarkdown(text) {
-  return escapeHtml(text || '').replace(/\n/g, '<br>');
+  return escapeHtml(plainFeedback(text)).replace(/\n/g, '<br>');
+}
+
+function feedbackHtml(segment) {
+  const list = (items, emptyText) => items.length
+    ? `<ul>${items.map((item) => `<li>${escapeHtml(plainFeedback(item))}</li>`).join('')}</ul>`
+    : `<p>${emptyText}</p>`;
+  return `
+    <div class="feedback-heading">
+      <h4>本段得分</h4>
+      <span class="segment-score">${Number(segment.score)} / 15 分</span>
+    </div>
+    <div class="feedback-section"><h5>主要问题</h5>${list(segment.issues, '未发现明显问题。')}</div>
+    <div class="feedback-section"><h5>修改建议</h5>${list(segment.suggestions, '保持当前表达。')}</div>
+    <div class="feedback-section"><h5>参考译文</h5><p lang="en">${escapeHtml(plainFeedback(segment.reference))}</p></div>
+  `;
+}
+
+function clearSegmentFeedback() {
+  currentAssessment = null;
+  document.body.classList.remove('assessment-visible');
+  document.querySelectorAll('.segment-feedback').forEach((el) => {
+    el.replaceChildren();
+    el.hidden = true;
+  });
+}
+
+function invalidateAssessment() {
+  if (!currentAssessment) return;
+  clearSegmentFeedback();
+  translateResult.replaceChildren();
+}
+
+function renderAssessment(assessment) {
+  currentAssessment = assessment;
+  document.body.classList.add('assessment-visible');
+  assessment.segments.forEach((segment, index) => {
+    const target = document.getElementById(`segment-feedback-${index}`);
+    if (target) {
+      target.innerHTML = feedbackHtml(segment);
+      target.hidden = false;
+    }
+  });
+  translateResult.innerHTML = `
+    <div class="feedback-heading"><h3>综合得分</h3><span class="segment-score">${assessment.totalScore} / 15 分</span></div>
+    <p class="score-caption">各段平均分</p>
+    ${assessment.summary ? `<p>${escapeHtml(plainFeedback(assessment.summary))}</p>` : ''}
+    ${!document.body.classList.contains('segmented-ready') ? assessment.segments.map(feedbackHtml).join('') : ''}
+  `;
+}
+
+function getSubmittedSegments() {
+  const inputs = Array.from(segmentInputList?.querySelectorAll('.segment-translation-input') || []);
+  if (document.body.classList.contains('segmented-ready') && inputs.length === currentSegments.length) {
+    return currentSegments.map((chinese, index) => ({
+      id: index + 1, chinese, english: inputs[index].value.trim()
+    }));
+  }
+  return [{ id: 1, chinese: currentChinese, english: translationInput.value.trim() }];
+}
+
+function submissionIdentity() {
+  return JSON.stringify({ chinese: currentChinese, segments: getSubmittedSegments(), level: getExamLevel(), user: getCurrentUserId() });
 }
 
 function pickLocalSentence() {
@@ -135,8 +203,10 @@ function splitLongChineseSegment(text) {
   });
 }
 
-function renderPromptAndInputs(text, translationText = '') {
-  currentSegments = splitChineseText(text);
+function renderPromptAndInputs(text, translationText = '', savedSegments = null) {
+  clearSegmentFeedback();
+  currentSegments = savedSegments?.length ? savedSegments.map((item) => item.chinese) : splitChineseText(text);
+  translationInput.value = translationText;
   chineseDisplay.textContent = text || '加载中...';
 
   if (!canUseSegmentedInputs) {
@@ -157,7 +227,7 @@ function renderPromptAndInputs(text, translationText = '') {
   promptSegmentsEl.style.display = currentSegments.length > 1 ? 'grid' : 'none';
   promptSegmentCount.textContent = currentSegments.length > 1 ? `${currentSegments.length} 段` : '';
 
-  const existingParts = translationText
+  const existingParts = savedSegments?.length ? savedSegments.map((item) => item.english || '') : translationText
     ? translationText.split(/\n{2,}/).map((part) => part.trim())
     : [];
 
@@ -167,7 +237,9 @@ function renderPromptAndInputs(text, translationText = '') {
         <span class="segment-number">${index + 1}</span>
         <span>${escapeHtml(segment)}</span>
       </div>
-      <textarea class="segment-translation-input" rows="3" data-index="${index}" placeholder="翻译第 ${index + 1} 段...">${escapeHtml(existingParts[index] || '')}</textarea>
+      <label class="input-label" for="segment-input-${index}">第 ${index + 1} 段英文翻译</label>
+      <textarea id="segment-input-${index}" class="segment-translation-input" rows="3" data-index="${index}" placeholder="翻译第 ${index + 1} 段...">${escapeHtml(existingParts[index] || '')}</textarea>
+      <div id="segment-feedback-${index}" class="segment-feedback" aria-live="polite" hidden></div>
     </div>
   `).join('');
 
@@ -181,6 +253,7 @@ function bindSegmentInputs() {
   if (!canUseSegmentedInputs) return;
   segmentInputList.querySelectorAll('.segment-translation-input').forEach((input) => {
     input.addEventListener('input', () => {
+      invalidateAssessment();
       autoGrowTextarea(input);
       updateCombinedTranslation();
     });
@@ -221,6 +294,7 @@ function updateCombinedTranslation() {
 }
 
 function clearTranslationInputs() {
+  invalidateAssessment();
   if (canUseSegmentedInputs) {
     segmentInputList.querySelectorAll('.segment-translation-input').forEach((input) => {
       input.value = '';
@@ -234,6 +308,8 @@ function clearTranslationInputs() {
 }
 
 async function loadRandomSentence() {
+  if (evaluationPending) return;
+  clearSegmentFeedback();
   try {
     refreshSentenceBtn.disabled = true;
     chineseDisplay.textContent = '加载中...';
@@ -267,12 +343,14 @@ async function loadRandomSentence() {
   }
 }
 
-function createPracticeRecord(evaluation = '', savedOffline = false) {
+function createPracticeRecord(evaluation = '', savedOffline = false, assessment = null) {
   return {
     chinese: currentChinese,
     english: getCurrentTranslationText(),
-    standard: extractStandardTranslation(evaluation),
+    standard: assessment ? assessment.segments.map((item) => item.reference).join(' ') : extractStandardTranslation(evaluation),
     evaluation,
+    assessment,
+    segments: getSubmittedSegments(),
     time: new Date().toISOString(),
     savedOffline
   };
@@ -292,6 +370,7 @@ function savePractice(savedOffline = !navigator.onLine) {
 }
 
 async function evaluateTranslation() {
+  if (evaluationPending) return;
   updateCombinedTranslation();
   const translation = getCurrentTranslationText();
   if (!currentChinese) return alert('请等待句子加载完成');
@@ -302,42 +381,66 @@ async function evaluateTranslation() {
     return;
   }
 
-  evaluateBtn.disabled = true;
-  translateResult.textContent = 'AI 评分中...';
-
-  const data = await API.post('/api/translate/evaluate', {
-    chinese: currentChinese,
-    translation
-  });
-
-  if (data.evaluation) {
-    translateResult.innerHTML = renderMarkdown(data.evaluation);
-    const records = getTranslateHistory();
-    records.push(createPracticeRecord(data.evaluation, false));
-    saveTranslateHistory(getCurrentUserId(), records);
-    showTranslateHistory();
-  } else {
-    translateResult.textContent = '出错：' + (data.error || '评分失败') + '。可以先保存，稍后再评分。';
+  clearSegmentFeedback();
+  const identity = submissionIdentity();
+  const segments = getSubmittedSegments();
+  const controls = Array.from(document.querySelectorAll('.segment-translation-input, #translationInput, #evaluateTranslationBtn, #refreshSentenceBtn, #clearTranslationBtn, #savePracticeBtn, #examLevelSelect, #loginBtn, #logoutBtn'));
+  const disabledStates = controls.map((item) => item.disabled);
+  evaluationPending = true;
+  controls.forEach((item) => { item.disabled = true; });
+  translateResult.textContent = 'AI 正在逐段评分...';
+  try {
+    const data = await API.post('/api/translate/evaluate', { chinese: currentChinese, translation, segments });
+    if (submissionIdentity() !== identity) {
+      translateResult.textContent = '练习或账号已变化，请重新评分。';
+      return;
+    }
+    const assessment = normalizeStoredAssessment(data.assessment);
+    if (assessment && assessment.segments.length === segments.length
+        && assessment.segments.every((item, index) => item.chinese === segments[index].chinese && item.english === segments[index].english)) {
+      renderAssessment(assessment);
+      const records = getTranslateHistory();
+      records.push(createPracticeRecord(data.evaluation || '', false, assessment));
+      saveTranslateHistory(getCurrentUserId(), records);
+      showTranslateHistory();
+      const firstFeedback = document.querySelector('.segment-feedback:not([hidden])');
+      (firstFeedback || translateResult).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      translateResult.textContent = data.error || '评分服务尚未更新，请更新服务后重新评分。你的输入已保留。';
+    }
+  } catch (e) {
+    translateResult.textContent = '评分失败，请重试。你的输入已保留。';
+  } finally {
+    controls.forEach((item, index) => { item.disabled = disabledStates[index]; });
+    evaluationPending = false;
   }
-
-  evaluateBtn.disabled = false;
-  translateResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function reviewTranslateRecord(index) {
+  if (evaluationPending) return;
   const item = getTranslateHistory()[index];
   if (!item) return;
   currentChinese = item.chinese || '';
   renderPromptAndInputs(currentChinese);
   translateResult.innerHTML = '';
-  showTranslateReviewPanel(item, index, true);
+  document.getElementById('translateReviewPanel').style.display = 'none';
   document.querySelector('[data-tab="translate"]')?.click();
   segmentInputList?.querySelector('.segment-translation-input')?.focus();
 }
 
 function showTranslateComparison(index) {
+  if (evaluationPending) return;
   const item = getTranslateHistory()[index];
   if (!item) return;
+  const assessment = normalizeStoredAssessment(item.assessment);
+  if (assessment) {
+    currentChinese = item.chinese || '';
+    renderPromptAndInputs(currentChinese, item.english, assessment.segments);
+    document.getElementById('translateReviewPanel').style.display = 'none';
+    document.querySelector('[data-tab="translate"]')?.click();
+    renderAssessment(assessment);
+    return;
+  }
   showTranslateReviewPanel(item, index, false);
   document.querySelector('[data-tab="translate"]')?.click();
 }
@@ -381,6 +484,9 @@ refreshSentenceBtn.addEventListener('click', () => {
 evaluateBtn.addEventListener('click', evaluateTranslation);
 savePracticeBtn?.addEventListener('click', () => savePractice(false));
 clearTranslationBtn?.addEventListener('click', clearTranslationInputs);
-translationInput?.addEventListener('input', () => updateTranslationStats(translationInput.value || ''));
+translationInput?.addEventListener('input', () => {
+  invalidateAssessment();
+  updateTranslationStats(translationInput.value || '');
+});
 
 loadRandomSentence();

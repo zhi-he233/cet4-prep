@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cet-translation-shell-v6';
+const CACHE_NAME = 'cet-translation-shell-v7';
 const SHELL_ASSETS = [
   '/',
   '/index.html',

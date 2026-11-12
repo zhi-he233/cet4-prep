@@ -337,6 +337,67 @@ body.fallback-visible .fallback-input-section {
   line-height: 1.55;
 }
 
+.segment-feedback[hidden] {
+  display: none;
+}
+
+.segment-feedback {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  overflow-wrap: anywhere;
+}
+
+.feedback-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.feedback-heading h3,
+.feedback-heading h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.segment-score {
+  color: var(--primary);
+  font-size: 1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.feedback-section {
+  margin-top: 12px;
+}
+
+.feedback-section h5 {
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.feedback-section ul {
+  padding-left: 20px;
+}
+
+.feedback-section li + li {
+  margin-top: 5px;
+}
+
+.feedback-section p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.score-caption {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 .input-tools {
   display: flex;
   justify-content: flex-end;
@@ -615,6 +676,10 @@ body.fallback-visible .fallback-input-section {
     border-radius: var(--radius);
     background: var(--panel);
     box-shadow: var(--shadow);
+  }
+
+  .assessment-visible .actions {
+    position: static;
   }
 
   .tabs {

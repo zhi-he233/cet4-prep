@@ -30,6 +30,24 @@ function setHistoryForLevel(level, records) {
   localStorage.setItem(getUserStorageKey('translateHistory', userId, level), JSON.stringify(records.slice(-500)));
 }
 
+function normalizeStoredAssessment(value) {
+  if (!value || !Array.isArray(value.segments) || !value.segments.length) return null;
+  const segments = value.segments;
+  if (segments.some((item, index) => !item || item.id !== index + 1
+      || typeof item.chinese !== 'string' || typeof item.english !== 'string'
+      || typeof item.reference !== 'string' || !Number.isFinite(item.score)
+      || item.score < 0 || item.score > 15
+      || !Array.isArray(item.issues) || !Array.isArray(item.suggestions)
+      || [...item.issues, ...item.suggestions].some((text) => typeof text !== 'string'))) return null;
+  return {
+    version: 1,
+    totalScore: Math.round(segments.reduce((sum, item) => sum + item.score, 0) / segments.length * 10) / 10,
+    maxScore: 15,
+    summary: typeof value.summary === 'string' ? value.summary : '',
+    segments
+  };
+}
+
 function normalizeHistoryRecords(value) {
   if (!Array.isArray(value)) return [];
   return value
@@ -39,6 +57,8 @@ function normalizeHistoryRecords(value) {
       english: String(record.english || ''),
       standard: String(record.standard || ''),
       evaluation: String(record.evaluation || ''),
+      assessment: normalizeStoredAssessment(record.assessment),
+      segments: Array.isArray(record.segments) ? record.segments : undefined,
       time: record.time || new Date().toISOString(),
       savedOffline: Boolean(record.savedOffline)
     }));
@@ -129,9 +149,10 @@ function importTranslateHistory(file) {
   reader.readAsText(file, 'utf-8');
 }
 
-function getScoreText(evaluation) {
+function getScoreText(evaluation, assessment) {
+  if (assessment && Number.isFinite(assessment.totalScore)) return `${assessment.totalScore}/15分`;
   if (!evaluation) return '未评分';
-  const scoreMatch = evaluation.match(/(\d+)\s*分/);
+  const scoreMatch = evaluation.match(/(?:得分[：:]?\s*\**\s*)?(\d+(?:\.\d+)?)\s*(?:\/\s*15|分)/);
   return scoreMatch ? `${scoreMatch[1]}分` : 'N/A';
 }
 
@@ -163,7 +184,7 @@ function showTranslateHistory() {
         <p>${escapeHtml(record.english)}</p>
       </div>
       <div class="history-meta">
-        <span>${getScoreText(record.evaluation)}</span>
+        <span>${getScoreText(record.evaluation, record.assessment)}</span>
         ${record.savedOffline ? '<span>离线保存</span>' : ''}
         <span>${record.time ? new Date(record.time).toLocaleString() : ''}</span>
       </div>
